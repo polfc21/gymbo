@@ -1,0 +1,21 @@
+@startuml
+
+state OPENED_EXERCISE
+state choice1 <<choice>>
+
+OPENED_EXERCISE --> S1 : Player requests CreateSerie
+S1 --> S2 : System permits enter repetitions and weight
+S2 --> S3 : System permits CreateSerie
+S3 --> S4 : Player introduces repetitions and weight
+S3 --> S31 : Player requests cancel
+S31 --> OPENED_EXERCISE
+S4 --> S5 : Player requests CreateSerie
+S4 --> S41 : Player requests cancel
+S41 --> OPENED_EXERCISE
+S5 --> choice1
+choice1 --> S6 : [incorrect serie data]
+S6 --> OPENED_EXERCISE : System shows serie incorrect data error
+choice1 --> OpenExercise
+OpenExercise --> OPENED_EXERCISE
+
+@enduml

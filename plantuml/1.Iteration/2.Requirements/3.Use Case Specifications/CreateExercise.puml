@@ -1,0 +1,30 @@
+@startuml
+
+state OPENED_TRAINING
+state OPENED_EXERCISES
+state choice1 <<choice>>
+
+OPENED_EXERCISES --> S1
+OPENED_TRAINING --> S1 : Player requests CreateExercise
+S1 --> S2 : System permits enter name and CreateSerie
+S2 --> S3 : System permits CreateExercise
+S3 --> S4 : Player introduces name
+S3 --> S31 : Player requests cancel
+S31 --> OPENED_TRAINING
+S31 --> OPENED_EXERCISES
+S4 --> S5 : Player requests CreateExercise
+S4 --> CreateSerie : Player requests CreateSerie
+S4 --> S41 : Player requests cancel
+S41 --> OPENED_TRAINING
+S41 --> OPENED_EXERCISES
+CreateSerie --> S4
+S5 --> choice1
+choice1 --> S6 : [incorrect exercise data]
+S6 --> OPENED_TRAINING : System shows exercise incorrect data error
+S6 --> OPENED_EXERCISES
+choice1 --> OpenTraining
+OpenTraining --> OPENED_TRAINING
+choice1 --> OpenExercises
+OpenExercises --> OPENED_EXERCISES
+
+@enduml

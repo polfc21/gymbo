@@ -1,0 +1,16 @@
+@startuml
+
+state OPENED_TRAININGS
+state OPENED_TRAINING
+state OPENED_EXERCISES
+state OPENED_EXERCISE
+state OPENED_SERIE
+
+OPENED_TRAINING --> EMPTY
+OPENED_EXERCISES --> EMPTY : User request show trainings of actual month
+OPENED_EXERCISE --> EMPTY
+OPENED_SERIE --> EMPTY
+
+EMPTY --> OPENED_TRAININGS : System prints trainings
+
+@enduml

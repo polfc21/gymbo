@@ -1,0 +1,68 @@
+@startuml
+
+title Use Case Diagram - 1st iteration Gymbo
+
+actor Player as P
+
+usecase Login as LI
+
+usecase OpenTrainings as OTS
+usecase CreateTraining as CT
+usecase OpenTraining as OT
+usecase UpdateTraining as UT
+usecase DeleteTraining as DT
+
+usecase AddExercise as AE
+
+usecase OpenExercises as OES
+usecase CreateExercise as CE
+usecase OpenExercise as OE
+usecase UpdateExercise as UE
+usecase DeleteExercise as DE
+
+usecase CreateSerie as CS
+usecase OpenSerie as OS
+usecase DeleteSerie as DS
+usecase UpdateSerie as US
+
+usecase Logout as LO
+
+left to right direction
+
+ P -- LI
+ LI ..> OTS : include
+
+ P -- OTS
+ P -- CT
+ CT ..> OTS : include
+ P -- UT
+ UT ..> OTS : include
+ P -- DT
+ DT ..> OTS : include
+ P -- OT
+ OT ..> OTS : include
+
+ P -- AE
+
+ P -- OES
+ OES ..> OTS : include
+ P -- CE
+ CE ..> OT : include
+ P -- UE
+ UE ..> OT : include
+ P -- DE
+ DE ..> OT : include
+ P -- OE
+ OE ..> OTS : include
+
+ P -- CS
+ CS ..> OE : include
+ P -- US
+ US ..> OE : include
+ P -- DS
+ DS ..> OE : include
+ P -- OS
+ OS ..> OE : include
+
+ P -- LO
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+
+state OPENED_TRAININGS
+state OPENED_TRAINING
+state choice1 <<choice>>
+
+OPENED_TRAININGS --> S1 : User selects a training
+S1 --> S2 : User requests OpenTraining
+S2 --> S3 : System shows data training
+S3 --> choice1
+choice1 --> S4 : [training has exercises]
+S4 --> S5 : System shows exercises
+choice1 --> OPENED_TRAINING
+S5 --> OPENED_TRAINING
+
+@enduml
