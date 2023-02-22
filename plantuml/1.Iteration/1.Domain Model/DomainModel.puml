@@ -1,0 +1,16 @@
+@startuml
+class Training {
+  -name : String
+  -date: Date
+}
+class Exercise {
+  -name : String
+}
+class Serie {
+  -number : Long
+  -repetitions : Long
+  -weight : Double
+}
+Training "1" *--> "0..n" Exercise
+Exercise "1" *--> "0..n" Serie
+@enduml
