@@ -1,0 +1,48 @@
+@startuml
+title Controller Diagram
+package com.behabits.gymbo {
+    package infrastructure {
+        package infrastructure_daos {
+            class JpaTrainingDao
+            package repository {
+                interface TrainingRepository
+                package entity_mappers {
+                    JpaTrainingDao *--> TrainingEntityMapper
+                    class TrainingEntityMapper
+                }
+                package entities {
+                    class TrainingEntity
+                }
+                TrainingRepository --> TrainingEntity
+                TrainingEntityMapper --> TrainingEntity
+            }
+    }
+    package domain {
+        package services {
+            interface TrainingService
+        }
+        package daos {
+            JpaTrainingDao --|> TrainingDao
+            JpaTrainingDao *--> TrainingRepository
+            interface TrainingDao
+        }
+        package models {
+            TrainingEntityMapper --> Training
+            class Training
+        }
+        package exceptions {
+            class TrainingException
+        }
+        TrainingService --> Training
+        TrainingService --> TrainingException
+    }
+    package application {
+        package application_services {
+        TrainingServiceImpl --|> TrainingService
+        TrainingServiceImpl *--> TrainingDao
+            class TrainingServiceImpl
+        }
+    }
+}
+
+@enduml

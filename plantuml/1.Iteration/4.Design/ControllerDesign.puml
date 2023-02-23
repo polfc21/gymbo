@@ -1,0 +1,48 @@
+@startuml
+title Controller Diagram
+package com.behabits.gymbo {
+    package infrastructure {
+        package controllers {
+            class TrainingController
+            package http_errors {
+                class ErrorMessage
+                class ApiExceptionHandler
+            }
+            package api_mappers {
+                TrainingController *--> TrainingApiMapper
+                class TrainingApiMapper
+            }
+            package dtos {
+                TrainingController ..> TrainingResponse
+                class TrainingResponse
+            }
+            TrainingApiMapper --> TrainingResponse
+            ApiExceptionHandler --> ErrorMessage
+    }
+    package domain {
+        package services {
+            interface TrainingService
+            TrainingController *--> TrainingService
+
+        }
+        package models {
+            TrainingApiMapper --> Training
+            TrainingController ..> Training
+            class Training
+        }
+        package exceptions {
+            ApiExceptionHandler --> TrainingException
+            class TrainingException
+        }
+        TrainingService --> Training
+        TrainingService --> TrainingException
+    }
+    package application {
+        package application_services {
+        TrainingServiceImpl --|> TrainingService
+            class TrainingServiceImpl
+        }
+    }
+}
+
+@enduml
