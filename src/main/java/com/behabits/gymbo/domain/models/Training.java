@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Training {
+    private Long id;
     private LocalDateTime date;
     private String name;
     private List<Exercise> exercises;

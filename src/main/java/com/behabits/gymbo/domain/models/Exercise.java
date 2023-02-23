@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Exercise {
+    private Long id;
     private String name;
     private List<Serie> series;
 }

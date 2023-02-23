@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Serie {
+    private Long id;
     private Integer number;
     private Double weight;
     private Integer repetitions;
