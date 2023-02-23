@@ -1,0 +1,19 @@
+@startuml
+
+object user
+object seriesView
+object serieView
+object createSerieController
+object series
+object serie
+
+
+user -up-> seriesView : createSerie()
+seriesView -down-> serieView : createSerie()
+user -right-> serieView : setRepetitions(), setWeigth()
+serieView -right-> createSerieController : createSerie(serieData)
+createSerieController --> serie
+serieView --> serie
+series --> serie
+serieView --> series
+@enduml

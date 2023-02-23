@@ -1,0 +1,19 @@
+@startuml
+
+title Classes - Class Diagram
+
+class TrainingView
+class CreateTrainingController
+class ExerciseView
+class Training
+class Exercise
+
+TrainingView --> CreateTrainingController
+TrainingView --> ExerciseView
+TrainingView --> Training
+CreateTrainingController --> Training
+Training --> Exercise
+ExerciseView --> Exercise
+TrainingView --> Exercise
+
+@enduml

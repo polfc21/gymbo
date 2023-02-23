@@ -1,0 +1,25 @@
+@startuml
+
+object user
+object exercisesView
+object exerciseView
+object serieView
+object createExerciseController
+object exercise
+object series
+object serie
+
+
+user -up-> exercisesView : createExercise()
+exercisesView -down-> exerciseView : createExercise()
+user -right-> exerciseView : setName(), createSerie()
+exerciseView -right-> createExerciseController : createExercise(exerciseData)
+createExerciseController --> exercise
+exerciseView --> exercise
+exercise -down-> series
+exerciseView -down-> series
+exerciseView -down-> serieView : createSerie()
+serieView -right-> series
+serieView -right-> serie
+series -right-> serie
+@enduml

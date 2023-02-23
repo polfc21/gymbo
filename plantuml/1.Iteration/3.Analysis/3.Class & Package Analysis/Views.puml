@@ -1,0 +1,38 @@
+@startuml
+
+package views {
+  class TrainingsView {
+    + openTrainings()
+    + openTraining()
+    + createTraining()
+  }
+  class TrainingView {
+    + setName(name)
+    + setDate(date)
+    + addExercise()
+  }
+  class ExercisesView {
+    + openExercise()
+    + createExercise()
+  }
+  class ExerciseView {
+    + setName(name)
+    + createSerie()
+  }
+  class SeriesView {
+    + createSerie()
+  }
+  class SerieView {
+    + setRepetitions(repetitions)
+    + setWeight(weight)
+  }
+  TrainingsView -down-> TrainingView
+  TrainingView -down-> ExercisesView
+  ExercisesView -down-> ExerciseView
+  ExerciseView -right-> SeriesView
+  ExerciseView -right-> SerieView
+  SeriesView -right-> SerieView
+}
+
+
+@enduml

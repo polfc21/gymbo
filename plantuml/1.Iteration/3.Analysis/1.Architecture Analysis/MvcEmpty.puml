@@ -1,0 +1,16 @@
+@startuml
+
+title Packages - Component Diagram
+
+package views
+
+package controllers
+
+package models
+
+views ..> controllers
+views ..> models
+controllers ..> models
+
+
+@enduml

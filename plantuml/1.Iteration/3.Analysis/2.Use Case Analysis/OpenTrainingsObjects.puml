@@ -1,0 +1,19 @@
+@startuml
+
+title Relationships - Class Diagram
+
+object user
+object trainingsView
+object openTrainingsController
+object trainings
+object training
+object trainingView
+
+user -right-> trainingsView : openTrainings(date)
+trainingsView -right-> openTrainingsController : findTrainings(date)
+openTrainingsController --> trainings : findTrainings(date)
+trainings --> training : getName(), getDate(), getExercises()
+trainingsView --> trainings
+trainingsView --> trainingView
+trainingView --> training : getName(), getDate(), getExercises()
+@enduml

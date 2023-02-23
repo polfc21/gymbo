@@ -1,0 +1,25 @@
+@startuml
+
+package controllers {
+  class CreateSerieController {
+    + createSerie(serieData)
+  }
+  class CreateTrainingController {
+    + createTraining(trainingData)
+  }
+  class CreateExerciseController {
+    + createExercise(exerciseData)
+  }
+  class OpenTrainingsController {
+    + openTrainings(date)
+  }
+  class OpenTrainingController {
+    + openTraining(idTraining)
+  }
+  class OpenExerciseController {
+    + openExercise(idExercise)
+  }
+}
+
+
+@enduml

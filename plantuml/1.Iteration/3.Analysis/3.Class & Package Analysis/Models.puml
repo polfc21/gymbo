@@ -1,0 +1,42 @@
+@startuml
+
+package models {
+  class Trainings {
+    + openTrainings(date)
+    + openTraining(idTraining)
+    + createTraining(trainingData)
+  }
+  class Training {
+    - name : Text
+    - date : Date
+    + getName()
+    + getDate()
+    + getExercises()
+  }
+  Trainings --> Training
+  class Exercises {
+    + openExercise(idExercise)
+    + createExercise(exerciseData)
+  }
+  class Exercise {
+    - name : Text
+    + getName()
+    + getSeries()
+  }
+  Exercises --> Exercise
+  Training --> "0..n" Exercise
+  class Series {
+    + createSerie(serieData)
+  }
+  Series --> Serie
+  class Serie {
+    - repetitions : Number
+    - weight : Number
+    + getRepetitions()
+    + getWeight()
+  }
+  Exercise --> "0..n" Serie
+}
+
+
+@enduml

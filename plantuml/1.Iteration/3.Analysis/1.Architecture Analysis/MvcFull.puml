@@ -1,0 +1,89 @@
+@startuml
+
+title Packages - Component Diagram
+
+package views {
+  class TrainingsView {
+    + openTrainings()
+    + createTraining()
+    + openTraining()
+  }
+  class CreateTrainingView {
+    + addExercise()
+    + setName(name)
+    + setDate(date)
+    + createTraining()
+  }
+  class TrainingView {
+    + openExercises()
+    + addExercise()
+  }
+  class ExerciseView {
+    + createSerie()
+  }
+  class CreateExerciseView {
+    + setName(name)
+    + createSerie()
+  }
+  class CreateSerieView {
+    + setRepetitions(repetitions)
+    + setWeight(weight)
+  }
+  class SerieView {}
+
+  TrainingsView o--> TrainingView
+  TrainingsView o--> CreateTrainingView
+
+  TrainingView o--> ExerciseView
+  TrainingView o--> CreateExerciseView
+
+  ExerciseView o--> SerieView
+  ExerciseView o--> CreateSerieView
+}
+
+package controllers {
+  class OpenTrainingsController {
+    + findTrainingsByMonth(month)
+  }
+  class OpenTrainingController {
+    + findTraining(trainingId)
+  }
+  class CreateTrainingController {
+    + createTraining(trainingData)
+  }
+  class CreateExerciseController {
+    + createExercise(exerciseData)
+  }
+  class OpenExercise {
+    + findExercise(exerciseId)
+  }
+  class CreateSerie {
+    + createSerie(serieData)
+  }
+}
+
+package models {
+  class Training {
+    + getDate()
+    + getName()
+    + getExercises()
+    + setDate(date)
+    + setName(name)
+    + addExercise(exercise)
+  }
+  class Exercise {
+    + getName()
+    + getSeries()
+    + setName(name)
+    + addSerie()
+  }
+  class Serie {
+    + getRepetitions()
+    + getWeight()
+    + setRepetitions(repetitions)
+    + setWeight(weight)
+  }
+}
+
+
+@enduml

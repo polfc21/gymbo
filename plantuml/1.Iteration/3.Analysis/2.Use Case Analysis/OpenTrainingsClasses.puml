@@ -1,0 +1,17 @@
+@startuml
+
+title Classes - Class Diagram
+
+class TrainingsView
+class OpenTrainingsController
+class Trainings
+class Training
+
+TrainingsView --> TrainingView
+TrainingsView --> OpenTrainingsController
+TrainingsView --> Trainings
+OpenTrainingsController --> Trainings
+OpenTrainingsController --> Training
+Trainings --> Training
+TrainingView --> Training
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+
+title Packages - Component Diagram
+
+package views {
+  class TrainingsView {}
+  class CreateTrainingView {}
+  class TrainingView {}
+  class ExerciseView {}
+  class CreateExerciseView {}
+  class CreateSerieView {}
+  class SerieView {}
+
+  TrainingsView o--> TrainingView
+  TrainingsView o--> CreateTrainingView
+
+  TrainingView o--> ExerciseView
+  TrainingView o--> CreateExerciseView
+
+  ExerciseView o--> SerieView
+  ExerciseView o--> CreateSerieView
+}
+
+package controllers {
+  class OpenTrainingsController {}
+  class OpenTrainingController {}
+  class CreateTrainingController {}
+  class CreateExerciseController {}
+  class OpenExerciseController {}
+  class CreateSerieController {}
+}
+
+package models {
+  class Training
+  class Exercise
+  class Serie
+}
+
+
+@enduml

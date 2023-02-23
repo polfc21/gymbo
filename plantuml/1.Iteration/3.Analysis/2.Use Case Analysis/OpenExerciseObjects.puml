@@ -1,0 +1,26 @@
+@startuml
+
+title Relationships - Class Diagram
+
+object user
+object exerciseView
+object exercisesView
+object openExerciseController
+object exercises
+object exercise
+object series
+object seriesView
+
+user -right-> exercisesView : openExercise()
+exercisesView -down-> exerciseView : update(idExercise)
+exerciseView -right-> openExerciseController : findExercise(idExercise)
+openExerciseController -down-> exercises : findExercise(idExercise)
+openExerciseController -down-> exercise
+exercises -left-> exercise
+exercise -down-> series
+exercisesView --> exercises
+exerciseView --> exercise
+exerciseView --> seriesView : getSeries()
+seriesView --> series
+exerciseView --> exercise : getName(), getSeries()
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+
+title Classes - Class Diagram
+
+class ExerciseView
+class OpenExerciseController
+class SerieView
+class Serie
+class Exercise
+
+ExerciseView --> OpenExerciseController
+ExerciseView --> SerieView
+ExerciseView --> Exercise
+OpenExerciseController --> Exercise
+Exercise --> Serie
+ExerciseView --> Serie
+SerieView --> Serie
+
+@enduml
