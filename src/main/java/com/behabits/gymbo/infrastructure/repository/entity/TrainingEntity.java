@@ -16,7 +16,8 @@ public class TrainingEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String name;
-    private LocalDateTime date;
+    @Column(name = "training_date")
+    private LocalDateTime trainingDate;
     @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExerciseEntity> exercises;
 }

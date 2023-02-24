@@ -15,7 +15,7 @@ public class TrainingEntityMapper {
         Training domain = new Training();
         domain.setId(entity.getId());
         domain.setName(entity.getName());
-        domain.setDate(entity.getDate());
+        domain.setTrainingDate(entity.getTrainingDate());
         domain.setExercises(this.exerciseEntityMapper.toDomain(entity.getExercises()));
         return domain;
     }

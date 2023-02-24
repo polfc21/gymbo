@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Training {
     private Long id;
-    private LocalDateTime date;
+    private LocalDateTime trainingDate;
     private String name;
     private List<Exercise> exercises;
 }
