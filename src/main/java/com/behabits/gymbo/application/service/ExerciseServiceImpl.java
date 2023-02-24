@@ -10,15 +10,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExerciseServiceImpl implements ExerciseService {
 
-    private final ExerciseDao exerciseDao;
+    //private final ExerciseDao exerciseDao;
 
     @Override
     public Exercise findExerciseById(Long id) {
-        return this.exerciseDao.findExerciseById(id);
+        return null;
+        //return this.exerciseDao.findExerciseById(id);
     }
 
     @Override
     public Exercise createExercise(Exercise exercise) {
-        return this.exerciseDao.createExercise(exercise);
+        return null;
+        //return this.exerciseDao.createExercise(exercise);
     }
 }

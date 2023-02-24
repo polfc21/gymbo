@@ -13,20 +13,23 @@ import java.util.List;
 @Service
 public class TrainingServiceImpl implements TrainingService {
 
-    private final TrainingDao trainingDao;
+    //private final TrainingDao trainingDao;
 
     @Override
     public List<Training> findTrainingsByMonth(LocalDateTime date) {
-        return this.trainingDao.findTrainingsByMonth(date);
+        return null;
+        //return this.trainingDao.findTrainingsByMonth(date);
     }
 
     @Override
     public Training findTrainingById(Long id) {
-        return this.trainingDao.findTrainingById(id);
+        return null;
+        //return this.trainingDao.findTrainingById(id);
     }
 
     @Override
     public Training createTraining(Training training) {
-        return this.trainingDao.createTraining(training);
+        return null;
+        //return this.trainingDao.createTraining(training);
     }
 }
