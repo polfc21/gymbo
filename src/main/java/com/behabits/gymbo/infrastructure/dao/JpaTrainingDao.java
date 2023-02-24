@@ -23,7 +23,7 @@ public class JpaTrainingDao implements TrainingDao {
     public List<Training> findTrainingsByMonth(Month month) {
         return this.trainingRepository.findAllByMonth(month).stream()
                 .map(this.mapper::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

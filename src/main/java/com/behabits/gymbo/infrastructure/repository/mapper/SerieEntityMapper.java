@@ -13,7 +13,7 @@ public class SerieEntityMapper {
     public List<Serie> toDomain(List<SerieEntity> entities) {
         return entities.stream()
                 .map(this::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Serie toDomain(SerieEntity entity) {
@@ -28,7 +28,7 @@ public class SerieEntityMapper {
     public List<SerieEntity> toEntity(List<Serie> models) {
         return models.stream()
                 .map(this::toEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private SerieEntity toEntity(Serie domain) {
