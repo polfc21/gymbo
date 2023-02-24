@@ -8,7 +8,7 @@ import com.behabits.gymbo.infrastructure.repository.mapper.TrainingEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +20,8 @@ public class JpaTrainingDao implements TrainingDao {
     private final TrainingEntityMapper mapper;
 
     @Override
-    public List<Training> findTrainingsByMonth(LocalDateTime date) {
-        return this.trainingRepository.findAllByMonth(date.getMonth()).stream()
+    public List<Training> findTrainingsByMonth(Month month) {
+        return this.trainingRepository.findAllByMonth(month).stream()
                 .map(this.mapper::toDomain)
                 .collect(Collectors.toList());
     }
