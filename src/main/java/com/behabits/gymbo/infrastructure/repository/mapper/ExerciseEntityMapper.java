@@ -20,7 +20,7 @@ public class ExerciseEntityMapper {
                 .collect(Collectors.toList());
     }
 
-    private Exercise toDomain(ExerciseEntity entity) {
+    public Exercise toDomain(ExerciseEntity entity) {
         Exercise domain = new Exercise();
         domain.setId(entity.getId());
         domain.setName(entity.getName());
@@ -34,7 +34,7 @@ public class ExerciseEntityMapper {
                 .collect(Collectors.toList());
     }
 
-    private ExerciseEntity toEntity(Exercise domain) {
+    public ExerciseEntity toEntity(Exercise domain) {
         ExerciseEntity entity = new ExerciseEntity();
         entity.setId(domain.getId());
         entity.setName(domain.getName());
