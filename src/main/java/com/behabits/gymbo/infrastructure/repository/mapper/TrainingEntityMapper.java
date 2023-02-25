@@ -23,7 +23,8 @@ public class TrainingEntityMapper {
     public TrainingEntity toEntity(Training domain) {
         TrainingEntity entity = new TrainingEntity();
         entity.setId(domain.getId());
-        entity.setName(entity.getName());
+        entity.setName(domain.getName());
+        entity.setTrainingDate(domain.getTrainingDate());
         entity.setExercises(this.exerciseEntityMapper.toEntity(domain.getExercises()));
         entity.getExercises().forEach(exerciseEntity -> exerciseEntity.setTraining(entity));
         return entity;
