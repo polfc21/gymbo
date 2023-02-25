@@ -1,4 +1,4 @@
-package com.behabits.gymbo.infrastructure.controller.dto.builder;
+package com.behabits.gymbo.infrastructure.controller.builder.request;
 
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import lombok.NoArgsConstructor;
@@ -27,6 +27,14 @@ public class SerieRequestBuilder {
         serieRequest.setNumber(null);
         serieRequest.setRepetitions(null);
         serieRequest.setWeight(null);
+        return serieRequest;
+    }
+
+    public SerieRequest buildSquatSerieRequest() {
+        SerieRequest serieRequest = new SerieRequest();
+        serieRequest.setNumber(1);
+        serieRequest.setRepetitions(10);
+        serieRequest.setWeight(10.0);
         return serieRequest;
     }
 

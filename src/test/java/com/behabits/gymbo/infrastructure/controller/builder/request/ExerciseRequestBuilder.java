@@ -1,4 +1,4 @@
-package com.behabits.gymbo.infrastructure.controller.dto.builder;
+package com.behabits.gymbo.infrastructure.controller.builder.request;
 
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import lombok.NoArgsConstructor;
@@ -23,4 +23,12 @@ public class ExerciseRequestBuilder {
         exerciseRequest.setName(null);
         return exerciseRequest;
     }
+
+    public ExerciseRequest buildSquatExerciseRequest() {
+        ExerciseRequest exerciseRequest = new ExerciseRequest();
+        exerciseRequest.setId(1L);
+        exerciseRequest.setName("Squat");
+        return exerciseRequest;
+    }
+
 }

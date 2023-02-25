@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.dto.request;
 
-import com.behabits.gymbo.infrastructure.controller.dto.builder.TrainingRequestBuilder;
+import com.behabits.gymbo.infrastructure.controller.builder.request.TrainingRequestBuilder;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

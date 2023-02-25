@@ -1,4 +1,4 @@
-package com.behabits.gymbo.infrastructure.controller.dto.builder;
+package com.behabits.gymbo.infrastructure.controller.builder.request;
 
 import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
 import lombok.NoArgsConstructor;
@@ -26,6 +26,13 @@ public class TrainingRequestBuilder {
         TrainingRequest trainingRequest = new TrainingRequest();
         trainingRequest.setName(null);
         trainingRequest.setTrainingDate(null);
+        return trainingRequest;
+    }
+
+    public TrainingRequest buildLegTrainingRequest() {
+        TrainingRequest trainingRequest = new TrainingRequest();
+        trainingRequest.setName("Leg");
+        trainingRequest.setTrainingDate(LocalDateTime.now());
         return trainingRequest;
     }
 }
