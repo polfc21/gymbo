@@ -11,9 +11,9 @@ import java.util.List;
 public class SerieApiMapper {
 
     public List<Serie> toDomain(List<SerieRequest> requests) {
-        return requests.stream()
+        return requests.stream() != null ? requests.stream()
                 .map(this::toDomain)
-                .toList();
+                .toList() : null;
     }
 
     private Serie toDomain(SerieRequest request) {
@@ -26,9 +26,9 @@ public class SerieApiMapper {
     }
 
     public List<SerieResponse> toResponse(List<Serie> models) {
-        return models.stream()
+        return models.stream() != null ? models.stream()
                 .map(this::toResponse)
-                .toList();
+                .toList() : null;
     }
 
     private SerieResponse toResponse(Serie domain) {

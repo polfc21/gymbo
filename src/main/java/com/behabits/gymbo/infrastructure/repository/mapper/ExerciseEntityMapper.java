@@ -14,9 +14,9 @@ public class ExerciseEntityMapper {
     private final SerieEntityMapper serieEntityMapper;
 
     public List<Exercise> toDomain(List<ExerciseEntity> entities) {
-        return entities.stream()
+        return entities.stream() != null ? entities.stream()
                 .map(this::toDomain)
-                .toList();
+                .toList() : null;
     }
 
     public Exercise toDomain(ExerciseEntity entity) {
@@ -28,9 +28,9 @@ public class ExerciseEntityMapper {
     }
 
     public List<ExerciseEntity> toEntity(List<Exercise> models) {
-        return models.stream()
+        return models.stream() != null ? models.stream()
                 .map(this::toEntity)
-                .toList();
+                .toList() : null;
     }
 
     public ExerciseEntity toEntity(Exercise domain) {

@@ -15,9 +15,9 @@ public class ExerciseApiMapper {
     private final SerieApiMapper serieApiMapper;
 
     public List<Exercise> toDomain(List<ExerciseRequest> requests) {
-        return requests.stream()
+        return requests != null ? requests.stream()
                 .map(this::toDomain)
-                .toList();
+                .toList() : null;
     }
 
     public Exercise toDomain(ExerciseRequest request) {
@@ -29,9 +29,9 @@ public class ExerciseApiMapper {
     }
 
     public List<ExerciseResponse> toResponse(List<Exercise> models) {
-        return models.stream()
+        return models.stream() != null ? models.stream()
                 .map(this::toResponse)
-                .toList();
+                .toList() : null;
     }
 
     public ExerciseResponse toResponse(Exercise domain) {
