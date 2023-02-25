@@ -32,6 +32,7 @@ public class SerieRequestBuilder {
 
     public SerieRequest buildSquatSerieRequest() {
         SerieRequest serieRequest = new SerieRequest();
+        serieRequest.setId(1L);
         serieRequest.setNumber(1);
         serieRequest.setRepetitions(10);
         serieRequest.setWeight(10.0);

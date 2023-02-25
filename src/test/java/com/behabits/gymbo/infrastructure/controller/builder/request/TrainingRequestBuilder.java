@@ -31,6 +31,7 @@ public class TrainingRequestBuilder {
 
     public TrainingRequest buildLegTrainingRequest() {
         TrainingRequest trainingRequest = new TrainingRequest();
+        trainingRequest.setId(1L);
         trainingRequest.setName("Leg");
         trainingRequest.setTrainingDate(LocalDateTime.now());
         return trainingRequest;
