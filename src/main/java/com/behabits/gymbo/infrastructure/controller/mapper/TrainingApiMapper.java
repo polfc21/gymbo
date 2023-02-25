@@ -25,6 +25,7 @@ public class TrainingApiMapper {
         TrainingResponse response = new TrainingResponse();
         response.setId(domain.getId());
         response.setName(domain.getName());
+        response.setTrainingDate(domain.getTrainingDate());
         response.setExercises(this.exerciseApiMapper.toResponse(domain.getExercises()));
         return response;
     }
