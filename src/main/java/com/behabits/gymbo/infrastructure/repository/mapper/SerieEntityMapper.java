@@ -10,7 +10,7 @@ import java.util.List;
 public class SerieEntityMapper {
 
     public List<Serie> toDomain(List<SerieEntity> entities) {
-        return entities.stream() != null ? entities.stream()
+        return entities != null ? entities.stream()
                 .map(this::toDomain)
                 .toList() : null;
     }
@@ -25,7 +25,7 @@ public class SerieEntityMapper {
     }
 
     public List<SerieEntity> toEntity(List<Serie> models) {
-        return models.stream() != null ? models.stream()
+        return models != null ? models.stream()
                 .map(this::toEntity)
                 .toList() : null;
     }

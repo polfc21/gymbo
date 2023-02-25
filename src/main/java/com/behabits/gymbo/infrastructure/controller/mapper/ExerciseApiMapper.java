@@ -29,7 +29,7 @@ public class ExerciseApiMapper {
     }
 
     public List<ExerciseResponse> toResponse(List<Exercise> models) {
-        return models.stream() != null ? models.stream()
+        return models != null ? models.stream()
                 .map(this::toResponse)
                 .toList() : null;
     }
