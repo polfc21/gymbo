@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainingRequest {
+    private Long id;
     @NotBlank
     private String name;
     @NotNull

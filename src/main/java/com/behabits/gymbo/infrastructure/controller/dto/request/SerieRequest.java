@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SerieRequest {
+    private Long id;
     @Positive
     private Integer number;
     @Positive

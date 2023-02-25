@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExerciseRequest {
+    private Long id;
     @NotBlank
     private String name;
     private List<SerieRequest> series;
