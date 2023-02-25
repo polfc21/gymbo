@@ -9,7 +9,7 @@ public class TrainingResponseBuilder {
     public TrainingResponse buildSquatTrainingResponse() {
         TrainingResponse trainingResponse = new TrainingResponse();
         trainingResponse.setId(1L);
-        trainingResponse.setName("Squat");
+        trainingResponse.setName("Leg");
         return trainingResponse;
     }
 }
