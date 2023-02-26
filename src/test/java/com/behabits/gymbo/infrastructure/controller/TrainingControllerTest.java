@@ -4,8 +4,8 @@ import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.services.TrainingService;
-import com.behabits.gymbo.infrastructure.controller.builder.request.TrainingRequestBuilder;
-import com.behabits.gymbo.infrastructure.controller.builder.response.TrainingResponseBuilder;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.TrainingRequestRepository;
+import com.behabits.gymbo.infrastructure.controller.repositories.response.TrainingResponseRepository;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.TrainingResponse;
@@ -70,14 +70,14 @@ public class TrainingControllerTest {
 
     @BeforeEach
     void setUp() {
-        TrainingRequestBuilder trainingRequestBuilder = new TrainingRequestBuilder();
-        TrainingResponseBuilder trainingResponseBuilder = new TrainingResponseBuilder();
+        TrainingRequestRepository trainingRequestRepository = new TrainingRequestRepository();
+        TrainingResponseRepository trainingResponseRepository = new TrainingResponseRepository();
         TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
-        this.legRequest = trainingRequestBuilder.buildLegTrainingRequest();
-        this.legResponse = trainingResponseBuilder.buildLegTrainingResponse();
+        this.legRequest = trainingRequestRepository.getLegTrainingRequest();
+        this.legResponse = trainingResponseRepository.getLegTrainingResponse();
         this.legTraining = trainingModelRepository.buildLegTraining();
-        this.incorrectRequest = trainingRequestBuilder.buildIncorrectTrainingRequest();
-        this.nullRequest = trainingRequestBuilder.buildNullTrainingRequest();
+        this.incorrectRequest = trainingRequestRepository.getIncorrectTrainingRequest();
+        this.nullRequest = trainingRequestRepository.getNullTrainingRequest();
     }
 
     @Test

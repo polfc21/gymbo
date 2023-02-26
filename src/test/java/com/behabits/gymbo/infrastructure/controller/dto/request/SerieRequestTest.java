@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.dto.request;
 
-import com.behabits.gymbo.infrastructure.controller.builder.request.SerieRequestBuilder;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -17,18 +17,18 @@ public class SerieRequestTest {
 
     private Validator validator;
 
-    private SerieRequestBuilder serieRequestBuilder;
+    private SerieRequestRepository serieRequestRepository;
 
     @BeforeEach
     void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        this.serieRequestBuilder = new SerieRequestBuilder();
+        this.serieRequestRepository = new SerieRequestRepository();
     }
 
     @Test
     void givenCorrectSerieRequestWhenValidateThenViolationsSizeIs0() {
-        SerieRequest serieRequest = this.serieRequestBuilder.buildCorrectSerieRequest();
+        SerieRequest serieRequest = this.serieRequestRepository.getCorrectSerieRequest();
 
         Set<ConstraintViolation<SerieRequest>> violations = this.validator.validate(serieRequest);
 
@@ -37,7 +37,7 @@ public class SerieRequestTest {
 
     @Test
     void givenIncorrectSerieRequestWhenValidateThenViolationsSizeIs3() {
-        SerieRequest serieRequest = this.serieRequestBuilder.buildIncorrectSerieRequest();
+        SerieRequest serieRequest = this.serieRequestRepository.getIncorrectSerieRequest();
 
         Set<ConstraintViolation<SerieRequest>> violations = this.validator.validate(serieRequest);
 
@@ -46,7 +46,7 @@ public class SerieRequestTest {
 
     @Test
     void givenNullSerieRequestWhenValidateThenViolationsSizeIs3() {
-        SerieRequest serieRequest = this.serieRequestBuilder.buildNullSerieRequest();
+        SerieRequest serieRequest = this.serieRequestRepository.getNullSerieRequest();
 
         Set<ConstraintViolation<SerieRequest>> violations = this.validator.validate(serieRequest);
 

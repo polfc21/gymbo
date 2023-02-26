@@ -2,7 +2,7 @@ package com.behabits.gymbo.infrastructure.controller.mapper;
 
 import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.models.Serie;
-import com.behabits.gymbo.infrastructure.controller.builder.request.SerieRequestBuilder;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,19 +19,19 @@ public class SerieApiMapperTest {
     @Autowired
     private SerieApiMapper serieApiMapper;
 
-    private SerieRequestBuilder serieRequestBuilder;
+    private SerieRequestRepository serieRequestRepository;
 
     private SerieModelRepository serieModelRepository;
 
     @BeforeEach
     void setUp() {
-        this.serieRequestBuilder = new SerieRequestBuilder();
+        this.serieRequestRepository = new SerieRequestRepository();
         this.serieModelRepository = new SerieModelRepository();
     }
 
     @Test
     void givenSquatSerieRequestWhenMapToDomainThenReturnSquatSerie() {
-        SerieRequest serieRequest = this.serieRequestBuilder.buildSquatSerieRequest();
+        SerieRequest serieRequest = this.serieRequestRepository.getSquatSerieRequest();
 
         Serie serie = this.serieApiMapper.toDomain(serieRequest);
 

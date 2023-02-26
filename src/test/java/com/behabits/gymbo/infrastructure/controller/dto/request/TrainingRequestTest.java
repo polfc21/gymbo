@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.dto.request;
 
-import com.behabits.gymbo.infrastructure.controller.builder.request.TrainingRequestBuilder;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.TrainingRequestRepository;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -17,18 +17,18 @@ public class TrainingRequestTest {
 
     private Validator validator;
 
-    private TrainingRequestBuilder trainingRequestBuilder;
+    private TrainingRequestRepository trainingRequestRepository;
 
     @BeforeEach
     void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        this.trainingRequestBuilder = new TrainingRequestBuilder();
+        this.trainingRequestRepository = new TrainingRequestRepository();
     }
 
     @Test
     void givenCorrectTrainingRequestWhenValidateThenViolationsSizeIs0() {
-        TrainingRequest trainingRequest = this.trainingRequestBuilder.buildCorrectTrainingRequest();
+        TrainingRequest trainingRequest = this.trainingRequestRepository.getCorrectTrainingRequest();
 
         Set<ConstraintViolation<TrainingRequest>> violations = this.validator.validate(trainingRequest);
 
@@ -37,7 +37,7 @@ public class TrainingRequestTest {
 
     @Test
     void givenIncorrectTrainingRequestWhenValidateThenViolationsSizeIs2() {
-        TrainingRequest trainingRequest = this.trainingRequestBuilder.buildIncorrectTrainingRequest();
+        TrainingRequest trainingRequest = this.trainingRequestRepository.getIncorrectTrainingRequest();
 
         Set<ConstraintViolation<TrainingRequest>> violations = this.validator.validate(trainingRequest);
 
@@ -46,7 +46,7 @@ public class TrainingRequestTest {
 
     @Test
     void givenNullTrainingRequestWhenValidateThenViolationsSizeIs2() {
-        TrainingRequest trainingRequest = this.trainingRequestBuilder.buildNullTrainingRequest();
+        TrainingRequest trainingRequest = this.trainingRequestRepository.getNullTrainingRequest();
 
         Set<ConstraintViolation<TrainingRequest>> violations = this.validator.validate(trainingRequest);
 

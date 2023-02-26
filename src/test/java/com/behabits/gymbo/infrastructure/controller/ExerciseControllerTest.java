@@ -6,10 +6,10 @@ import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.services.ExerciseService;
-import com.behabits.gymbo.infrastructure.controller.builder.request.ExerciseRequestBuilder;
-import com.behabits.gymbo.infrastructure.controller.builder.request.SerieRequestBuilder;
-import com.behabits.gymbo.infrastructure.controller.builder.response.ExerciseResponseBuilder;
-import com.behabits.gymbo.infrastructure.controller.builder.response.SerieResponseBuilder;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
+import com.behabits.gymbo.infrastructure.controller.repositories.response.ExerciseResponseRepository;
+import com.behabits.gymbo.infrastructure.controller.repositories.response.SerieResponseRepository;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
@@ -84,19 +84,19 @@ public class ExerciseControllerTest {
     }
 
     public ExerciseRequest buildSquatRequest() {
-        ExerciseRequestBuilder exerciseRequestBuilder = new ExerciseRequestBuilder();
-        SerieRequestBuilder serieRequestBuilder = new SerieRequestBuilder();
-        ExerciseRequest squatRequest = exerciseRequestBuilder.buildSquatExerciseRequest();
-        SerieRequest squatSerieRequest = serieRequestBuilder.buildSquatSerieRequest();
+        ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
+        SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
+        ExerciseRequest squatRequest = exerciseRequestRepository.getSquatExerciseRequest();
+        SerieRequest squatSerieRequest = serieRequestRepository.getSquatSerieRequest();
         squatRequest.setSeries(List.of(squatSerieRequest));
         return squatRequest;
     }
 
     public ExerciseResponse buildSquatResponse() {
-        ExerciseResponseBuilder exerciseResponseBuilder = new ExerciseResponseBuilder();
-        SerieResponseBuilder serieResponseBuilder = new SerieResponseBuilder();
-        ExerciseResponse squatResponse = exerciseResponseBuilder.buildSquatExerciseResponse();
-        SerieResponse squatSerieResponse = serieResponseBuilder.buildSquatSerieResponse();
+        ExerciseResponseRepository exerciseResponseRepository = new ExerciseResponseRepository();
+        SerieResponseRepository serieResponseRepository = new SerieResponseRepository();
+        ExerciseResponse squatResponse = exerciseResponseRepository.getSquatExerciseResponse();
+        SerieResponse squatSerieResponse = serieResponseRepository.getSquatSerieResponse();
         squatResponse.setSeries(List.of(squatSerieResponse));
         return squatResponse;
     }
@@ -111,23 +111,23 @@ public class ExerciseControllerTest {
     }
 
     public ExerciseRequest buildIncorrectExerciseRequest() {
-        ExerciseRequestBuilder exerciseRequestBuilder = new ExerciseRequestBuilder();
-        return exerciseRequestBuilder.buildIncorrectExerciseRequest();
+        ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
+        return exerciseRequestRepository.getIncorrectExerciseRequest();
     }
 
     public ExerciseRequest buildNullExerciseRequest() {
-        ExerciseRequestBuilder exerciseRequestBuilder = new ExerciseRequestBuilder();
-        return exerciseRequestBuilder.buildNullExerciseRequest();
+        ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
+        return exerciseRequestRepository.getNullExerciseRequest();
     }
 
     public SerieRequest buildIncorrectSerieRequest() {
-        SerieRequestBuilder serieRequestBuilder = new SerieRequestBuilder();
-        return serieRequestBuilder.buildIncorrectSerieRequest();
+        SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
+        return serieRequestRepository.getIncorrectSerieRequest();
     }
 
     public SerieRequest buildNullSerieRequest() {
-        SerieRequestBuilder serieRequestBuilder = new SerieRequestBuilder();
-        return serieRequestBuilder.buildNullSerieRequest();
+        SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
+        return serieRequestRepository.getNullSerieRequest();
     }
 
     @Test

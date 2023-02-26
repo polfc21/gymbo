@@ -2,7 +2,7 @@ package com.behabits.gymbo.infrastructure.controller.mapper;
 
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
-import com.behabits.gymbo.infrastructure.controller.builder.request.TrainingRequestBuilder;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.TrainingRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.TrainingResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,20 +19,20 @@ public class TrainingApiMapperTest {
     @Autowired
     private TrainingApiMapper trainingApiMapper;
 
-    private TrainingRequestBuilder trainingRequestBuilder;
+    private TrainingRequestRepository trainingRequestRepository;
 
     private TrainingModelRepository trainingModelRepository;
 
 
     @BeforeEach
     void setUp() {
-        this.trainingRequestBuilder = new TrainingRequestBuilder();
+        this.trainingRequestRepository = new TrainingRequestRepository();
         this.trainingModelRepository = new TrainingModelRepository();
     }
 
     @Test
     void givenLegTrainingRequestWhenMapToDomainThenReturnLegTraining() {
-        TrainingRequest trainingRequest = this.trainingRequestBuilder.buildLegTrainingRequest();
+        TrainingRequest trainingRequest = this.trainingRequestRepository.getLegTrainingRequest();
 
         Training training = this.trainingApiMapper.toDomain(trainingRequest);
 

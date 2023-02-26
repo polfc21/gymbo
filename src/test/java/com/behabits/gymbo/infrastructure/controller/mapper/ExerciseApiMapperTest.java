@@ -2,7 +2,7 @@ package com.behabits.gymbo.infrastructure.controller.mapper;
 
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.infrastructure.controller.builder.request.ExerciseRequestBuilder;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.ExerciseResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,19 +19,19 @@ public class ExerciseApiMapperTest {
     @Autowired
     private ExerciseApiMapper exerciseApiMapper;
 
-    private ExerciseRequestBuilder exerciseRequestBuilder;
+    private ExerciseRequestRepository exerciseRequestRepository;
 
     private ExerciseModelRepository exerciseModelRepository;
 
     @BeforeEach
     void setUp() {
-        this.exerciseRequestBuilder = new ExerciseRequestBuilder();
+        this.exerciseRequestRepository = new ExerciseRequestRepository();
         this.exerciseModelRepository = new ExerciseModelRepository();
     }
 
     @Test
     void givenSquatExerciseRequestWhenMapToDomainThenReturnSquatExercise() {
-        ExerciseRequest exerciseRequest = this.exerciseRequestBuilder.buildSquatExerciseRequest();
+        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
 
         Exercise exercise = this.exerciseApiMapper.toDomain(exerciseRequest);
 
