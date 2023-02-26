@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.mapper;
 
-import com.behabits.gymbo.domain.builder.ExerciseBuilder;
+import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.infrastructure.controller.builder.request.ExerciseRequestBuilder;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
@@ -21,12 +21,12 @@ public class ExerciseApiMapperTest {
 
     private ExerciseRequestBuilder exerciseRequestBuilder;
 
-    private ExerciseBuilder exerciseBuilder;
+    private ExerciseModelRepository exerciseModelRepository;
 
     @BeforeEach
     void setUp() {
         this.exerciseRequestBuilder = new ExerciseRequestBuilder();
-        this.exerciseBuilder = new ExerciseBuilder();
+        this.exerciseModelRepository = new ExerciseModelRepository();
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ExerciseApiMapperTest {
 
     @Test
     void givenSquatExerciseWhenMapToResponseThenReturnSquatExerciseResponse() {
-        Exercise exercise = this.exerciseBuilder.buildSquatExercise();
+        Exercise exercise = this.exerciseModelRepository.buildSquatExercise();
 
         ExerciseResponse exerciseResponse = this.exerciseApiMapper.toResponse(exercise);
 

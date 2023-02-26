@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller;
 
-import com.behabits.gymbo.domain.builder.TrainingBuilder;
+import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.services.TrainingService;
 import com.behabits.gymbo.infrastructure.controller.builder.request.TrainingRequestBuilder;
@@ -71,10 +71,10 @@ public class TrainingControllerTest {
     void setUp() {
         TrainingRequestBuilder trainingRequestBuilder = new TrainingRequestBuilder();
         TrainingResponseBuilder trainingResponseBuilder = new TrainingResponseBuilder();
-        TrainingBuilder trainingBuilder = new TrainingBuilder();
+        TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
         this.legRequest = trainingRequestBuilder.buildLegTrainingRequest();
         this.legResponse = trainingResponseBuilder.buildLegTrainingResponse();
-        this.legTraining = trainingBuilder.buildLegTraining();
+        this.legTraining = trainingModelRepository.buildLegTraining();
         this.incorrectRequest = trainingRequestBuilder.buildIncorrectTrainingRequest();
         this.nullRequest = trainingRequestBuilder.buildNullTrainingRequest();
     }

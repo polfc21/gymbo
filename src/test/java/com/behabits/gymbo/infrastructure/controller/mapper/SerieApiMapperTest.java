@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.mapper;
 
-import com.behabits.gymbo.domain.builder.SerieBuilder;
+import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.infrastructure.controller.builder.request.SerieRequestBuilder;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
@@ -21,12 +21,12 @@ public class SerieApiMapperTest {
 
     private SerieRequestBuilder serieRequestBuilder;
 
-    private SerieBuilder serieBuilder;
+    private SerieModelRepository serieModelRepository;
 
     @BeforeEach
     void setUp() {
         this.serieRequestBuilder = new SerieRequestBuilder();
-        this.serieBuilder = new SerieBuilder();
+        this.serieModelRepository = new SerieModelRepository();
     }
 
     @Test
@@ -43,7 +43,7 @@ public class SerieApiMapperTest {
 
     @Test
     void givenSquatSerieWhenMapToResponseThenReturnSquatSerieResponse() {
-        Serie serie = this.serieBuilder.buildSquatSerie();
+        Serie serie = this.serieModelRepository.buildSquatSerie();
 
         SerieResponse serieResponse = this.serieApiMapper.toResponse(serie);
 

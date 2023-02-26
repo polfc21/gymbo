@@ -1,7 +1,7 @@
 package com.behabits.gymbo.infrastructure.controller;
 
-import com.behabits.gymbo.domain.builder.ExerciseBuilder;
-import com.behabits.gymbo.domain.builder.SerieBuilder;
+import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
+import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.services.ExerciseService;
@@ -101,10 +101,10 @@ public class ExerciseControllerTest {
     }
 
     public Exercise buildSquatExercise() {
-        ExerciseBuilder exerciseBuilder = new ExerciseBuilder();
-        SerieBuilder serieBuilder = new SerieBuilder();
-        Exercise squatExercise = exerciseBuilder.buildSquatExercise();
-        Serie squatSerie = serieBuilder.buildSquatSerie();
+        ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
+        SerieModelRepository serieModelRepository = new SerieModelRepository();
+        Exercise squatExercise = exerciseModelRepository.buildSquatExercise();
+        Serie squatSerie = serieModelRepository.buildSquatSerie();
         squatExercise.setSeries(List.of(squatSerie));
         return squatExercise;
     }

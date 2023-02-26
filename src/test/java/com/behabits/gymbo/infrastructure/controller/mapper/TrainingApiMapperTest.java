@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.mapper;
 
-import com.behabits.gymbo.domain.builder.TrainingBuilder;
+import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.infrastructure.controller.builder.request.TrainingRequestBuilder;
 import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
@@ -21,13 +21,13 @@ public class TrainingApiMapperTest {
 
     private TrainingRequestBuilder trainingRequestBuilder;
 
-    private TrainingBuilder trainingBuilder;
+    private TrainingModelRepository trainingModelRepository;
 
 
     @BeforeEach
     void setUp() {
         this.trainingRequestBuilder = new TrainingRequestBuilder();
-        this.trainingBuilder = new TrainingBuilder();
+        this.trainingModelRepository = new TrainingModelRepository();
     }
 
     @Test
@@ -44,7 +44,7 @@ public class TrainingApiMapperTest {
 
     @Test
     void givenLegTrainingWhenMapToResponseThenReturnLegTrainingResponse() {
-        Training training = this.trainingBuilder.buildLegTraining();
+        Training training = this.trainingModelRepository.buildLegTraining();
 
         TrainingResponse trainingResponse = this.trainingApiMapper.toResponse(training);
 
