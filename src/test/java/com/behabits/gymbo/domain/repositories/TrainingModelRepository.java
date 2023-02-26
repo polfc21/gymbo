@@ -9,21 +9,21 @@ import java.util.List;
 @NoArgsConstructor
 public class TrainingModelRepository {
 
-    public Training buildLegTraining() {
-        Training training = new Training();
-        training.setId(1L);
-        training.setName("Leg");
-        training.setTrainingDate(LocalDateTime.now());
-        return training;
+    public Training getLegTraining() {
+        return Training.builder()
+                .id(1L)
+                .name("Leg")
+                .trainingDate(LocalDateTime.now())
+                .build();
     }
 
-    public Training buildLegTrainingWithSquatExercise() {
+    public Training getLegTrainingWithSquatExercise() {
         ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
         return Training.builder()
                 .id(1L)
                 .name("Leg")
                 .trainingDate(LocalDateTime.now())
-                .exercises(List.of(exerciseModelRepository.buildSquatExerciseWithSquatSeries()))
+                .exercises(List.of(exerciseModelRepository.getSquatExerciseWithSquatSeries()))
                 .build();
     }
 }

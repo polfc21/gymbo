@@ -8,19 +8,19 @@ import java.util.List;
 @NoArgsConstructor
 public class ExerciseModelRepository {
 
-    public Exercise buildSquatExercise() {
-        Exercise exercise = new Exercise();
-        exercise.setId(1L);
-        exercise.setName("Squat");
-        return exercise;
+    public Exercise getSquatExercise() {
+        return Exercise.builder()
+                .id(1L)
+                .name("Squat")
+                .build();
     }
     
-    public Exercise buildSquatExerciseWithSquatSeries() {
+    public Exercise getSquatExerciseWithSquatSeries() {
         SerieModelRepository serieModelRepository = new SerieModelRepository();
         return Exercise.builder()
                 .id(1L)
                 .name("Squat")
-                .series(List.of(serieModelRepository.buildSquatSerie()))
+                .series(List.of(serieModelRepository.getSquatSerie()))
                 .build();
     }
 }

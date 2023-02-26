@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SerieModelRepository {
 
-    public Serie buildSquatSerie() {
+    public Serie getSquatSerie() {
         return Serie.builder()
                 .id(1L)
                 .number(1)
