@@ -5,7 +5,6 @@ import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,15 +18,9 @@ public class SerieApiMapperTest {
     @Autowired
     private SerieApiMapper serieApiMapper;
 
-    private SerieRequestRepository serieRequestRepository;
+    private final SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
 
-    private SerieModelRepository serieModelRepository;
-
-    @BeforeEach
-    void setUp() {
-        this.serieRequestRepository = new SerieRequestRepository();
-        this.serieModelRepository = new SerieModelRepository();
-    }
+    private final SerieModelRepository serieModelRepository = new SerieModelRepository();
 
     @Test
     void givenSquatSerieRequestWhenMapToDomainThenReturnSquatSerie() {
@@ -43,7 +36,7 @@ public class SerieApiMapperTest {
 
     @Test
     void givenSquatSerieWhenMapToResponseThenReturnSquatSerieResponse() {
-        Serie serie = this.serieModelRepository.buildSquatSerie();
+        Serie serie = this.serieModelRepository.getSquatSerie();
 
         SerieResponse serieResponse = this.serieApiMapper.toResponse(serie);
 

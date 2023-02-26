@@ -5,7 +5,6 @@ import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.TrainingRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.TrainingResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,16 +18,9 @@ public class TrainingApiMapperTest {
     @Autowired
     private TrainingApiMapper trainingApiMapper;
 
-    private TrainingRequestRepository trainingRequestRepository;
+    private final TrainingRequestRepository trainingRequestRepository = new TrainingRequestRepository();
 
-    private TrainingModelRepository trainingModelRepository;
-
-
-    @BeforeEach
-    void setUp() {
-        this.trainingRequestRepository = new TrainingRequestRepository();
-        this.trainingModelRepository = new TrainingModelRepository();
-    }
+    private final TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
 
     @Test
     void givenLegTrainingRequestWhenMapToDomainThenReturnLegTraining() {
@@ -44,7 +36,7 @@ public class TrainingApiMapperTest {
 
     @Test
     void givenLegTrainingWhenMapToResponseThenReturnLegTrainingResponse() {
-        Training training = this.trainingModelRepository.buildLegTraining();
+        Training training = this.trainingModelRepository.getLegTraining();
 
         TrainingResponse trainingResponse = this.trainingApiMapper.toResponse(training);
 

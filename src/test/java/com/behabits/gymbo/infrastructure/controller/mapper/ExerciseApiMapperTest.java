@@ -5,7 +5,6 @@ import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.ExerciseResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,15 +18,9 @@ public class ExerciseApiMapperTest {
     @Autowired
     private ExerciseApiMapper exerciseApiMapper;
 
-    private ExerciseRequestRepository exerciseRequestRepository;
+    private final ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
 
-    private ExerciseModelRepository exerciseModelRepository;
-
-    @BeforeEach
-    void setUp() {
-        this.exerciseRequestRepository = new ExerciseRequestRepository();
-        this.exerciseModelRepository = new ExerciseModelRepository();
-    }
+    private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
 
     @Test
     void givenSquatExerciseRequestWhenMapToDomainThenReturnSquatExercise() {
@@ -42,7 +35,7 @@ public class ExerciseApiMapperTest {
 
     @Test
     void givenSquatExerciseWhenMapToResponseThenReturnSquatExerciseResponse() {
-        Exercise exercise = this.exerciseModelRepository.buildSquatExercise();
+        Exercise exercise = this.exerciseModelRepository.getSquatExercise();
 
         ExerciseResponse exerciseResponse = this.exerciseApiMapper.toResponse(exercise);
 
