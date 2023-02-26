@@ -23,7 +23,7 @@ public class ExerciseEntityMapperTest {
 
     @Test
     void givenSquatExerciseWhenMapToEntityThenReturnSquatExerciseEntity() {
-        Exercise squatExercise = this.exerciseModelRepository.buildSquatExercise();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
 
         ExerciseEntity squatExerciseEntity = this.mapper.toEntity(squatExercise);
 
@@ -45,7 +45,7 @@ public class ExerciseEntityMapperTest {
 
     @Test
     void givenSquatExerciseWithSerieWhenMapToEntityThenReturnSquatExerciseEntityWithSerie() {
-        Exercise squatExercise = this.exerciseModelRepository.buildSquatExerciseWithSquatSeries();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
 
         ExerciseEntity squatExerciseEntity = this.mapper.toEntity(squatExercise);
 

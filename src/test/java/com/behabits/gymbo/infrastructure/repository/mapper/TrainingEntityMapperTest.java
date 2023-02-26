@@ -23,7 +23,7 @@ public class TrainingEntityMapperTest {
 
     @Test
     void givenLegTrainingWhenMapToEntityThenReturnLegTrainingEntity() {
-        Training legTraining = this.trainingModelRepository.buildLegTraining();
+        Training legTraining = this.trainingModelRepository.getLegTraining();
 
         TrainingEntity legTrainingEntity = this.mapper.toEntity(legTraining);
 
@@ -47,7 +47,7 @@ public class TrainingEntityMapperTest {
 
     @Test
     void givenLegTrainingWithSquatExerciseWhenMapToEntityThenReturnLegTrainingEntityWithSquatExercise() {
-        Training legTraining = this.trainingModelRepository.buildLegTrainingWithSquatExercise();
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
         TrainingEntity legTrainingEntity = this.mapper.toEntity(legTraining);
 

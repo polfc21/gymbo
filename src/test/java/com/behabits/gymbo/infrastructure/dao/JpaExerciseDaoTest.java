@@ -38,7 +38,7 @@ public class JpaExerciseDaoTest {
 
     @Test
     void givenSquatExerciseWhenCreateExerciseThenReturnSquatExercise() {
-        Exercise squatExercise = this.exerciseModelRepository.buildSquatExercise();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
         ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExercise();
 
         when(this.mapper.toEntity(squatExercise)).thenReturn(squatExerciseEntity);
@@ -50,7 +50,7 @@ public class JpaExerciseDaoTest {
 
     @Test
     void givenSquatExerciseWithSeriesWhenCreateExerciseThenReturnSquatExerciseWithSeries() {
-        Exercise squatExercise = this.exerciseModelRepository.buildSquatExerciseWithSquatSeries();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
         ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
 
         when(this.mapper.toEntity(squatExercise)).thenReturn(squatExerciseEntity);
@@ -62,7 +62,7 @@ public class JpaExerciseDaoTest {
 
     @Test
     void givenExistentIdWhenFindExerciseByIdThenReturnExercise() {
-        Exercise squatExercise = this.exerciseModelRepository.buildSquatExerciseWithSquatSeries();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
         ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
 
         when(this.exerciseRepository.findById(squatExerciseEntity.getId())).thenReturn(Optional.of(squatExerciseEntity));

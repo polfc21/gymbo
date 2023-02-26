@@ -23,7 +23,7 @@ public class SerieEntityMapperTest {
 
     @Test
     void givenSerieWhenMapToEntityThenReturnSerieEntity() {
-        Serie squatSerie = this.serieModelRepository.buildSquatSerie();
+        Serie squatSerie = this.serieModelRepository.getSquatSerie();
 
         SerieEntity squatSerieEntity = this.mapper.toEntity(squatSerie);
 

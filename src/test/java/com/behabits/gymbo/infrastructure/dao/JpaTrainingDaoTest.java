@@ -40,7 +40,7 @@ public class JpaTrainingDaoTest {
 
     @Test
     void givenLegTrainingWhenCreateTrainingThenReturnTraining() {
-        Training legTraining = this.trainingModelRepository.buildLegTraining();
+        Training legTraining = this.trainingModelRepository.getLegTraining();
         TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
 
         when(this.mapper.toEntity(legTraining)).thenReturn(legTrainingEntity);
@@ -52,7 +52,7 @@ public class JpaTrainingDaoTest {
 
     @Test
     void givenLegTrainingWithSquatExerciseWhenCreateTrainingThenReturnTraining() {
-        Training legTraining = this.trainingModelRepository.buildLegTrainingWithSquatExercise();
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
         TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTrainingWithSquatExerciseWithSeries();
 
         when(this.mapper.toEntity(legTraining)).thenReturn(legTrainingEntity);
@@ -64,7 +64,7 @@ public class JpaTrainingDaoTest {
 
     @Test
     void givenMonthWhenFindTrainingsByMonthThenReturnTrainings() {
-        Training legTraining = this.trainingModelRepository.buildLegTraining();
+        Training legTraining = this.trainingModelRepository.getLegTraining();
         TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
         Month legTrainingMonth = legTraining.getTrainingDate().getMonth();
         Month legTrainingEntityMonth = legTrainingEntity.getTrainingDate().getMonth();
@@ -77,7 +77,7 @@ public class JpaTrainingDaoTest {
 
     @Test
     void givenExistentIdWhenFindTrainingByIdThenReturnTraining() {
-        Training legTraining = this.trainingModelRepository.buildLegTraining();
+        Training legTraining = this.trainingModelRepository.getLegTraining();
         TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
 
         when(this.trainingRepository.findById(legTrainingEntity.getId())).thenReturn(Optional.of(legTrainingEntity));
