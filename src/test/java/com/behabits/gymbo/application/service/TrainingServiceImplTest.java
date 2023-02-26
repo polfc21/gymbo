@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.TrainingDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Training;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,12 +48,21 @@ public class TrainingServiceImplTest {
     }
 
     @Test
-    void givenIdWhenFindTrainingByIdThenReturnTraining() {
+    void givenExistentIdWhenFindTrainingByIdThenReturnTraining() {
         Long id = 1L;
 
         when(this.trainingDao.findTrainingById(id)).thenReturn(this.training);
 
         assertThat(this.trainingService.findTrainingById(id), is(this.training));
+    }
+
+    @Test
+    void givenNonExistentIdWhenFindTrainingByIdThenReturnNull() {
+        Long id = 1L;
+
+        when(this.trainingDao.findTrainingById(id)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.trainingService.findTrainingById(1L));
     }
 
     @Test

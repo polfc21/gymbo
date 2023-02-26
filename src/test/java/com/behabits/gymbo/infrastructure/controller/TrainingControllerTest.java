@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller;
 
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.services.TrainingService;
@@ -108,7 +109,7 @@ public class TrainingControllerTest {
     }
 
     @Test
-    void givenIdWhenFindTrainingByIdThenReturnTrainingResponseAnd200() throws Exception {
+    void givenExistentIdWhenFindTrainingByIdThenReturnTrainingResponseAnd200() throws Exception {
         given(this.trainingService.findTrainingById(1L)).willReturn(this.legTraining);
         given(this.mapper.toResponse(this.legTraining)).willReturn(this.legResponse);
 
@@ -119,6 +120,19 @@ public class TrainingControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(this.legResponse).getJson()));
+    }
+
+    @Test
+    void givenNonExistentIdWhenFindTrainingByIdThenReturn404() throws Exception {
+        given(this.trainingService.findTrainingById(1L)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.TRAININGS + "/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+        verify(this.mapper, times(0)).toResponse(this.legTraining);
     }
 
     @Test

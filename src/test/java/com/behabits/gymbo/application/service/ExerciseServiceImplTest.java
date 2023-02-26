@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.ExerciseDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Serie;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ExerciseServiceImplTest {
@@ -34,12 +36,21 @@ public class ExerciseServiceImplTest {
     }
 
     @Test
-    void givenIdWhenFindExerciseByIdThenReturnExercise() {
+    void givenExistentIdWhenFindExerciseByIdThenReturnExercise() {
         Long id = 1L;
 
         when(this.exerciseDao.findExerciseById(id)).thenReturn(this.exercise);
 
         assertThat(this.exerciseService.findExerciseById(id), is(this.exercise));
+    }
+
+    @Test
+    void givenNonExistentIdWhenFindExerciseByIdThenReturnNull() {
+        Long id = 1L;
+
+        when(this.exerciseDao.findExerciseById(id)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.exerciseService.findExerciseById(1L));
     }
 
     @Test

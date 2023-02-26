@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,10 +72,9 @@ public class JpaExerciseDaoTest {
     }
 
     @Test
-    void givenNonExistentIdWhenFindExerciseByIdThenReturnNull() {
+    void givenNonExistentIdWhenFindExerciseByIdThenThrowNotFoundException() {
         when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
-        when(this.mapper.toDomain((ExerciseEntity) null)).thenReturn(null);
 
-        assertNull(this.exerciseDao.findExerciseById(1L));
+        assertThrows(NotFoundException.class, () -> this.exerciseDao.findExerciseById(1L));
     }
 }

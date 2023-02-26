@@ -1,6 +1,7 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.TrainingDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.infrastructure.repository.TrainingRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.TrainingEntity;
@@ -28,7 +29,7 @@ public class JpaTrainingDao implements TrainingDao {
     @Override
     public Training findTrainingById(Long id) {
         TrainingEntity entity = this.trainingRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new NotFoundException("Training with " + id + " not found"));
         return this.mapper.toDomain(entity);
     }
 

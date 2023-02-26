@@ -1,6 +1,7 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.ExerciseDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.ExerciseEntity;
@@ -18,7 +19,7 @@ public class JpaExerciseDao implements ExerciseDao {
     @Override
     public Exercise findExerciseById(Long id) {
         ExerciseEntity entity = this.exerciseRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new NotFoundException("Exercise with " + id + " not found"));
         return this.mapper.toDomain(entity);
     }
 

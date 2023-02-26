@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.infrastructure.repository.TrainingRepository;
@@ -18,7 +19,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,10 +87,9 @@ public class JpaTrainingDaoTest {
     }
 
     @Test
-    void givenNoExistentIdWhenFindTrainingByIdThenReturnNull() {
+    void givenNoExistentIdWhenFindTrainingByIdThenThrowNotFoundException() {
         when(this.trainingRepository.findById(1L)).thenReturn(Optional.empty());
-        when(this.mapper.toDomain(null)).thenReturn(null);
 
-        assertNull(this.trainingDao.findTrainingById(1L));
+        assertThrows(NotFoundException.class, () -> this.trainingDao.findTrainingById(1L));
     }
 }

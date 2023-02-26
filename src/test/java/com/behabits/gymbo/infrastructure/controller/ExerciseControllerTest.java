@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller;
 
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
@@ -130,7 +131,7 @@ public class ExerciseControllerTest {
     }
 
     @Test
-    void givenIdWhenFindExerciseByIdThenReturnExerciseResponseAnd200() throws Exception {
+    void givenExistentIdWhenFindExerciseByIdThenReturnExerciseResponseAnd200() throws Exception {
         given(this.exerciseService.findExerciseById(1L)).willReturn(this.squatExercise);
         given(this.mapper.toResponse(this.squatExercise)).willReturn(this.squatResponse);
 
@@ -141,6 +142,19 @@ public class ExerciseControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(this.squatResponse).getJson()));
+    }
+
+    @Test
+    void givenNotExistentIdWhenFindExerciseByIdThenReturnExerciseResponseAnd200() throws Exception {
+        given(this.exerciseService.findExerciseById(1L)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + "/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+        verify(this.mapper, times(0)).toResponse(this.squatExercise);
     }
 
     @Test
