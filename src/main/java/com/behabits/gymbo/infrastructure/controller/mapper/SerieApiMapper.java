@@ -16,7 +16,7 @@ public class SerieApiMapper {
                 .toList() : null;
     }
 
-    private Serie toDomain(SerieRequest request) {
+    public Serie toDomain(SerieRequest request) {
         Serie domain = new Serie();
         domain.setId(request.getId());
         domain.setNumber(request.getNumber());
@@ -31,7 +31,7 @@ public class SerieApiMapper {
                 .toList() : null;
     }
 
-    private SerieResponse toResponse(Serie domain) {
+    public SerieResponse toResponse(Serie domain) {
         SerieResponse response = new SerieResponse();
         response.setId(domain.getId());
         response.setNumber(domain.getNumber());
