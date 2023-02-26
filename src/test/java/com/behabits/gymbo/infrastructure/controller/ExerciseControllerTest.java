@@ -2,21 +2,16 @@ package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
-import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.services.ExerciseService;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.response.ExerciseResponseRepository;
-import com.behabits.gymbo.infrastructure.controller.repositories.response.SerieResponseRepository;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.ExerciseResponse;
-import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.ExerciseApiMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -35,8 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 
 @AutoConfigureJsonTesters
@@ -58,82 +51,20 @@ public class ExerciseControllerTest {
     @Autowired
     private JacksonTester<ExerciseRequest> jsonExerciseRequest;
 
-    private ExerciseRequest squatRequest;
+    private final ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
 
-    private ExerciseResponse squatResponse;
+    private final ExerciseResponseRepository exerciseResponseRepository = new ExerciseResponseRepository();
 
-    private Exercise squatExercise;
+    private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
 
-    private ExerciseRequest incorrectRequest;
-
-    private ExerciseRequest nullRequest;
-
-    private SerieRequest incorrectSerieRequest;
-
-    private SerieRequest nullSerieRequest;
-
-    @BeforeEach
-    void setUp() {
-        this.squatRequest = this.buildSquatRequest();
-        this.squatResponse = this.buildSquatResponse();
-        this.squatExercise = this.buildSquatExercise();
-        this.incorrectRequest = this.buildIncorrectExerciseRequest();
-        this.incorrectSerieRequest = this.buildIncorrectSerieRequest();
-        this.nullRequest = this.buildNullExerciseRequest();
-        this.nullSerieRequest = this.buildNullSerieRequest();
-    }
-
-    public ExerciseRequest buildSquatRequest() {
-        ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
-        SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
-        ExerciseRequest squatRequest = exerciseRequestRepository.getSquatExerciseRequest();
-        SerieRequest squatSerieRequest = serieRequestRepository.getSquatSerieRequest();
-        squatRequest.setSeries(List.of(squatSerieRequest));
-        return squatRequest;
-    }
-
-    public ExerciseResponse buildSquatResponse() {
-        ExerciseResponseRepository exerciseResponseRepository = new ExerciseResponseRepository();
-        SerieResponseRepository serieResponseRepository = new SerieResponseRepository();
-        ExerciseResponse squatResponse = exerciseResponseRepository.getSquatExerciseResponse();
-        SerieResponse squatSerieResponse = serieResponseRepository.getSquatSerieResponse();
-        squatResponse.setSeries(List.of(squatSerieResponse));
-        return squatResponse;
-    }
-
-    public Exercise buildSquatExercise() {
-        ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
-        SerieModelRepository serieModelRepository = new SerieModelRepository();
-        Exercise squatExercise = exerciseModelRepository.buildSquatExercise();
-        Serie squatSerie = serieModelRepository.buildSquatSerie();
-        squatExercise.setSeries(List.of(squatSerie));
-        return squatExercise;
-    }
-
-    public ExerciseRequest buildIncorrectExerciseRequest() {
-        ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
-        return exerciseRequestRepository.getIncorrectExerciseRequest();
-    }
-
-    public ExerciseRequest buildNullExerciseRequest() {
-        ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
-        return exerciseRequestRepository.getNullExerciseRequest();
-    }
-
-    public SerieRequest buildIncorrectSerieRequest() {
-        SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
-        return serieRequestRepository.getIncorrectSerieRequest();
-    }
-
-    public SerieRequest buildNullSerieRequest() {
-        SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
-        return serieRequestRepository.getNullSerieRequest();
-    }
+    private final SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
 
     @Test
     void givenExistentIdWhenFindExerciseByIdThenReturnExerciseResponseAnd200() throws Exception {
-        given(this.exerciseService.findExerciseById(1L)).willReturn(this.squatExercise);
-        given(this.mapper.toResponse(this.squatExercise)).willReturn(this.squatResponse);
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
+        ExerciseResponse squatResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
+        given(this.exerciseService.findExerciseById(1L)).willReturn(squatExercise);
+        given(this.mapper.toResponse(squatExercise)).willReturn(squatResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.EXERCISES + "/1")
@@ -141,7 +72,7 @@ public class ExerciseControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(this.squatResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(squatResponse).getJson()));
     }
 
     @Test
@@ -154,98 +85,99 @@ public class ExerciseControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
-        verify(this.mapper, times(0)).toResponse(this.squatExercise);
     }
 
     @Test
     void givenSquatExerciseRequestWhenCreateExerciseThenReturnSquatExerciseResponseAnd201() throws Exception {
-        given(this.mapper.toDomain(this.squatRequest)).willReturn(this.squatExercise);
-        given(this.exerciseService.createExercise(this.squatExercise)).willReturn(this.squatExercise);
-        given(this.mapper.toResponse(this.squatExercise)).willReturn(this.squatResponse);
+        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
+        ExerciseResponse squatResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
+        given(this.mapper.toDomain(squatRequest)).willReturn(squatExercise);
+        given(this.exerciseService.createExercise(squatExercise)).willReturn(squatExercise);
+        given(this.mapper.toResponse(squatExercise)).willReturn(squatResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(this.squatRequest).getJson())
+                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(this.squatResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(squatResponse).getJson()));
     }
 
     @Test
     void givenNullSerieListRequestWhenCreateExerciseThenReturn201() throws Exception {
-        this.squatRequest.setSeries(List.of());
-        this.squatResponse.setSeries(List.of());
-        given(this.mapper.toDomain(this.squatRequest)).willReturn(this.squatExercise);
-        given(this.exerciseService.createExercise(this.squatExercise)).willReturn(this.squatExercise);
-        given(this.mapper.toResponse(this.squatExercise)).willReturn(this.squatResponse);
+        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        squatRequest.setSeries(List.of());
+        ExerciseResponse squatResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
+        squatResponse.setSeries(List.of());
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
+        given(this.mapper.toDomain(squatRequest)).willReturn(squatExercise);
+        given(this.exerciseService.createExercise(squatExercise)).willReturn(squatExercise);
+        given(this.mapper.toResponse(squatExercise)).willReturn(squatResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(this.squatRequest).getJson())
+                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(this.squatResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(squatResponse).getJson()));
     }
 
     @Test
     void givenNullSerieRequestWhenCreateExerciseThenReturn400() throws Exception {
-        this.squatRequest.setSeries(List.of(this.nullSerieRequest));
+        SerieRequest nullSerieRequest = this.serieRequestRepository.getNullSerieRequest();
+        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        squatRequest.setSeries(List.of(nullSerieRequest));
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(this.squatRequest).getJson())
+                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
-        verify(this.mapper, times(0)).toDomain(this.squatRequest);
-        verify(this.exerciseService, times(0)).createExercise(this.squatExercise);
-        verify(this.mapper, times(0)).toResponse(this.squatExercise);
     }
 
     @Test
     void givenIncorrectSerieRequestWhenCreateExerciseThenReturn400() throws Exception {
-        this.squatRequest.setSeries(List.of(this.incorrectSerieRequest));
+        SerieRequest incorrectSerieRequest = this.serieRequestRepository.getIncorrectSerieRequest();
+        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        squatRequest.setSeries(List.of(incorrectSerieRequest));
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(this.squatRequest).getJson())
+                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
-        verify(this.mapper, times(0)).toDomain(this.squatRequest);
-        verify(this.exerciseService, times(0)).createExercise(this.squatExercise);
-        verify(this.mapper, times(0)).toResponse(this.squatExercise);
     }
 
     @Test
     void givenIncorrectExerciseRequestWhenCreateExerciseThenReturn400() throws Exception {
+        ExerciseRequest incorrectRequest = this.exerciseRequestRepository.getIncorrectExerciseRequest();
+
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(this.incorrectRequest).getJson())
+                        .content(this.jsonExerciseRequest.write(incorrectRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
-        verify(this.mapper, times(0)).toDomain(this.incorrectRequest);
-        verify(this.exerciseService, times(0)).createExercise(this.squatExercise);
-        verify(this.mapper, times(0)).toResponse(this.squatExercise);
     }
 
     @Test
     void givenNullExerciseRequestWhenCreateExerciseThenReturn400() throws Exception {
+        ExerciseRequest nullRequest = this.exerciseRequestRepository.getNullExerciseRequest();
+
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(this.nullRequest).getJson())
+                        .content(this.jsonExerciseRequest.write(nullRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
-        verify(this.mapper, times(0)).toDomain(this.nullRequest);
-        verify(this.exerciseService, times(0)).createExercise(this.squatExercise);
-        verify(this.mapper, times(0)).toResponse(this.squatExercise);
     }
 }

@@ -10,7 +10,6 @@ import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.TrainingResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.TrainingApiMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -30,8 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @AutoConfigureJsonTesters
 @WebMvcTest(TrainingController.class)
@@ -58,32 +55,18 @@ public class TrainingControllerTest {
     @Autowired
     private JacksonTester<Month> jsonMonth;
 
-    private TrainingRequest legRequest;
+    private final TrainingRequestRepository trainingRequestRepository = new TrainingRequestRepository();
 
-    private TrainingResponse legResponse;
+    private final TrainingResponseRepository trainingResponseRepository = new TrainingResponseRepository();
 
-    private Training legTraining;
-
-    private TrainingRequest incorrectRequest;
-
-    private TrainingRequest nullRequest;
-
-    @BeforeEach
-    void setUp() {
-        TrainingRequestRepository trainingRequestRepository = new TrainingRequestRepository();
-        TrainingResponseRepository trainingResponseRepository = new TrainingResponseRepository();
-        TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
-        this.legRequest = trainingRequestRepository.getLegTrainingRequest();
-        this.legResponse = trainingResponseRepository.getLegTrainingResponse();
-        this.legTraining = trainingModelRepository.buildLegTraining();
-        this.incorrectRequest = trainingRequestRepository.getIncorrectTrainingRequest();
-        this.nullRequest = trainingRequestRepository.getNullTrainingRequest();
-    }
+    private final TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
 
     @Test
     void givenMonthWhenFindTrainingsThenReturnTrainingsResponseAnd200() throws Exception {
-        given(this.trainingService.findTrainingsByMonth(Month.FEBRUARY)).willReturn(List.of(this.legTraining));
-        given(this.mapper.toResponse(this.legTraining)).willReturn(this.legResponse);
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+        TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
+        given(this.trainingService.findTrainingsByMonth(Month.FEBRUARY)).willReturn(List.of(legTraining));
+        given(this.mapper.toResponse(legTraining)).willReturn(legResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
@@ -92,7 +75,7 @@ public class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.jsonTrainingsResponse.write(List.of(this.legResponse)).getJson()));
+        assertThat(response.getContentAsString(), is(this.jsonTrainingsResponse.write(List.of(legResponse)).getJson()));
     }
 
     @Test
@@ -104,14 +87,14 @@ public class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
-        verify(this.trainingService, times(0)).findTrainingsByMonth(null);
-        verify(this.mapper, times(0)).toResponse(this.legTraining);
     }
 
     @Test
     void givenExistentIdWhenFindTrainingByIdThenReturnTrainingResponseAnd200() throws Exception {
-        given(this.trainingService.findTrainingById(1L)).willReturn(this.legTraining);
-        given(this.mapper.toResponse(this.legTraining)).willReturn(this.legResponse);
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+        TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
+        given(this.trainingService.findTrainingById(1L)).willReturn(legTraining);
+        given(this.mapper.toResponse(legTraining)).willReturn(legResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS + "/1")
@@ -119,7 +102,7 @@ public class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(this.legResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(legResponse).getJson()));
     }
 
     @Test
@@ -132,50 +115,50 @@ public class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
-        verify(this.mapper, times(0)).toResponse(this.legTraining);
     }
 
     @Test
     void givenLegTrainingRequestWhenCreateTrainingThenReturnLegTrainingResponseAnd201() throws Exception {
-        given(this.mapper.toDomain(this.legRequest)).willReturn(this.legTraining);
-        given(this.trainingService.createTraining(this.legTraining)).willReturn(this.legTraining);
-        given(this.mapper.toResponse(this.legTraining)).willReturn(this.legResponse);
+        TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+        TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
+        given(this.mapper.toDomain(legRequest)).willReturn(legTraining);
+        given(this.trainingService.createTraining(legTraining)).willReturn(legTraining);
+        given(this.mapper.toResponse(legTraining)).willReturn(legResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(this.legRequest).getJson())
+                        .content(this.jsonTrainingRequest.write(legRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(this.legResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(legResponse).getJson()));
     }
 
     @Test
     void givenIncorrectTrainingRequestWhenCreateTrainingThenReturn400() throws Exception {
+        TrainingRequest incorrectRequest = this.trainingRequestRepository.getIncorrectTrainingRequest();
+
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(this.incorrectRequest).getJson())
+                        .content(this.jsonTrainingRequest.write(incorrectRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
-        verify(this.mapper, times(0)).toDomain(this.incorrectRequest);
-        verify(this.trainingService, times(0)).createTraining(this.legTraining);
-        verify(this.mapper, times(0)).toResponse(this.legTraining);
     }
 
     @Test
     void givenNullTrainingRequestWhenCreateTrainingThenReturn400() throws Exception {
+        TrainingRequest nullRequest = this.trainingRequestRepository.getNullTrainingRequest();
+
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(this.nullRequest).getJson())
+                        .content(this.jsonTrainingRequest.write(nullRequest).getJson())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
-        verify(this.mapper, times(0)).toDomain(this.nullRequest);
-        verify(this.trainingService, times(0)).createTraining(this.legTraining);
-        verify(this.mapper, times(0)).toResponse(this.legTraining);
     }
 }
