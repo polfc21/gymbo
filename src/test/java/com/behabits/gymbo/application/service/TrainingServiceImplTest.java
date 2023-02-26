@@ -3,7 +3,7 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.domain.daos.TrainingDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Training;
-import org.junit.jupiter.api.BeforeEach;
+import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,32 +28,26 @@ public class TrainingServiceImplTest {
     @Mock
     private TrainingDao trainingDao;
 
-    private Training training;
-
-    private List<Training> trainings;
-
-    @BeforeEach
-    void setUp() {
-        this.training = new Training();
-        this.trainings = List.of(this.training);
-    }
+    private final TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
 
     @Test
     void givenMonthWhenFindTrainingsByMonthThenReturnTrainingsOfMonth() {
         Month month = Month.FEBRUARY;
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
-        when(this.trainingDao.findTrainingsByMonth(month)).thenReturn(this.trainings);
+        when(this.trainingDao.findTrainingsByMonth(month)).thenReturn(List.of(training));
 
-        assertThat(this.trainingService.findTrainingsByMonth(month), is(this.trainings));
+        assertThat(this.trainingService.findTrainingsByMonth(month), is(List.of(training)));
     }
 
     @Test
     void givenExistentIdWhenFindTrainingByIdThenReturnTraining() {
         Long id = 1L;
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
-        when(this.trainingDao.findTrainingById(id)).thenReturn(this.training);
+        when(this.trainingDao.findTrainingById(id)).thenReturn(training);
 
-        assertThat(this.trainingService.findTrainingById(id), is(this.training));
+        assertThat(this.trainingService.findTrainingById(id), is(training));
     }
 
     @Test
@@ -67,8 +61,10 @@ public class TrainingServiceImplTest {
 
     @Test
     void givenTrainingWhenCreateTrainingThenReturnTraining() {
-        when(this.trainingDao.createTraining(this.training)).thenReturn(this.training);
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
-        assertThat(this.trainingService.createTraining(this.training), is(this.training));
+        when(this.trainingDao.createTraining(training)).thenReturn(training);
+
+        assertThat(this.trainingService.createTraining(training), is(training));
     }
 }
