@@ -88,6 +88,25 @@ public class ExerciseControllerTest {
     }
 
     @Test
+    void givenSquatExerciseWithSeriesWhenCreateExerciseThenReturnSquatExerciseResponseAnd201() throws Exception {
+        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequestWithSeries();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+        ExerciseResponse squatResponse = this.exerciseResponseRepository.getSquatExerciseResponseWithSeries();
+        given(this.mapper.toDomain(squatRequest)).willReturn(squatExercise);
+        given(this.exerciseService.createExercise(squatExercise)).willReturn(squatExercise);
+        given(this.mapper.toResponse(squatExercise)).willReturn(squatResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(squatResponse).getJson()));
+    }
+
+    @Test
     void givenSquatExerciseRequestWhenCreateExerciseThenReturnSquatExerciseResponseAnd201() throws Exception {
         ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
         Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
@@ -132,6 +151,7 @@ public class ExerciseControllerTest {
         SerieRequest nullSerieRequest = this.serieRequestRepository.getNullSerieRequest();
         ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
         squatRequest.setSeries(List.of(nullSerieRequest));
+
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -146,6 +166,7 @@ public class ExerciseControllerTest {
         SerieRequest incorrectSerieRequest = this.serieRequestRepository.getIncorrectSerieRequest();
         ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
         squatRequest.setSeries(List.of(incorrectSerieRequest));
+
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)

@@ -4,6 +4,8 @@ import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.services.TrainingService;
+import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.TrainingRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.response.TrainingResponseRepository;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
@@ -60,6 +62,8 @@ public class TrainingControllerTest {
     private final TrainingResponseRepository trainingResponseRepository = new TrainingResponseRepository();
 
     private final TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
+
+    private final ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
 
     @Test
     void givenMonthWhenFindTrainingsThenReturnTrainingsResponseAnd200() throws Exception {
@@ -134,6 +138,55 @@ public class TrainingControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
         assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(legResponse).getJson()));
+    }
+
+    @Test
+    void givenNullExerciseListRequestWhenCreateTrainingThenReturn201() throws Exception {
+        TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequest();
+        Training legTraining = this.trainingModelRepository.getLegTraining();
+        TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponse();
+        given(this.mapper.toDomain(legRequest)).willReturn(legTraining);
+        given(this.trainingService.createTraining(legTraining)).willReturn(legTraining);
+        given(this.mapper.toResponse(legTraining)).willReturn(legResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.jsonTrainingRequest.write(legRequest).getJson())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(legResponse).getJson()));
+    }
+
+    @Test
+    void givenNullExerciseRequestWhenCreateTrainingThenReturn400() throws Exception {
+        ExerciseRequest nullRequest = this.exerciseRequestRepository.getNullExerciseRequest();
+        TrainingRequest legTrainingRequest = this.trainingRequestRepository.getLegTrainingRequest();
+        legTrainingRequest.setExercises(List.of(nullRequest));
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.jsonTrainingRequest.write(legTrainingRequest).getJson())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    void givenIncorrectExerciseRequestWhenCreateTrainingThenReturn400() throws Exception {
+        ExerciseRequest incorrectRequest = this.exerciseRequestRepository.getIncorrectExerciseRequest();
+        TrainingRequest legTrainingRequest = this.trainingRequestRepository.getLegTrainingRequest();
+        legTrainingRequest.setExercises(List.of(incorrectRequest));
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.jsonTrainingRequest.write(legTrainingRequest).getJson())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
     }
 
     @Test
