@@ -15,7 +15,7 @@ public class SerieEntityMapper {
                 .toList() : null;
     }
 
-    private Serie toDomain(SerieEntity entity) {
+    public Serie toDomain(SerieEntity entity) {
         Serie domain = new Serie();
         domain.setId(entity.getId());
         domain.setNumber(entity.getNumber());
@@ -30,7 +30,7 @@ public class SerieEntityMapper {
                 .toList() : null;
     }
 
-    private SerieEntity toEntity(Serie domain) {
+    public SerieEntity toEntity(Serie domain) {
         SerieEntity entity = new SerieEntity();
         entity.setId(domain.getId());
         entity.setNumber(domain.getNumber());
