@@ -1,9 +1,11 @@
 package com.behabits.gymbo.infrastructure.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+@Builder
 @Getter
 @Setter
 @Entity
@@ -17,4 +19,8 @@ public class SerieEntity {
     private Double weight;
     @ManyToOne
     private ExerciseEntity exercise;
+
+    public SerieEntity() {
+
+    }
 }

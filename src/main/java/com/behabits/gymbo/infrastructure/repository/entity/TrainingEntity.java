@@ -1,12 +1,14 @@
 package com.behabits.gymbo.infrastructure.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 @Entity
@@ -20,4 +22,8 @@ public class TrainingEntity {
     private LocalDateTime trainingDate;
     @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExerciseEntity> exercises;
+
+    public TrainingEntity() {
+
+    }
 }
