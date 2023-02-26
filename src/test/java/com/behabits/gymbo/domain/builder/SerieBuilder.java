@@ -9,6 +9,7 @@ public class SerieBuilder {
     public Serie buildSquatSerie() {
         Serie serie = new Serie();
         serie.setId(1L);
+        serie.setNumber(1);
         serie.setRepetitions(10);
         serie.setWeight(10.0);
         return serie;
