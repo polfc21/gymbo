@@ -26,7 +26,9 @@ public class TrainingEntityMapper {
         entity.setName(domain.getName());
         entity.setTrainingDate(domain.getTrainingDate());
         entity.setExercises(this.exerciseEntityMapper.toEntity(domain.getExercises()));
-        entity.getExercises().forEach(exerciseEntity -> exerciseEntity.setTraining(entity));
+        if (entity.getExercises() != null) {
+            entity.getExercises().forEach(exerciseEntity -> exerciseEntity.setTraining(entity));
+        }
         return entity;
     }
 }

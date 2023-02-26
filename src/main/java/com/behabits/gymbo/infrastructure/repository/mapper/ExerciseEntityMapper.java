@@ -38,7 +38,9 @@ public class ExerciseEntityMapper {
         entity.setId(domain.getId());
         entity.setName(domain.getName());
         entity.setSeries(this.serieEntityMapper.toEntity(domain.getSeries()));
-        entity.getSeries().forEach(serieEntity -> serieEntity.setExercise(entity));
+        if (entity.getSeries() != null) {
+            entity.getSeries().forEach(serieEntity -> serieEntity.setExercise(entity));
+        }
         return entity;
     }
 
