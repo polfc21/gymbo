@@ -1,11 +1,13 @@
 package com.behabits.gymbo.infrastructure.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Builder
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
