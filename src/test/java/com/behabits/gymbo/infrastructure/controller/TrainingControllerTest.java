@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.is;
 
 @AutoConfigureJsonTesters
 @WebMvcTest(TrainingController.class)
-public class TrainingControllerTest {
+class TrainingControllerTest {
 
     @MockBean
     private TrainingService trainingService;

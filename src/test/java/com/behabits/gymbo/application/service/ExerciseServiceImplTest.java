@@ -16,7 +16,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
-public class ExerciseServiceImplTest {
+class ExerciseServiceImplTest {
 
     @InjectMocks
     private ExerciseServiceImpl exerciseService;

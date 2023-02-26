@@ -13,7 +13,7 @@ import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
-public class ExerciseRequestTest {
+class ExerciseRequestTest {
 
     private Validator validator;
 

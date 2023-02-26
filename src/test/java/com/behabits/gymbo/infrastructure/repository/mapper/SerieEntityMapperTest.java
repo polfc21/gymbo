@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @SpringBootTest
-public class SerieEntityMapperTest {
+class SerieEntityMapperTest {
 
     @Autowired
     private SerieEntityMapper mapper;
