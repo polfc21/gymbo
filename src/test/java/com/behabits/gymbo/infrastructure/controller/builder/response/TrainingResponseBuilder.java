@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TrainingResponseBuilder {
 
-    public TrainingResponse buildSquatTrainingResponse() {
+    public TrainingResponse buildLegTrainingResponse() {
         TrainingResponse trainingResponse = new TrainingResponse();
         trainingResponse.setId(1L);
         trainingResponse.setName("Leg");
