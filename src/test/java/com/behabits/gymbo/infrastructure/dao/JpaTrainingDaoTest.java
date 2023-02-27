@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,11 +69,13 @@ class JpaTrainingDaoTest {
         TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
         Month legTrainingMonth = legTraining.getTrainingDate().getMonth();
         Month legTrainingEntityMonth = legTrainingEntity.getTrainingDate().getMonth();
+        Year legTrainingYear = Year.of(legTraining.getTrainingDate().getYear());
+        Year legTrainingEntityYear = Year.of(legTrainingEntity.getTrainingDate().getYear());
 
-        when(this.trainingRepository.findAllByMonth(legTrainingEntityMonth)).thenReturn(List.of(legTrainingEntity));
+        when(this.trainingRepository.findAllByMonthAndYear(legTrainingEntityMonth.getValue(), legTrainingEntityYear.getValue())).thenReturn(List.of(legTrainingEntity));
         when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
 
-        assertThat(this.trainingDao.findTrainingsByMonth(legTrainingMonth), is(List.of(legTraining)));
+        assertThat(this.trainingDao.findTrainingsByMonthAndYear(legTrainingMonth, legTrainingYear), is(List.of(legTraining)));
     }
 
     @Test

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 
 @Component
@@ -20,8 +21,8 @@ public class JpaTrainingDao implements TrainingDao {
     private final TrainingEntityMapper mapper;
 
     @Override
-    public List<Training> findTrainingsByMonth(Month month) {
-        return this.trainingRepository.findAllByMonth(month).stream()
+    public List<Training> findTrainingsByMonthAndYear(Month month, Year year) {
+        return this.trainingRepository.findAllByMonthAndYear(month.getValue(), year.getValue()).stream()
                 .map(this.mapper::toDomain)
                 .toList();
     }

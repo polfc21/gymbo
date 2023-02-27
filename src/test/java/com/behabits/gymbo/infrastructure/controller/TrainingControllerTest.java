@@ -24,6 +24,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
@@ -54,9 +55,6 @@ class TrainingControllerTest {
     @Autowired
     private JacksonTester<TrainingRequest> jsonTrainingRequest;
 
-    @Autowired
-    private JacksonTester<Month> jsonMonth;
-
     private final TrainingRequestRepository trainingRequestRepository = new TrainingRequestRepository();
 
     private final TrainingResponseRepository trainingResponseRepository = new TrainingResponseRepository();
@@ -66,16 +64,17 @@ class TrainingControllerTest {
     private final ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
 
     @Test
-    void givenMonthWhenFindTrainingsThenReturnTrainingsResponseAnd200() throws Exception {
+    void givenCorrectMonthAndCorrectYearWhenFindTrainingsThenReturnTrainingsResponseAnd200() throws Exception {
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
         TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
-        given(this.trainingService.findTrainingsByMonth(Month.FEBRUARY)).willReturn(List.of(legTraining));
+        given(this.trainingService.findTrainingsByMonthAndYear(Month.FEBRUARY,Year.of(2021))).willReturn(List.of(legTraining));
         given(this.mapper.toResponse(legTraining)).willReturn(legResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonMonth.write(Month.FEBRUARY).getJson())
+                        .param("month", "FEBRUARY")
+                        .param("year", "2021")
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
@@ -83,11 +82,36 @@ class TrainingControllerTest {
     }
 
     @Test
-    void givenNullMonthWhenFindTrainingsThenReturn400() throws Exception {
+    void givenNullMonthAndCorrectYearWhenFindTrainingsThenReturn400() throws Exception {
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("null")
+                        .param("month", "null")
+                        .param("year", "2021")
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    void givenCorrectMonthAndNullYearWhenFindTrainingsThenReturn400() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("month", "JANUARY")
+                        .param("year", "null")
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    void givenNullMonthAndNullYearWhenFindTrainingsThenReturn400() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("month", "null")
+                        .param("year", "null")
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));

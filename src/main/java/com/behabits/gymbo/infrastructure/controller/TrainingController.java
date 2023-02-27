@@ -7,12 +7,14 @@ import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.TrainingResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.TrainingApiMapper;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 
 @RequestMapping(ApiConstant.API_V1 + ApiConstant.TRAININGS)
@@ -25,8 +27,9 @@ public class TrainingController {
     private final TrainingApiMapper mapper;
 
     @GetMapping
-    public ResponseEntity<List<TrainingResponse>> findTrainingsByMonth(@RequestBody @Valid Month month) {
-        List<TrainingResponse> trainings = this.trainingService.findTrainingsByMonth(month)
+    public ResponseEntity<List<TrainingResponse>> findTrainingsByMonth(@RequestParam @Valid @NotNull Month month,
+                                                                       @RequestParam @Valid @NotNull Year year) {
+        List<TrainingResponse> trainings = this.trainingService.findTrainingsByMonthAndYear(month, year)
                 .stream()
                 .map(this.mapper::toResponse)
                 .toList();

@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,11 +34,12 @@ class TrainingServiceImplTest {
     @Test
     void givenMonthWhenFindTrainingsByMonthThenReturnTrainingsOfMonth() {
         Month month = Month.FEBRUARY;
+        Year year = Year.now();
         Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
-        when(this.trainingDao.findTrainingsByMonth(month)).thenReturn(List.of(training));
+        when(this.trainingDao.findTrainingsByMonthAndYear(month, year)).thenReturn(List.of(training));
 
-        assertThat(this.trainingService.findTrainingsByMonth(month), is(List.of(training)));
+        assertThat(this.trainingService.findTrainingsByMonthAndYear(month, year), is(List.of(training)));
     }
 
     @Test

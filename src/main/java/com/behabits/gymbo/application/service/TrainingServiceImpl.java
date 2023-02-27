@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Month;
+import java.time.Year;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,8 +17,8 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingDao trainingDao;
 
     @Override
-    public List<Training> findTrainingsByMonth(Month month) {
-        return this.trainingDao.findTrainingsByMonth(month);
+    public List<Training> findTrainingsByMonthAndYear(Month month, Year year) {
+        return this.trainingDao.findTrainingsByMonthAndYear(month, year);
     }
 
     @Override
