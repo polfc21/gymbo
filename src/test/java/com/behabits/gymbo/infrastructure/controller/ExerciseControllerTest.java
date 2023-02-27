@@ -12,11 +12,10 @@ import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.ExerciseResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.ExerciseApiMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
-@AutoConfigureJsonTesters
 @WebMvcTest(ExerciseController.class)
 class ExerciseControllerTest {
 
@@ -46,10 +43,7 @@ class ExerciseControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private JacksonTester<ExerciseResponse> jsonExerciseResponse;
-
-    @Autowired
-    private JacksonTester<ExerciseRequest> jsonExerciseRequest;
+    private ObjectMapper objectMapper;
 
     private final ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
 
@@ -72,7 +66,7 @@ class ExerciseControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(squatResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponse)));
     }
 
     @Test
@@ -99,11 +93,11 @@ class ExerciseControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(squatRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(squatResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponse)));
     }
 
     @Test
@@ -118,11 +112,11 @@ class ExerciseControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(squatRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(squatResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponse)));
     }
 
     @Test
@@ -139,11 +133,11 @@ class ExerciseControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(squatRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.jsonExerciseResponse.write(squatResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponse)));
     }
 
     @Test
@@ -155,7 +149,7 @@ class ExerciseControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(squatRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
@@ -170,7 +164,7 @@ class ExerciseControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(squatRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(squatRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
@@ -183,7 +177,7 @@ class ExerciseControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(incorrectRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(incorrectRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
@@ -196,7 +190,7 @@ class ExerciseControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonExerciseRequest.write(nullRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(nullRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));

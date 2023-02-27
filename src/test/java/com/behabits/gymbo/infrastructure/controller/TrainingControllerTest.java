@@ -12,11 +12,10 @@ import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.TrainingResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.TrainingApiMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +32,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-@AutoConfigureJsonTesters
 @WebMvcTest(TrainingController.class)
 class TrainingControllerTest {
 
@@ -47,13 +45,7 @@ class TrainingControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private JacksonTester<List<TrainingResponse>> jsonTrainingsResponse;
-
-    @Autowired
-    private JacksonTester<TrainingResponse> jsonTrainingResponse;
-
-    @Autowired
-    private JacksonTester<TrainingRequest> jsonTrainingRequest;
+    private ObjectMapper objectMapper;
 
     private final TrainingRequestRepository trainingRequestRepository = new TrainingRequestRepository();
 
@@ -78,7 +70,7 @@ class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.jsonTrainingsResponse.write(List.of(legResponse)).getJson()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(List.of(legResponse))));
     }
 
     @Test
@@ -130,7 +122,7 @@ class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(legResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
     }
 
     @Test
@@ -157,11 +149,11 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(legRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(legRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(legResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
     }
 
     @Test
@@ -176,11 +168,11 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(legRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(legRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.jsonTrainingResponse.write(legResponse).getJson()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
     }
 
     @Test
@@ -192,7 +184,7 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(legTrainingRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(nullRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
@@ -207,7 +199,7 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(legTrainingRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(incorrectRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
@@ -220,7 +212,7 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(incorrectRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(incorrectRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
@@ -233,7 +225,7 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.jsonTrainingRequest.write(nullRequest).getJson())
+                        .content(this.objectMapper.writeValueAsString(nullRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
