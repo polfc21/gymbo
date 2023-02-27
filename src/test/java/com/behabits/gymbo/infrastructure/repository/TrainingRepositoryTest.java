@@ -10,8 +10,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+
 @DataJpaTest
-public class TrainingRepositoryTest {
+class TrainingRepositoryTest {
 
     @Autowired
     private TrainingRepository trainingRepository;
@@ -29,7 +33,7 @@ public class TrainingRepositoryTest {
 
         List<TrainingEntity> trainingList = trainingRepository.findAllByMonthAndYear(actualMonth, actualYear);
 
-        assert trainingList.size() == 1;
+        assertThat(trainingList.size(), is(1));
     }
 
     @Test
@@ -42,6 +46,6 @@ public class TrainingRepositoryTest {
 
         List<TrainingEntity> trainingList = trainingRepository.findAllByMonthAndYear(actualMonth + 1, actualYear + 1);
 
-        assert trainingList.size() == 0;
+        assertThat(trainingList.size(), is(0));
     }
 }
