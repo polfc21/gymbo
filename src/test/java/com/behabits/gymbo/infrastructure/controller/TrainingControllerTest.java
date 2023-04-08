@@ -27,6 +27,7 @@ import java.time.Year;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -229,5 +230,40 @@ class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    void givenNonExistentIdWhenUpdateTrainingThenReturn404() throws Exception {
+        TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+        given(this.mapper.toDomain(legRequest)).willReturn(legTraining);
+        given(this.trainingService.updateTraining(legTraining)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(legRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenExistentIdWhenUpdateTrainingThenReturnUpdatedTraining() throws Exception {
+        TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+        TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
+        given(this.mapper.toDomain(legRequest)).willReturn(legTraining);
+        given(this.trainingService.updateTraining(legTraining)).willReturn(legTraining);
+        given(this.mapper.toResponse(legTraining)).willReturn(legResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(legRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
     }
 }

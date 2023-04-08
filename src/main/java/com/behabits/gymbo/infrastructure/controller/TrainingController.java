@@ -47,4 +47,10 @@ public class TrainingController {
         Training training = this.trainingService.createTraining(this.mapper.toDomain(request));
         return new ResponseEntity<>(this.mapper.toResponse(training), HttpStatus.CREATED);
     }
+
+    @PutMapping
+    public ResponseEntity<TrainingResponse> updateTraining(@RequestBody @Valid TrainingRequest request) {
+        Training training = this.trainingService.updateTraining(this.mapper.toDomain(request));
+        return new ResponseEntity<>(this.mapper.toResponse(training), HttpStatus.OK);
+    }
 }
