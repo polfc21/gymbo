@@ -53,7 +53,7 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void givenNonExistentIdWhenFindTrainingByIdThenReturnNull() {
+    void givenNonExistentIdWhenFindTrainingByIdThenThrowNotFoundException() {
         Long id = 1L;
 
         when(this.trainingDao.findTrainingById(id)).thenThrow(NotFoundException.class);
@@ -68,5 +68,23 @@ class TrainingServiceImplTest {
         when(this.trainingDao.createTraining(training)).thenReturn(training);
 
         assertThat(this.trainingService.createTraining(training), is(training));
+    }
+
+    @Test
+    void givenNonExistentIdWhenUpdateTrainingThenThrowNotFoundException() {
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+
+        when(this.trainingDao.updateTraining(training)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.trainingService.updateTraining(training));
+    }
+
+    @Test
+    void givenExistentIdWhenUpdateTrainingThenReturnTrainingUpdated() {
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+
+        when(this.trainingDao.updateTraining(training)).thenReturn(training);
+
+        assertThat(this.trainingService.updateTraining(training), is(training));
     }
 }

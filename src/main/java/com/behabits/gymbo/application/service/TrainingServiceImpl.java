@@ -30,4 +30,9 @@ public class TrainingServiceImpl implements TrainingService {
     public Training createTraining(Training training) {
         return this.trainingDao.createTraining(training);
     }
+
+    @Override
+    public Training updateTraining(Training training) {
+        return this.trainingDao.updateTraining(training);
+    }
 }
