@@ -1,0 +1,25 @@
+@startuml
+class Player {
+  -username : String
+  -name : String
+  -email : String
+  -password String
+  -phone : String
+}
+class Training {
+  -name : String
+  -date: Date
+}
+class Exercise {
+  -name : String
+}
+class Serie {
+  -number : Long
+  -repetitions : Long
+  -weight : Double
+}
+Player "1" *--> "0..n" Training
+Training "1" *--> "0..n" Exercise
+Exercise "1" *--> "0..n" Serie
+@enduml
+
