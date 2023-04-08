@@ -95,4 +95,25 @@ class JpaTrainingDaoTest {
 
         assertThrows(NotFoundException.class, () -> this.trainingDao.findTrainingById(1L));
     }
+
+    @Test
+    void givenNonExistentIdWhenUpdateTrainingThenThrowNotFoundException() {
+        Training legTraining = this.trainingModelRepository.getLegTraining();
+
+        when(this.trainingRepository.findById(legTraining.getId())).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.trainingDao.updateTraining(legTraining));
+    }
+
+    @Test
+    void givenExistentIdWhenUpdateTrainingThenReturnTrainingUpdated() {
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+        TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTrainingWithSquatExerciseWithSeries();
+
+        when(this.trainingRepository.findById(legTraining.getId())).thenReturn(Optional.of(legTrainingEntity));
+        when(this.trainingRepository.save(legTrainingEntity)).thenReturn(legTrainingEntity);
+        when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
+
+        assertThat(this.trainingDao.updateTraining(legTraining), is(legTraining));
+    }
 }
