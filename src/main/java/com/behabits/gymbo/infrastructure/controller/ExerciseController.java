@@ -28,7 +28,7 @@ public class ExerciseController {
     }
 
     @PostMapping
-    public ResponseEntity<ExerciseResponse> createTraining(@RequestBody @Valid ExerciseRequest request) {
+    public ResponseEntity<ExerciseResponse> createExercise(@RequestBody @Valid ExerciseRequest request) {
         Exercise exercise = this.exerciseService.createExercise(this.mapper.toDomain(request));
         return new ResponseEntity<>(this.mapper.toResponse(exercise), HttpStatus.CREATED);
     }
