@@ -27,8 +27,8 @@ public class TrainingController {
     private final TrainingApiMapper mapper;
 
     @GetMapping
-    public ResponseEntity<List<TrainingResponse>> findTrainingsByMonth(@RequestParam @Valid @NotNull Month month,
-                                                                       @RequestParam @Valid @NotNull Year year) {
+    public ResponseEntity<List<TrainingResponse>> findTrainingsByMonthAndYear(@RequestParam @Valid @NotNull Month month,
+                                                                              @RequestParam @Valid @NotNull Year year) {
         List<TrainingResponse> trainings = this.trainingService.findTrainingsByMonthAndYear(month, year)
                 .stream()
                 .map(this.mapper::toResponse)
