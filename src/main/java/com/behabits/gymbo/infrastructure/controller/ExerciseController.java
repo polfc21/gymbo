@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping(ApiConstant.API_V1 + ApiConstant.EXERCISES)
 @RestController
 @RequiredArgsConstructor
@@ -31,5 +33,11 @@ public class ExerciseController {
     public ResponseEntity<ExerciseResponse> createExercise(@RequestBody @Valid ExerciseRequest request) {
         Exercise exercise = this.exerciseService.createExercise(this.mapper.toDomain(request));
         return new ResponseEntity<>(this.mapper.toResponse(exercise), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ExerciseResponse>> findExercisesByTrainingId(@RequestParam(required = false) Long trainingId) {
+        List<Exercise> exercises = this.exerciseService.findExercisesByTrainingId(trainingId);
+        return new ResponseEntity<>(this.mapper.toResponse(exercises), HttpStatus.OK);
     }
 }

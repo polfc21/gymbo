@@ -195,4 +195,42 @@ class ExerciseControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
     }
+
+    @Test
+    void givenTrainingIdWhenFindExercisesByTrainingIdThenReturn200() throws Exception {
+        long trainingId = 1L;
+        Exercise exercise = this.exerciseModelRepository.getSquatExercise();
+        List<Exercise> exercises = List.of(exercise);
+        ExerciseResponse exerciseResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
+        List<ExerciseResponse> exerciseResponses = List.of(exerciseResponse);
+        given(this.exerciseService.findExercisesByTrainingId(1L)).willReturn(exercises);
+        given(this.mapper.toResponse(exercises)).willReturn(exerciseResponses);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES)
+                        .param("trainingId", Long.toString(trainingId))
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(exerciseResponses)));
+    }
+
+    @Test
+    void givenNullTrainingIdWhenFindExercisesByTrainingIdThenReturn200() throws Exception {
+        Exercise exercise = this.exerciseModelRepository.getSquatExercise();
+        List<Exercise> exercises = List.of(exercise);
+        ExerciseResponse exerciseResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
+        List<ExerciseResponse> exerciseResponses = List.of(exerciseResponse);
+        given(this.exerciseService.findExercisesByTrainingId(null)).willReturn(exercises);
+        given(this.mapper.toResponse(exercises)).willReturn(exerciseResponses);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(exerciseResponses)));
+    }
 }
