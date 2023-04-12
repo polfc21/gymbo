@@ -90,4 +90,22 @@ class JpaExerciseDaoTest {
 
         assertThat(this.exerciseDao.findExercisesByTrainingId(trainingId), is(List.of(squatExercise)));
     }
+
+    @Test
+    void givenNonExistentExerciseIdWhenFindSeriesByExerciseIdThenThrowNotFoundException() {
+        when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.exerciseDao.findSeriesByExerciseId(1L));
+    }
+
+    @Test
+    void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturnSeriesList() {
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
+
+        when(this.exerciseRepository.findById(squatExerciseEntity.getId())).thenReturn(Optional.of(squatExerciseEntity));
+        when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
+
+        assertThat(this.exerciseDao.findSeriesByExerciseId(squatExercise.getId()), is(squatExercise.getSeries()));
+    }
 }

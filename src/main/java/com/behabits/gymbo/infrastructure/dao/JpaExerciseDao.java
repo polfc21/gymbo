@@ -3,6 +3,7 @@ package com.behabits.gymbo.infrastructure.dao;
 import com.behabits.gymbo.domain.daos.ExerciseDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.ExerciseEntity;
 import com.behabits.gymbo.infrastructure.repository.mapper.ExerciseEntityMapper;
@@ -36,5 +37,11 @@ public class JpaExerciseDao implements ExerciseDao {
     public List<Exercise> findExercisesByTrainingId(Long trainingId) {
         List<ExerciseEntity> entities = this.exerciseRepository.findAllByTrainingId(trainingId);
         return this.mapper.toDomain(entities);
+    }
+
+    @Override
+    public List<Serie> findSeriesByExerciseId(Long exerciseId) {
+        Exercise exercise = this.findExerciseById(exerciseId);
+        return exercise.getSeries();
     }
 }
