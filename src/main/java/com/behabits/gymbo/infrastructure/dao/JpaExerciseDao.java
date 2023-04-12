@@ -9,6 +9,8 @@ import com.behabits.gymbo.infrastructure.repository.mapper.ExerciseEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class JpaExerciseDao implements ExerciseDao {
@@ -28,5 +30,11 @@ public class JpaExerciseDao implements ExerciseDao {
         ExerciseEntity entity = this.mapper.toEntity(exercise);
         entity = this.exerciseRepository.save(entity);
         return this.mapper.toDomain(entity);
+    }
+
+    @Override
+    public List<Exercise> findExercisesByTrainingId(Long trainingId) {
+        List<ExerciseEntity> entities = this.exerciseRepository.findAllByTrainingId(trainingId);
+        return this.mapper.toDomain(entities);
     }
 }

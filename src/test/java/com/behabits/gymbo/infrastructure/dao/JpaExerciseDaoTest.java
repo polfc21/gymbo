@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -76,5 +77,17 @@ class JpaExerciseDaoTest {
         when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> this.exerciseDao.findExerciseById(1L));
+    }
+
+    @Test
+    void givenExerciseWithTrainingIdWhenFindExercisesByTrainingIdThenReturnExerciseList() {
+        Long trainingId = 1L;
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
+
+        when(this.exerciseRepository.findAllByTrainingId(trainingId)).thenReturn(List.of(squatExerciseEntity));
+        when(this.mapper.toDomain(List.of(squatExerciseEntity))).thenReturn(List.of(squatExercise));
+
+        assertThat(this.exerciseDao.findExercisesByTrainingId(trainingId), is(List.of(squatExercise)));
     }
 }
