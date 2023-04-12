@@ -50,4 +50,11 @@ public class JpaTrainingDao implements TrainingDao {
         trainingEntity = this.trainingRepository.save(trainingEntity);
         return this.mapper.toDomain(trainingEntity);
     }
+
+    @Override
+    public void deleteTraining(Long id) {
+        TrainingEntity trainingEntity = this.trainingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Training with " + id + " not found"));
+        this.trainingRepository.delete(trainingEntity);
+    }
 }

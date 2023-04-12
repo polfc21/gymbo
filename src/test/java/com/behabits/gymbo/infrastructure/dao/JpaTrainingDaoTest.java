@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class JpaTrainingDaoTest {
@@ -115,5 +115,22 @@ class JpaTrainingDaoTest {
         when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
 
         assertThat(this.trainingDao.updateTraining(legTraining), is(legTraining));
+    }
+
+    @Test
+    void givenNonExistentIdWhenDeleteTrainingThenThrowNotFoundException() {
+        when(this.trainingRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.trainingDao.deleteTraining(1L));
+    }
+
+    @Test
+    void givenExistentIdWhenDeleteTrainingThenTrainingRepositoryDeleteTraining() {
+        TrainingEntity legTraining = this.trainingEntityRepository.getLegTraining();
+
+        when(this.trainingRepository.findById(legTraining.getId())).thenReturn(Optional.of(legTraining));
+        this.trainingDao.deleteTraining(legTraining.getId());
+
+        verify(this.trainingRepository).delete(legTraining);
     }
 }
