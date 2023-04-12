@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
@@ -52,5 +54,15 @@ class ExerciseServiceImplTest {
         when(this.exerciseDao.createExercise(exercise)).thenReturn(exercise);
 
         assertThat(this.exerciseService.createExercise(exercise), is(exercise));
+    }
+
+    @Test
+    void givenTrainingIdWhenFindExercisesByTrainingIdThenReturnExerciseList() {
+        Long trainingId = 1L;
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+
+        when(this.exerciseDao.findExercisesByTrainingId(trainingId)).thenReturn(List.of(exercise));
+
+        assertThat(this.exerciseService.findExercisesByTrainingId(trainingId), is(List.of(exercise)));
     }
 }

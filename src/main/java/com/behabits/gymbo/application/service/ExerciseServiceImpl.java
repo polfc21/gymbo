@@ -6,6 +6,8 @@ import com.behabits.gymbo.domain.services.ExerciseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class ExerciseServiceImpl implements ExerciseService {
@@ -20,5 +22,10 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public Exercise createExercise(Exercise exercise) {
         return this.exerciseDao.createExercise(exercise);
+    }
+
+    @Override
+    public List<Exercise> findExercisesByTrainingId(Long trainingId) {
+        return this.exerciseDao.findExercisesByTrainingId(trainingId);
     }
 }
