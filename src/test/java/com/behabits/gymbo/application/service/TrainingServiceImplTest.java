@@ -18,7 +18,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceImplTest {
@@ -86,5 +87,27 @@ class TrainingServiceImplTest {
         when(this.trainingDao.updateTraining(training)).thenReturn(training);
 
         assertThat(this.trainingService.updateTraining(training), is(training));
+    }
+
+    @Test
+    void givenNonExistentIdWhenDeleteTrainingThenThrowNotFoundException() {
+        Long id = 1L;
+
+        doThrow(NotFoundException.class).when(this.trainingDao).deleteTraining(id);
+
+        assertThrows(NotFoundException.class, () -> this.trainingService.deleteTraining(id));
+    }
+
+    @Test
+    void givenExistentIdWhenDeleteTrainingThenTrainingDaoDeleteTraining() {
+        Long id = 1L;
+
+        doNothing().when(this.trainingDao).deleteTraining(id);
+
+        try {
+            this.trainingService.deleteTraining(id);
+        } catch (NotFoundException e) {
+            fail("Exception thrown");
+        }
     }
 }

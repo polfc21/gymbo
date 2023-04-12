@@ -35,4 +35,9 @@ public class TrainingServiceImpl implements TrainingService {
     public Training updateTraining(Training training) {
         return this.trainingDao.updateTraining(training);
     }
+
+    @Override
+    public void deleteTraining(Long id) {
+        this.trainingDao.deleteTraining(id);
+    }
 }

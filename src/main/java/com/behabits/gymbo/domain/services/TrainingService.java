@@ -11,4 +11,5 @@ public interface TrainingService {
     Training findTrainingById(Long id);
     Training createTraining(Training training);
     Training updateTraining(Training training);
+    void deleteTraining(Long id);
 }
