@@ -1,9 +1,13 @@
 package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.services.ExerciseService;
+import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
+import com.behabits.gymbo.infrastructure.controller.mapper.SerieApiMapper;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.response.ExerciseResponseRepository;
@@ -12,6 +16,7 @@ import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.ExerciseResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.ExerciseApiMapper;
+import com.behabits.gymbo.infrastructure.controller.repositories.response.SerieResponseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +44,9 @@ class ExerciseControllerTest {
     @MockBean
     private ExerciseApiMapper mapper;
 
+    @MockBean
+    private SerieApiMapper serieMapper;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -52,6 +60,10 @@ class ExerciseControllerTest {
     private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
 
     private final SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
+
+    private final SerieResponseRepository serieResponseRepository = new SerieResponseRepository();
+
+    private final SerieModelRepository serieModelRepository = new SerieModelRepository();
 
     @Test
     void givenExistentIdWhenFindExerciseByIdThenReturnExerciseResponseAnd200() throws Exception {
@@ -232,5 +244,37 @@ class ExerciseControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(exerciseResponses)));
+    }
+
+    @Test
+    void givenNonExistentExerciseIdWhenFindSeriesByExerciseIdThenReturn404() throws Exception {
+        long exerciseId = 1L;
+        given(this.exerciseService.findSeriesByExerciseId(exerciseId)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturn200() throws Exception {
+        long exerciseId = 1L;
+        Serie serie = this.serieModelRepository.getSquatSerie();
+        List<Serie> series = List.of(serie);
+        SerieResponse serieResponse = this.serieResponseRepository.getSquatSerieResponse();
+        List<SerieResponse> seriesResponse = List.of(serieResponse);
+        given(this.exerciseService.findSeriesByExerciseId(exerciseId)).willReturn(series);
+        given(this.serieMapper.toResponse(series)).willReturn(seriesResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(seriesResponse)));
     }
 }
