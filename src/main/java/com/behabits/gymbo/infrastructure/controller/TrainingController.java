@@ -53,4 +53,10 @@ public class TrainingController {
         Training training = this.trainingService.updateTraining(this.mapper.toDomain(request));
         return new ResponseEntity<>(this.mapper.toResponse(training), HttpStatus.OK);
     }
+
+    @DeleteMapping(ApiConstant.ID)
+    public ResponseEntity<String> deleteTraining(@PathVariable Long id) {
+        this.trainingService.deleteTraining(id);
+        return new ResponseEntity<>("Training with id " + id + " deleted successfully", HttpStatus.NO_CONTENT);
+    }
 }

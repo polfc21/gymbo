@@ -27,11 +27,10 @@ import java.time.Year;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(TrainingController.class)
 class TrainingControllerTest {
@@ -249,7 +248,7 @@ class TrainingControllerTest {
     }
 
     @Test
-    void givenExistentIdWhenUpdateTrainingThenReturnUpdatedTraining() throws Exception {
+    void givenExistentIdWhenUpdateTrainingThenReturn200() throws Exception {
         TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
         TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
@@ -265,5 +264,32 @@ class TrainingControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
+    }
+
+    @Test
+    void givenNonExistentIdWhenDeleteTrainingThenReturn404() throws Exception {
+        Long id = 1L;
+        doThrow(NotFoundException.class).when(this.trainingService).deleteTraining(id);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenExistentIdWhenDeleteTrainingThenReturn204() throws Exception {
+        Long id = 1L;
+        doNothing().when(this.trainingService).deleteTraining(id);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NO_CONTENT.value()));
+        assertThat(response.getContentAsString(), is("Training with id " + id + " deleted successfully"));
     }
 }
