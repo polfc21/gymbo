@@ -3,7 +3,9 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.domain.daos.ExerciseDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
+import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +30,8 @@ class ExerciseServiceImplTest {
 
     private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
 
+    private final SerieModelRepository serieModelRepository = new SerieModelRepository();
+
     @Test
     void givenExistentIdWhenFindExerciseByIdThenReturnExercise() {
         Long id = 1L;
@@ -39,7 +43,7 @@ class ExerciseServiceImplTest {
     }
 
     @Test
-    void givenNonExistentIdWhenFindExerciseByIdThenReturnNull() {
+    void givenNonExistentIdWhenFindExerciseByIdThenThrowNotFoundException() {
         Long id = 1L;
 
         when(this.exerciseDao.findExerciseById(id)).thenThrow(NotFoundException.class);
@@ -64,5 +68,24 @@ class ExerciseServiceImplTest {
         when(this.exerciseDao.findExercisesByTrainingId(trainingId)).thenReturn(List.of(exercise));
 
         assertThat(this.exerciseService.findExercisesByTrainingId(trainingId), is(List.of(exercise)));
+    }
+
+    @Test
+    void givenNonExistentExerciseIdWhenFindSeriesByExerciseIdThenThrowNotFoundException() {
+        Long exerciseId = 1L;
+
+        when(this.exerciseDao.findSeriesByExerciseId(exerciseId)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.exerciseService.findSeriesByExerciseId(exerciseId));
+    }
+
+    @Test
+    void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturnSerieList() {
+        Long exerciseId = 1L;
+        Serie serie = this.serieModelRepository.getSquatSerie();
+
+        when(this.exerciseDao.findSeriesByExerciseId(exerciseId)).thenReturn(List.of(serie));
+
+        assertThat(this.exerciseService.findSeriesByExerciseId(exerciseId), is(List.of(serie)));
     }
 }
