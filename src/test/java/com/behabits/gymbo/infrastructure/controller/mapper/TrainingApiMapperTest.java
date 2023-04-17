@@ -28,7 +28,6 @@ class TrainingApiMapperTest {
 
         Training training = this.trainingApiMapper.toDomain(trainingRequest);
 
-        assertThat(training.getId(), is(trainingRequest.getId()));
         assertThat(training.getName(), is(trainingRequest.getName()));
         assertThat(training.getTrainingDate(), is(trainingRequest.getTrainingDate()));
         assertThat(training.getExercises(), is(trainingRequest.getExercises()));

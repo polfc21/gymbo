@@ -14,7 +14,6 @@ public class TrainingApiMapper {
 
     public Training toDomain(TrainingRequest request) {
         Training domain = new Training();
-        domain.setId(request.getId());
         domain.setName(request.getName());
         domain.setTrainingDate(request.getTrainingDate());
         domain.setExercises(this.exerciseApiMapper.toDomain(request.getExercises()));

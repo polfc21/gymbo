@@ -18,7 +18,6 @@ public class SerieApiMapper {
 
     public Serie toDomain(SerieRequest request) {
         Serie domain = new Serie();
-        domain.setId(request.getId());
         domain.setNumber(request.getNumber());
         domain.setRepetitions(request.getRepetitions());
         domain.setWeight(request.getWeight());

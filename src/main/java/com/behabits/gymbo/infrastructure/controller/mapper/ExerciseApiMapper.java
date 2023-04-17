@@ -22,7 +22,6 @@ public class ExerciseApiMapper {
 
     public Exercise toDomain(ExerciseRequest request) {
         Exercise domain = new Exercise();
-        domain.setId(request.getId());
         domain.setName(request.getName());
         domain.setSeries(this.serieApiMapper.toDomain(request.getSeries()));
         return domain;

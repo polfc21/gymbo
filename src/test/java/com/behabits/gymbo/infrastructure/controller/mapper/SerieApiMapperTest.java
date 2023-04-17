@@ -28,7 +28,6 @@ class SerieApiMapperTest {
 
         Serie serie = this.serieApiMapper.toDomain(serieRequest);
 
-        assertThat(serie.getId(), is(serieRequest.getId()));
         assertThat(serie.getNumber(), is(serieRequest.getNumber()));
         assertThat(serie.getRepetitions(), is(serieRequest.getRepetitions()));
         assertThat(serie.getWeight(), is(serieRequest.getWeight()));

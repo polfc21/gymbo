@@ -28,7 +28,6 @@ class ExerciseApiMapperTest {
 
         Exercise exercise = this.exerciseApiMapper.toDomain(exerciseRequest);
 
-        assertThat(exercise.getId(), is(exerciseRequest.getId()));
         assertThat(exercise.getName(), is(exerciseRequest.getName()));
         assertThat(exercise.getSeries(), is(exerciseRequest.getSeries()));
     }

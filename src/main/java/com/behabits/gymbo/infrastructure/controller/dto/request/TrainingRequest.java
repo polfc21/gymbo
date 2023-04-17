@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingRequest {
-    private Long id;
     @NotBlank
     private String name;
     @NotNull

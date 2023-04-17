@@ -12,7 +12,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SerieRequest {
-    private Long id;
     @Positive
     @NotNull
     private Integer number;
