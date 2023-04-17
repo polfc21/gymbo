@@ -48,9 +48,9 @@ public class TrainingController {
         return new ResponseEntity<>(this.mapper.toResponse(training), HttpStatus.CREATED);
     }
 
-    @PutMapping
-    public ResponseEntity<TrainingResponse> updateTraining(@RequestBody @Valid TrainingRequest request) {
-        Training training = this.trainingService.updateTraining(this.mapper.toDomain(request));
+    @PutMapping(ApiConstant.ID)
+    public ResponseEntity<TrainingResponse> updateTraining(@RequestBody @Valid TrainingRequest request, @PathVariable Long id) {
+        Training training = this.trainingService.updateTraining(id, this.mapper.toDomain(request));
         return new ResponseEntity<>(this.mapper.toResponse(training), HttpStatus.OK);
     }
 

@@ -73,20 +73,22 @@ class TrainingServiceImplTest {
 
     @Test
     void givenNonExistentIdWhenUpdateTrainingThenThrowNotFoundException() {
+        Long id = 1L;
         Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
-        when(this.trainingDao.updateTraining(training)).thenThrow(NotFoundException.class);
+        when(this.trainingDao.updateTraining(id, training)).thenThrow(NotFoundException.class);
 
-        assertThrows(NotFoundException.class, () -> this.trainingService.updateTraining(training));
+        assertThrows(NotFoundException.class, () -> this.trainingService.updateTraining(id, training));
     }
 
     @Test
     void givenExistentIdWhenUpdateTrainingThenReturnTrainingUpdated() {
+        Long id = 1L;
         Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
-        when(this.trainingDao.updateTraining(training)).thenReturn(training);
+        when(this.trainingDao.updateTraining(id, training)).thenReturn(training);
 
-        assertThat(this.trainingService.updateTraining(training), is(training));
+        assertThat(this.trainingService.updateTraining(id, training), is(training));
     }
 
     @Test

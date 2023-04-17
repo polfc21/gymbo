@@ -233,13 +233,14 @@ class TrainingControllerTest {
 
     @Test
     void givenNonExistentIdWhenUpdateTrainingThenReturn404() throws Exception {
+        Long id = 1L;
         TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
         given(this.mapper.toDomain(legRequest)).willReturn(legTraining);
-        given(this.trainingService.updateTraining(legTraining)).willThrow(NotFoundException.class);
+        given(this.trainingService.updateTraining(id, legTraining)).willThrow(NotFoundException.class);
 
         MockHttpServletResponse response = this.mockMvc.perform(
-                put(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                put(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(legRequest))
         ).andReturn().getResponse();
@@ -249,15 +250,16 @@ class TrainingControllerTest {
 
     @Test
     void givenExistentIdWhenUpdateTrainingThenReturn200() throws Exception {
+        Long id = 1L;
         TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
         TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
         given(this.mapper.toDomain(legRequest)).willReturn(legTraining);
-        given(this.trainingService.updateTraining(legTraining)).willReturn(legTraining);
+        given(this.trainingService.updateTraining(id, legTraining)).willReturn(legTraining);
         given(this.mapper.toResponse(legTraining)).willReturn(legResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
-                put(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                put(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(legRequest))
         ).andReturn().getResponse();

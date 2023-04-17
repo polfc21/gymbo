@@ -10,6 +10,6 @@ public interface TrainingService {
     List<Training> findTrainingsByMonthAndYear(Month month, Year year);
     Training findTrainingById(Long id);
     Training createTraining(Training training);
-    Training updateTraining(Training training);
+    Training updateTraining(Long id, Training training);
     void deleteTraining(Long id);
 }

@@ -42,9 +42,9 @@ public class JpaTrainingDao implements TrainingDao {
     }
 
     @Override
-    public Training updateTraining(Training training) {
-        TrainingEntity trainingEntity = this.trainingRepository.findById(training.getId())
-                .orElseThrow(() -> new NotFoundException("Training with " + training.getId() + " not found"));
+    public Training updateTraining(Long id, Training training) {
+        TrainingEntity trainingEntity = this.trainingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Training with " + id + " not found"));
         trainingEntity.setName(training.getName());
         trainingEntity.setTrainingDate(training.getTrainingDate());
         trainingEntity = this.trainingRepository.save(trainingEntity);

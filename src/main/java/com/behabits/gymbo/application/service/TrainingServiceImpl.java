@@ -32,8 +32,8 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public Training updateTraining(Training training) {
-        return this.trainingDao.updateTraining(training);
+    public Training updateTraining(Long id, Training training) {
+        return this.trainingDao.updateTraining(id, training);
     }
 
     @Override
