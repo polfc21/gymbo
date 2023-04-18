@@ -10,4 +10,5 @@ public interface ExerciseDao {
     Exercise createExercise(Exercise exercise);
     List<Exercise> findExercisesByTrainingId(Long trainingId);
     List<Serie> findSeriesByExerciseId(Long exerciseId);
+    Serie createSerie(Long exerciseId, Serie serie);
 }

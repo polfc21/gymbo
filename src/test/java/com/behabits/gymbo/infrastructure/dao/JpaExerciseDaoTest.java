@@ -2,11 +2,17 @@ package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
+import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
+import com.behabits.gymbo.infrastructure.repository.SerieRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.ExerciseEntity;
+import com.behabits.gymbo.infrastructure.repository.entity.SerieEntity;
 import com.behabits.gymbo.infrastructure.repository.mapper.ExerciseEntityMapper;
+import com.behabits.gymbo.infrastructure.repository.mapper.SerieEntityMapper;
 import com.behabits.gymbo.infrastructure.repository.repositories.ExerciseEntityRepository;
+import com.behabits.gymbo.infrastructure.repository.repositories.SerieEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,11 +37,18 @@ class JpaExerciseDaoTest {
     private ExerciseRepository exerciseRepository;
 
     @Mock
+    private SerieRepository serieRepository;
+
+    @Mock
     private ExerciseEntityMapper mapper;
 
-    private final ExerciseEntityRepository exerciseEntityRepository = new ExerciseEntityRepository();
+    @Mock
+    private SerieEntityMapper serieMapper;
 
+    private final ExerciseEntityRepository exerciseEntityRepository = new ExerciseEntityRepository();
     private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
+    private final SerieEntityRepository serieEntityRepository = new SerieEntityRepository();
+    private final SerieModelRepository serieModelRepository = new SerieModelRepository();
 
     @Test
     void givenSquatExerciseWhenCreateExerciseThenReturnSquatExercise() {
@@ -107,5 +120,28 @@ class JpaExerciseDaoTest {
         when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
 
         assertThat(this.exerciseDao.findSeriesByExerciseId(squatExercise.getId()), is(squatExercise.getSeries()));
+    }
+
+    @Test
+    void givenExistentExerciseIdWhenCreateSerieThenReturnSerie() {
+        Long existentId = 1L;
+        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
+        Serie squatSerie = this.serieModelRepository.getSquatSerie();
+        SerieEntity squatSerieEntity = this.serieEntityRepository.getSquatSerie();
+
+        when(this.exerciseRepository.findById(existentId)).thenReturn(Optional.of(squatExerciseEntity));
+        when(this.serieMapper.toEntity(squatSerie)).thenReturn(squatSerieEntity);
+        when(this.serieRepository.save(squatSerieEntity)).thenReturn(squatSerieEntity);
+        when(this.serieMapper.toDomain(squatSerieEntity)).thenReturn(squatSerie);
+
+        assertThat(this.exerciseDao.createSerie(existentId, squatSerie), is(squatSerie));
+        assertThat(squatSerieEntity.getExercise(), is(squatExerciseEntity));
+    }
+
+    @Test
+    void givenNonExistentExerciseIdWhenCreateSerieThenThrowNotFoundException() {
+        when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.exerciseDao.findSeriesByExerciseId(1L));
     }
 }
