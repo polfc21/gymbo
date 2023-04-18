@@ -277,4 +277,41 @@ class ExerciseControllerTest {
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(seriesResponse)));
     }
+
+    @Test
+    void givenExistentExerciseIdWhenCreateSerieThenReturn201() throws Exception {
+        long exerciseId = 1L;
+        SerieRequest squatSerieRequest = this.serieRequestRepository.getSquatSerieRequest();
+        Serie serie = this.serieModelRepository.getSquatSerie();
+        SerieResponse squatSerieResponse = this.serieResponseRepository.getSquatSerieResponse();
+        given(this.serieMapper.toDomain(squatSerieRequest)).willReturn(serie);
+        given(this.exerciseService.createSerie(exerciseId, serie)).willReturn(serie);
+        given(this.serieMapper.toResponse(serie)).willReturn(squatSerieResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(squatSerieRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatSerieResponse)));
+    }
+
+    @Test
+    void givenNonExistentExerciseIdWhenCreateSerieThenReturn404() throws Exception {
+        long exerciseId = 1L;
+        SerieRequest squatSerieRequest = this.serieRequestRepository.getSquatSerieRequest();
+        Serie serie = this.serieModelRepository.getSquatSerie();
+        given(this.serieMapper.toDomain(squatSerieRequest)).willReturn(serie);
+        given(this.exerciseService.createSerie(exerciseId, serie)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(squatSerieRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
 }

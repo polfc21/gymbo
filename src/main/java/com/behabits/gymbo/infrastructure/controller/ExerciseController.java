@@ -1,9 +1,11 @@
 package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.services.ExerciseService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
+import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.ExerciseResponse;
 import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.ExerciseApiMapper;
@@ -49,5 +51,11 @@ public class ExerciseController {
     public ResponseEntity<List<SerieResponse>> findSeriesByExerciseId(@PathVariable Long id) {
         List<SerieResponse> series = this.serieMapper.toResponse(this.exerciseService.findSeriesByExerciseId(id));
         return new ResponseEntity<>(series, HttpStatus.OK);
+    }
+
+    @PostMapping(ApiConstant.ID + ApiConstant.SERIES)
+    public ResponseEntity<SerieResponse> createSerie(@PathVariable Long id, @RequestBody @Valid SerieRequest request) {
+        Serie serie = this.exerciseService.createSerie(id, this.serieMapper.toDomain(request));
+        return new ResponseEntity<>(this.serieMapper.toResponse(serie), HttpStatus.CREATED);
     }
 }
