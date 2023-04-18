@@ -34,4 +34,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     public List<Serie> findSeriesByExerciseId(Long exerciseId) {
         return this.exerciseDao.findSeriesByExerciseId(exerciseId);
     }
+
+    @Override
+    public Serie createSerie(Long exerciseId, Serie serie) {
+        return this.exerciseDao.createSerie(exerciseId, serie);
+    }
 }

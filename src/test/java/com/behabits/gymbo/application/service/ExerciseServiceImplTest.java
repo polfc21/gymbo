@@ -88,4 +88,24 @@ class ExerciseServiceImplTest {
 
         assertThat(this.exerciseService.findSeriesByExerciseId(exerciseId), is(List.of(serie)));
     }
+
+    @Test
+    void givenExistentExerciseIdWhenCreateSerieThenReturnSerie() {
+        Long exerciseId = 1L;
+        Serie serie = this.serieModelRepository.getSquatSerie();
+
+        when(this.exerciseDao.createSerie(exerciseId, serie)).thenReturn(serie);
+
+        assertThat(this.exerciseService.createSerie(exerciseId, serie), is(serie));
+    }
+
+    @Test
+    void givenNonExistentExerciseIdWhenCreateSerieThenThrowNotFoundException() {
+        Long exerciseId = 1L;
+        Serie serie = this.serieModelRepository.getSquatSerie();
+
+        when(this.exerciseDao.createSerie(exerciseId, serie)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.exerciseService.createSerie(exerciseId, serie));
+    }
 }
