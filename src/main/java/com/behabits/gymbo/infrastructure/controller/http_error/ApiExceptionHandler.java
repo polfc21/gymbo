@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.http_error;
 
+import com.behabits.gymbo.domain.exceptions.ExistingUserException;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +30,15 @@ public class ApiExceptionHandler {
     @ResponseBody
     public ErrorMessage badRequest(Exception exception) {
         return new ErrorMessage(exception, HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler({
+            ExistingUserException.class
+    })
+    @ResponseBody
+    public ErrorMessage conflictRequest(Exception exception) {
+        return new ErrorMessage(exception, HttpStatus.CONFLICT.value());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
