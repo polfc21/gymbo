@@ -59,4 +59,11 @@ public class JpaExerciseDao implements ExerciseDao {
         serieEntity = this.serieRepository.save(serieEntity);
         return this.serieMapper.toDomain(serieEntity);
     }
+
+    @Override
+    public void deleteExercise(Long id) {
+        ExerciseEntity exerciseEntity = this.exerciseRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Exercise with " + id + " not found"));
+        this.exerciseRepository.delete(exerciseEntity);
+    }
 }

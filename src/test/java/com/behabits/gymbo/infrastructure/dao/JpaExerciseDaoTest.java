@@ -25,7 +25,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class JpaExerciseDaoTest {
@@ -143,5 +143,22 @@ class JpaExerciseDaoTest {
         when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> this.exerciseDao.findSeriesByExerciseId(1L));
+    }
+
+    @Test
+    void givenNonExistentExerciseIdWhenDeleteExerciseThenThrowNotFoundException() {
+        when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.exerciseDao.deleteExercise(1L));
+    }
+
+    @Test
+    void givenExistentExerciseIdWhenDeleteExerciseThenDeleteExercise() {
+        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
+
+        when(this.exerciseRepository.findById(squatExerciseEntity.getId())).thenReturn(Optional.of(squatExerciseEntity));
+        this.exerciseDao.deleteExercise(squatExerciseEntity.getId());
+
+        verify(this.exerciseRepository).delete(squatExerciseEntity);
     }
 }
