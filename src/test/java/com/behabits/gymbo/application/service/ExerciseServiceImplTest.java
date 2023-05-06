@@ -18,7 +18,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class ExerciseServiceImplTest {
 
@@ -107,5 +109,27 @@ class ExerciseServiceImplTest {
         when(this.exerciseDao.createSerie(exerciseId, serie)).thenThrow(NotFoundException.class);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.createSerie(exerciseId, serie));
+    }
+
+    @Test
+    void givenNonExistentExerciseIdWhenDeleteExerciseThenThrowNotFoundException() {
+        Long exerciseId = 1L;
+
+        doThrow(NotFoundException.class).when(this.exerciseDao).deleteExercise(exerciseId);
+
+        assertThrows(NotFoundException.class, () -> this.exerciseService.deleteExercise(exerciseId));
+    }
+
+    @Test
+    void givenExistentExerciseIdWhenDeleteExerciseThenDoNothing() {
+        Long exerciseId = 1L;
+
+        doNothing().when(this.exerciseDao).deleteExercise(exerciseId);
+
+        try {
+            this.exerciseService.deleteExercise(exerciseId);
+        } catch (NotFoundException e) {
+            fail("Should not throw NotFoundException");
+        }
     }
 }

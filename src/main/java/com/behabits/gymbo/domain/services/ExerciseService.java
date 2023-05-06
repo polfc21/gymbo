@@ -11,4 +11,5 @@ public interface ExerciseService {
     List<Exercise> findExercisesByTrainingId(Long trainingId);
     List<Serie> findSeriesByExerciseId(Long exerciseId);
     Serie createSerie(Long exerciseId, Serie serie);
+    void deleteExercise(Long id);
 }

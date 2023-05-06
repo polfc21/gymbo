@@ -39,4 +39,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     public Serie createSerie(Long exerciseId, Serie serie) {
         return this.exerciseDao.createSerie(exerciseId, serie);
     }
+
+    @Override
+    public void deleteExercise(Long id) {
+        this.exerciseDao.deleteExercise(id);
+    }
 }
