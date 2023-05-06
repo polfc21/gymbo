@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @DataJpaTest
-public class ExerciseRepositoryTest {
+class ExerciseRepositoryTest {
 
     @Autowired
     private ExerciseRepository exerciseRepository;

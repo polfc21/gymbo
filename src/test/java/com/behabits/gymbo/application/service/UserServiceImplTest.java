@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceImplTest {
+class UserServiceImplTest {
 
     @InjectMocks
-    private UserServiceImpl userServiceImpl;
+    private UserServiceImpl userService;
 
     @Mock
     private UserDao userDao;
@@ -35,7 +35,7 @@ public class UserServiceImplTest {
 
         when(this.userDao.createUser(user)).thenReturn(user);
 
-        assertThat(this.userServiceImpl.createUser(user), is(user));
+        assertThat(this.userService.createUser(user), is(user));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class UserServiceImplTest {
 
         when(this.userDao.createUser(user)).thenThrow(ExistingUserException.class);
 
-        assertThrows(ExistingUserException.class, () -> this.userServiceImpl.createUser(user));
+        assertThrows(ExistingUserException.class, () -> this.userService.createUser(user));
     }
 
     @Test
@@ -53,15 +53,17 @@ public class UserServiceImplTest {
 
         when(this.userDao.findByUsername(user.getUsername())).thenReturn(user);
 
-        assertThat(this.userServiceImpl.loadUserByUsername(user.getUsername()), is(new UserDetails(user)));
+        assertThat(this.userService.loadUserByUsername(user.getUsername()), is(new UserDetails(user)));
     }
 
     @Test
     void givenNonExistentUsernameWhenLoadUserByUsernameThenThrowUsernameNotFoundException() {
         User user = this.userModelRepository.getUser();
+        String username = user.getUsername();
 
         when(this.userDao.findByUsername(user.getUsername())).thenReturn(null);
 
-        assertThrows(UsernameNotFoundException.class, () -> this.userServiceImpl.loadUserByUsername(user.getUsername()));
+
+        assertThrows(UsernameNotFoundException.class, () -> this.userService.loadUserByUsername(username));
     }
 }

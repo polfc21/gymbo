@@ -17,7 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtAuthorizationFilterTest {
+class JwtAuthorizationFilterTest {
 
     @Mock
     private JwtService jwtService;

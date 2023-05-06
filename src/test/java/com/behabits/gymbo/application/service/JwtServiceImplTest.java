@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtServiceImplTest {
+class JwtServiceImplTest {
 
     @InjectMocks
     private JwtServiceImpl jwtService;

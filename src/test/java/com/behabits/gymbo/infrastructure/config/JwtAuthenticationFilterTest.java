@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtAuthenticationFilterTest {
+class JwtAuthenticationFilterTest {
 
     @Mock
     private JwtService jwtService;
@@ -55,7 +55,7 @@ public class JwtAuthenticationFilterTest {
     }
 
     @Test
-    public void testAttemptAuthentication() throws Exception {
+    void testAttemptAuthentication() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         String requestBody = "{\"username\": \"user1\", \"password\": \"password1\"}";
@@ -75,7 +75,7 @@ public class JwtAuthenticationFilterTest {
     }
 
     @Test
-    public void testAttemptAuthenticationThrowsException() throws Exception {
+    void testAttemptAuthenticationThrowsException() throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         BufferedReader reader = new BufferedReader(new StringReader("BAD LOGIN REQUEST"));

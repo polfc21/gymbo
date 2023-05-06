@@ -16,7 +16,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class UserApiMapperTest {
+class UserApiMapperTest {
 
     @Autowired
     private UserApiMapper userApiMapper;
