@@ -3,6 +3,7 @@ package com.behabits.gymbo.infrastructure.controller;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
+import com.behabits.gymbo.domain.services.JwtService;
 import com.behabits.gymbo.domain.services.TrainingService;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Month;
@@ -30,6 +32,7 @@ import static org.mockito.BDDMockito.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(TrainingController.class)
@@ -40,6 +43,9 @@ class TrainingControllerTest {
 
     @MockBean
     private TrainingApiMapper mapper;
+
+    @MockBean
+    private JwtService jwtService; // Added to load application context
 
     @Autowired
     private MockMvc mockMvc;
@@ -56,6 +62,7 @@ class TrainingControllerTest {
     private final ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
 
     @Test
+    @WithMockUser
     void givenCorrectMonthAndCorrectYearWhenFindTrainingsThenReturnTrainingsResponseAnd200() throws Exception {
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
         TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
@@ -74,6 +81,7 @@ class TrainingControllerTest {
     }
 
     @Test
+    @WithMockUser
     void givenNullMonthAndCorrectYearWhenFindTrainingsThenReturn400() throws Exception {
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
@@ -86,6 +94,7 @@ class TrainingControllerTest {
     }
 
     @Test
+    @WithMockUser
     void givenCorrectMonthAndNullYearWhenFindTrainingsThenReturn400() throws Exception {
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
@@ -98,6 +107,7 @@ class TrainingControllerTest {
     }
 
     @Test
+    @WithMockUser
     void givenNullMonthAndNullYearWhenFindTrainingsThenReturn400() throws Exception {
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
@@ -110,6 +120,19 @@ class TrainingControllerTest {
     }
 
     @Test
+    void givenNonAuthenticatedWhenFindTrainingsThenReturn403() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("month", "null")
+                        .param("year", "null")
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED.value()));
+    }
+
+    @WithMockUser
+    @Test
     void givenExistentIdWhenFindTrainingByIdThenReturnTrainingResponseAnd200() throws Exception {
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
         TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponseWithSquatExercise();
@@ -119,12 +142,14 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
     }
 
+    @WithMockUser
     @Test
     void givenNonExistentIdWhenFindTrainingByIdThenReturn404() throws Exception {
         given(this.trainingService.findTrainingById(1L)).willThrow(NotFoundException.class);
@@ -132,11 +157,13 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.TRAININGS + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
     }
 
+    @WithMockUser
     @Test
     void givenLegTrainingRequestWhenCreateTrainingThenReturnLegTrainingResponseAnd201() throws Exception {
         TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
@@ -150,12 +177,14 @@ class TrainingControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(legRequest))
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
     }
 
+    @WithMockUser
     @Test
     void givenNullExerciseListRequestWhenCreateTrainingThenReturn201() throws Exception {
         TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequest();
@@ -169,12 +198,14 @@ class TrainingControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(legRequest))
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
     }
 
+    @WithMockUser
     @Test
     void givenNullExerciseRequestWhenCreateTrainingThenReturn400() throws Exception {
         ExerciseRequest nullRequest = this.exerciseRequestRepository.getNullExerciseRequest();
@@ -185,11 +216,13 @@ class TrainingControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(nullRequest))
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
     }
 
+    @WithMockUser
     @Test
     void givenIncorrectExerciseRequestWhenCreateTrainingThenReturn400() throws Exception {
         ExerciseRequest incorrectRequest = this.exerciseRequestRepository.getIncorrectExerciseRequest();
@@ -200,11 +233,13 @@ class TrainingControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(incorrectRequest))
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
     }
 
+    @WithMockUser
     @Test
     void givenIncorrectTrainingRequestWhenCreateTrainingThenReturn400() throws Exception {
         TrainingRequest incorrectRequest = this.trainingRequestRepository.getIncorrectTrainingRequest();
@@ -213,11 +248,13 @@ class TrainingControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(incorrectRequest))
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
     }
 
+    @WithMockUser
     @Test
     void givenNullTrainingRequestWhenCreateTrainingThenReturn400() throws Exception {
         TrainingRequest nullRequest = this.trainingRequestRepository.getNullTrainingRequest();
@@ -226,11 +263,26 @@ class TrainingControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(nullRequest))
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
     }
 
+    @Test
+    void givenNonAuthenticatedWhenCreateTrainingThenReturn403() throws Exception {
+        TrainingRequest nullRequest = this.trainingRequestRepository.getNullTrainingRequest();
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(nullRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
     @Test
     void givenNonExistentIdWhenUpdateTrainingThenReturn404() throws Exception {
         Long id = 1L;
@@ -243,11 +295,13 @@ class TrainingControllerTest {
                 put(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(legRequest))
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
     }
 
+    @WithMockUser
     @Test
     void givenExistentIdWhenUpdateTrainingThenReturn200() throws Exception {
         Long id = 1L;
@@ -262,12 +316,28 @@ class TrainingControllerTest {
                 put(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(legRequest))
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
     }
 
+    @Test
+    void givenNonAuthenticatedExistentIdWhenUpdateTrainingThenReturn403() throws Exception {
+        Long id = 1L;
+        TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(legRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
     @Test
     void givenNonExistentIdWhenDeleteTrainingThenReturn404() throws Exception {
         Long id = 1L;
@@ -276,11 +346,13 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 delete(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
     }
 
+    @WithMockUser
     @Test
     void givenExistentIdWhenDeleteTrainingThenReturn204() throws Exception {
         Long id = 1L;
@@ -289,9 +361,22 @@ class TrainingControllerTest {
         MockHttpServletResponse response = this.mockMvc.perform(
                 delete(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NO_CONTENT.value()));
         assertThat(response.getContentAsString(), is("Training with id " + id + " deleted successfully"));
+    }
+
+    @Test
+    void givenNonAuthenticatedWhenDeleteTrainingThenReturn403() throws Exception {
+        Long id = 1L;
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
 }

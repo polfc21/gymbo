@@ -1,8 +1,8 @@
 package com.behabits.gymbo.infrastructure.controller;
 
-import com.behabits.gymbo.application.service.JwtServiceImpl;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
+import com.behabits.gymbo.domain.services.JwtService;
 import com.behabits.gymbo.domain.services.UserService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.UserRequest;
@@ -38,7 +38,7 @@ public class UserControllerTest {
     private UserApiMapper mapper;
 
     @MockBean
-    private JwtServiceImpl jwtService; // Added to load application context
+    private JwtService jwtService; // Added to load application context
 
     @Autowired
     private MockMvc mockMvc;
