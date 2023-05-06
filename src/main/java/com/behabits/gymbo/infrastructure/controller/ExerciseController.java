@@ -58,4 +58,10 @@ public class ExerciseController {
         Serie serie = this.exerciseService.createSerie(id, this.serieMapper.toDomain(request));
         return new ResponseEntity<>(this.serieMapper.toResponse(serie), HttpStatus.CREATED);
     }
+
+    @DeleteMapping(ApiConstant.ID)
+    public ResponseEntity<String> deleteExercise(@PathVariable Long id) {
+        this.exerciseService.deleteExercise(id);
+        return new ResponseEntity<>("Exercise with id " + id + " deleted successfully", HttpStatus.NO_CONTENT);
+    }
 }

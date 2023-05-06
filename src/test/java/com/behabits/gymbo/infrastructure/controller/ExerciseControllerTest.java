@@ -32,11 +32,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(ExerciseController.class)
 class ExerciseControllerTest {
@@ -368,6 +369,49 @@ class ExerciseControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(squatSerieRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenNonExistentIdWhenDeleteExerciseThenReturn404() throws Exception {
+        long exerciseId = 1L;
+        doThrow(NotFoundException.class).when(this.exerciseService).deleteExercise(exerciseId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenExistentIdWhenDeleteExerciseThenReturn204() throws Exception {
+        long id = 1L;
+        doNothing().when(this.exerciseService).deleteExercise(id);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NO_CONTENT.value()));
+        assertThat(response.getContentAsString(), is("Exercise with id " + id + " deleted successfully"));
+    }
+
+    @Test
+    void givenNonAuthenticatedWhenDeleteExerciseThenReturn403() throws Exception {
+        long id = 1L;
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
