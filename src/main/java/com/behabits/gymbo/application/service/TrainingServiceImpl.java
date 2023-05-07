@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.TrainingDao;
+import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.services.TrainingService;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,12 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public void deleteTraining(Long id) {
         this.trainingDao.deleteTraining(id);
+    }
+
+    @Override
+    public Training addExercise(Long id, Exercise exercise) {
+        Training training = this.trainingDao.findTrainingById(id);
+        training.addExercise(exercise);
+        return this.trainingDao.createTraining(training);
     }
 }

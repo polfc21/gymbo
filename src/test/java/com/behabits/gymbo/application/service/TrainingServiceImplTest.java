@@ -2,7 +2,9 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.TrainingDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Training;
+import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -111,5 +113,29 @@ class TrainingServiceImplTest {
         } catch (NotFoundException e) {
             fail("Exception thrown");
         }
+    }
+
+    @Test
+    void givenExistentIdWhenAddExerciseThenReturnTrainingWithExerciseAdded() {
+        Long id = 1L;
+        Exercise exercise = new ExerciseModelRepository().getSquatExercise();
+        Training training = this.trainingModelRepository.getLegTraining();
+
+        when(this.trainingDao.findTrainingById(id)).thenReturn(training);
+        when(this.trainingDao.createTraining(training)).thenReturn(training);
+        Training trainingWithExerciseAdded = this.trainingService.addExercise(id, exercise);
+
+        assertThat(trainingWithExerciseAdded, is(training));
+        assertThat(trainingWithExerciseAdded.getExercises(), hasItem(exercise));
+    }
+
+    @Test
+    void givenNonExistentIdWhenAddExerciseThenThrowNotFoundException() {
+        Long id = 1L;
+        Exercise exercise = new ExerciseModelRepository().getSquatExercise();
+
+        when(this.trainingDao.findTrainingById(id)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.trainingService.addExercise(id, exercise));
     }
 }

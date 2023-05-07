@@ -1,5 +1,6 @@
 package com.behabits.gymbo.domain.services;
 
+import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Training;
 
 import java.time.Month;
@@ -12,4 +13,5 @@ public interface TrainingService {
     Training createTraining(Training training);
     Training updateTraining(Long id, Training training);
     void deleteTraining(Long id);
+    Training addExercise(Long id, Exercise exercise);
 }
