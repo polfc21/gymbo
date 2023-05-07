@@ -21,9 +21,9 @@ public class Training {
         if (this.exercises == null) {
             this.exercises = List.of(exercise);
         } else {
-            List<Exercise> exercises = new ArrayList<>(this.exercises);
-            exercises.add(exercise);
-            this.exercises = List.copyOf(exercises);
+            List<Exercise> newExercises = new ArrayList<>(this.exercises);
+            newExercises.add(exercise);
+            this.exercises = List.copyOf(newExercises);
         }
     }
 
