@@ -1,11 +1,14 @@
 package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.services.JwtService;
 import com.behabits.gymbo.domain.services.TrainingService;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
+import com.behabits.gymbo.infrastructure.controller.mapper.ExerciseApiMapper;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.TrainingRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.response.TrainingResponseRepository;
@@ -43,6 +46,9 @@ class TrainingControllerTest {
 
     @MockBean
     private TrainingApiMapper mapper;
+
+    @MockBean
+    private ExerciseApiMapper exerciseMapper;
 
     @MockBean
     private JwtService jwtService; // Added to load application context
@@ -379,4 +385,77 @@ class TrainingControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
+
+    @WithMockUser
+    @Test
+    void givenExistentIdAndCorrectExerciseWhenAddExerciseThenReturn201() throws Exception {
+        Long id = 1L;
+        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        Exercise exercise = new ExerciseModelRepository().getSquatExercise();
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+        TrainingResponse legResponse = this.trainingResponseRepository.getLegTrainingResponse();
+        given(this.exerciseMapper.toDomain(exerciseRequest)).willReturn(exercise);
+        given(this.trainingService.addExercise(id, exercise)).willReturn(legTraining);
+        given(this.mapper.toResponse(legTraining)).willReturn(legResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID + ApiConstant.EXERCISES, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(exerciseRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(legResponse)));
+    }
+
+    @WithMockUser
+    @Test
+    void givenNonExistentIdAndCorrectExerciseWhenAddExerciseThenReturn404() throws Exception {
+        Long id = 1L;
+        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        Exercise exercise = new ExerciseModelRepository().getSquatExercise();
+        given(this.exerciseMapper.toDomain(exerciseRequest)).willReturn(exercise);
+        given(this.trainingService.addExercise(id, exercise)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID + ApiConstant.EXERCISES, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(exerciseRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenNonValidExerciseWhenAddExerciseThenReturn400() throws Exception {
+        Long id = 1L;
+        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getIncorrectExerciseRequest();
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID + ApiConstant.EXERCISES, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(exerciseRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedWhenAddExerciseThenReturn403() throws Exception {
+        Long id = 1L;
+        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID + ApiConstant.EXERCISES, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(exerciseRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
 }

@@ -3,8 +3,10 @@ package com.behabits.gymbo.infrastructure.controller;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.services.TrainingService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
+import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.request.TrainingRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.TrainingResponse;
+import com.behabits.gymbo.infrastructure.controller.mapper.ExerciseApiMapper;
 import com.behabits.gymbo.infrastructure.controller.mapper.TrainingApiMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +27,8 @@ public class TrainingController {
     private final TrainingService trainingService;
 
     private final TrainingApiMapper mapper;
+
+    private final ExerciseApiMapper exerciseMapper;
 
     @GetMapping
     public ResponseEntity<List<TrainingResponse>> findTrainingsByMonthAndYear(@RequestParam @Valid @NotNull Month month,
@@ -58,5 +62,11 @@ public class TrainingController {
     public ResponseEntity<String> deleteTraining(@PathVariable Long id) {
         this.trainingService.deleteTraining(id);
         return new ResponseEntity<>("Training with id " + id + " deleted successfully", HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping(ApiConstant.ID + ApiConstant.EXERCISES)
+    public ResponseEntity<TrainingResponse> addExercise(@PathVariable Long id, @RequestBody @Valid ExerciseRequest request) {
+        Training training = this.trainingService.addExercise(id, this.exerciseMapper.toDomain(request));
+        return new ResponseEntity<>(this.mapper.toResponse(training), HttpStatus.CREATED);
     }
 }
