@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.config;
 
-import com.behabits.gymbo.application.domain.UserDetails;
+import com.behabits.gymbo.application.domain.UserDetailsImpl;
 import com.behabits.gymbo.domain.services.JwtService;
 import com.behabits.gymbo.infrastructure.controller.dto.request.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,8 +41,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws ServletException, IOException {
-        UserDetails userDetails = (UserDetails) authResult.getPrincipal();
-        String token = this.jwtService.createToken(userDetails.getUsername(), userDetails.getEmail());
+        UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authResult.getPrincipal();
+        String token = this.jwtService.createToken(userDetailsImpl.getUsername(), userDetailsImpl.getEmail());
         response.addHeader("Authorization", "Bearer " + token);
         response.getWriter().flush();
         super.successfulAuthentication(request, response, chain, authResult);

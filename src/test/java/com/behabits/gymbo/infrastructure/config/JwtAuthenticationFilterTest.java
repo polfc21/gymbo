@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.config;
 
-import com.behabits.gymbo.application.domain.UserDetails;
+import com.behabits.gymbo.application.domain.UserDetailsImpl;
 import com.behabits.gymbo.domain.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,9 +34,9 @@ class JwtAuthenticationFilterTest {
     void testSuccessfulAuthentication() throws Exception {
         String username = "USERNAME";
         String email = "EMAIL";
-        UserDetails userDetails = mock(UserDetails.class);
-        when(userDetails.getUsername()).thenReturn(username);
-        when(userDetails.getEmail()).thenReturn(email);
+        UserDetailsImpl userDetailsImpl = mock(UserDetailsImpl.class);
+        when(userDetailsImpl.getUsername()).thenReturn(username);
+        when(userDetailsImpl.getEmail()).thenReturn(email);
         Authentication auth = mock(Authentication.class);
         String token = "VALID TOKEN";
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -45,7 +45,7 @@ class JwtAuthenticationFilterTest {
         FilterChain chain = mock(FilterChain.class);
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(this.jwtService);
 
-        when(auth.getPrincipal()).thenReturn(userDetails);
+        when(auth.getPrincipal()).thenReturn(userDetailsImpl);
         when(this.jwtService.createToken(anyString(), anyString())).thenReturn(token);
         when(response.getWriter()).thenReturn(writer);
         filter.successfulAuthentication(request, response, chain, auth);

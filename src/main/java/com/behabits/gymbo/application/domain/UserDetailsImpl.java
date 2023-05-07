@@ -4,18 +4,25 @@ import com.behabits.gymbo.domain.models.User;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 
 @EqualsAndHashCode
 @RequiredArgsConstructor
-public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
+public class UserDetailsImpl implements UserDetails, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1905122041950251207L;
 
     private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

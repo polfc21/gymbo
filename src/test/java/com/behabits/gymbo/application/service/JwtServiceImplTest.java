@@ -8,7 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
-import com.behabits.gymbo.application.domain.UserDetails;
+import com.behabits.gymbo.application.domain.UserDetailsImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ class JwtServiceImplTest {
         JWTVerifier jwtVerifier = mock(JWTVerifier.class);
         DecodedJWT decodedJWT = mock(DecodedJWT.class);
         Claim claim = mock(Claim.class);
-        UserDetails userDetails = mock(UserDetails.class);
+        UserDetailsImpl userDetailsImpl = mock(UserDetailsImpl.class);
 
         when(JWT.require(Algorithm.HMAC256(this.secret))).thenReturn(verification);
         when(verification.withIssuer(this.issuer)).thenReturn(verification);
@@ -95,8 +95,8 @@ class JwtServiceImplTest {
         when(jwtVerifier.verify(validToken)).thenReturn(decodedJWT);
         when(decodedJWT.getClaim("username")).thenReturn(claim);
         when(claim.asString()).thenReturn(username);
-        when(this.userService.loadUserByUsername(username)).thenReturn(userDetails);
-        when(userDetails.getUsername()).thenReturn(username);
+        when(this.userService.loadUserByUsername(username)).thenReturn(userDetailsImpl);
+        when(userDetailsImpl.getUsername()).thenReturn(username);
 
         assertThat(this.jwtService.getAuthentication(validToken).getPrincipal(), is(username));
     }

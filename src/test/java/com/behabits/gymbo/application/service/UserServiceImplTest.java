@@ -4,7 +4,7 @@ import com.behabits.gymbo.domain.daos.UserDao;
 import com.behabits.gymbo.domain.exceptions.ExistingUserException;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
-import com.behabits.gymbo.application.domain.UserDetails;
+import com.behabits.gymbo.application.domain.UserDetailsImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,7 +53,7 @@ class UserServiceImplTest {
 
         when(this.userDao.findByUsername(user.getUsername())).thenReturn(user);
 
-        assertThat(this.userService.loadUserByUsername(user.getUsername()), is(new UserDetails(user)));
+        assertThat(this.userService.loadUserByUsername(user.getUsername()), is(new UserDetailsImpl(user)));
     }
 
     @Test
