@@ -1,6 +1,7 @@
 package com.behabits.gymbo.infrastructure.config;
 
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
+import com.behabits.gymbo.domain.exceptions.LoginException;
 import com.behabits.gymbo.domain.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,7 +84,7 @@ class JwtAuthenticationFilterTest {
 
         when(request.getReader()).thenReturn(reader);
 
-        assertThrows(RuntimeException.class, () -> filter.attemptAuthentication(request, response));
+        assertThrows(LoginException.class, () -> filter.attemptAuthentication(request, response));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.behabits.gymbo.infrastructure.config;
 
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
+import com.behabits.gymbo.domain.exceptions.LoginException;
 import com.behabits.gymbo.domain.services.JwtService;
 import com.behabits.gymbo.infrastructure.controller.dto.request.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +36,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             return new ObjectMapper().readValue(request.getReader(), LoginRequest.class);
         } catch (IOException e) {
-            throw new RuntimeException("BAD LOGIN REQUEST");
+            throw new LoginException("BAD LOGIN REQUEST");
         }
     }
 
