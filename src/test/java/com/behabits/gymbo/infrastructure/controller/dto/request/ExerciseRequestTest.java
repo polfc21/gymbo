@@ -1,55 +1,21 @@
 package com.behabits.gymbo.infrastructure.controller.dto.request;
 
-import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.BeforeEach;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
 
 class ExerciseRequestTest {
 
-    private Validator validator;
-
-    private ExerciseRequestRepository exerciseRequestRepository;
-
-    @BeforeEach
-    void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-        this.exerciseRequestRepository = new ExerciseRequestRepository();
-    }
+    private final SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
 
     @Test
-    void givenCorrectExerciseRequestWhenValidateThenViolationsSizeIs0() {
-        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getCorrectExerciseRequest();
+    void givenSameSerieRequestWhenEqualsAndHashCodeThenReturnTrueSameHashCode() {
+        SerieRequest serieRequest = this.serieRequestRepository.getCorrectSerieRequest();
+        SerieRequest serieRequest2 = this.serieRequestRepository.getCorrectSerieRequest();
 
-        Set<ConstraintViolation<ExerciseRequest>> violations = this.validator.validate(exerciseRequest);
-
-        assertThat(violations.size(), is(0));
-    }
-
-    @Test
-    void givenIncorrectExerciseRequestWhenValidateThenViolationsSizeIs1() {
-        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getIncorrectExerciseRequest();
-
-        Set<ConstraintViolation<ExerciseRequest>> violations = this.validator.validate(exerciseRequest);
-
-        assertThat(violations.size(), is(1));
-    }
-
-    @Test
-    void givenNullExerciseRequestWhenValidateThenViolationsSizeIs1() {
-        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getNullExerciseRequest();
-
-        Set<ConstraintViolation<ExerciseRequest>> violations = this.validator.validate(exerciseRequest);
-
-        assertThat(violations.size(), is(1));
+        assertThat(serieRequest, is(serieRequest2));
+        assertThat(serieRequest.hashCode(), is(serieRequest2.hashCode()));
     }
 }
