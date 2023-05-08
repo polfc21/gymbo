@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 @DataJpaTest
@@ -91,5 +92,35 @@ class TrainingRepositoryTest {
         List<TrainingEntity> trainingList = this.trainingRepository.findAllByMonthAndYearAndPlayerId(actualMonth, actualYear, userId + 1);
 
         assertThat(trainingList.size(), is(0));
+    }
+
+    @Test
+    void givenTrainingOfUserWhenFindByIdAndPlayerIdThenReturnTraining() {
+        UserEntity user = new UserEntityRepository().getUser();
+        user.setId(null);
+        TrainingEntity training = new TrainingEntityRepository().getLegTraining();
+        training.setId(null);
+        Long userId = this.entityManager.persistAndGetId(user, Long.class);
+        training.setPlayer(user);
+        Long trainingId = this.entityManager.persistAndGetId(training, Long.class);
+
+        TrainingEntity trainingEntity = this.trainingRepository.findByIdAndPlayerId(trainingId, userId);
+
+        assertThat(trainingEntity.getId(), is(trainingId));
+    }
+
+    @Test
+    void givenTrainingOfUserWhenFindByAnotherIdAndPlayerIdThenReturnNull() {
+        UserEntity user = new UserEntityRepository().getUser();
+        user.setId(null);
+        TrainingEntity training = new TrainingEntityRepository().getLegTraining();
+        training.setId(null);
+        Long userId = this.entityManager.persistAndGetId(user, Long.class);
+        training.setPlayer(user);
+        Long trainingId = this.entityManager.persistAndGetId(training, Long.class);
+
+        TrainingEntity trainingEntity = this.trainingRepository.findByIdAndPlayerId(trainingId + 1, userId + 1);
+
+        assertNull(trainingEntity);
     }
 }
