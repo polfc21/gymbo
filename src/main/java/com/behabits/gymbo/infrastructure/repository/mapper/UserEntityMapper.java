@@ -2,11 +2,9 @@ package com.behabits.gymbo.infrastructure.repository.mapper;
 
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class UserEntityMapper {
 
     public User toDomain(UserEntity entity) {
