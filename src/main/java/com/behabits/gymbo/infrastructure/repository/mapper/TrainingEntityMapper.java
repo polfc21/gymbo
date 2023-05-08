@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class TrainingEntityMapper {
 
     private final ExerciseEntityMapper exerciseEntityMapper;
+    private final UserEntityMapper userEntityMapper;
 
     public Training toDomain(TrainingEntity entity) {
         Training domain = new Training();
@@ -17,6 +18,9 @@ public class TrainingEntityMapper {
         domain.setName(entity.getName());
         domain.setTrainingDate(entity.getTrainingDate());
         domain.setExercises(this.exerciseEntityMapper.toDomain(entity.getExercises()));
+        if (entity.getPlayer() != null) {
+            domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
+        }
         return domain;
     }
 
@@ -28,6 +32,9 @@ public class TrainingEntityMapper {
         entity.setExercises(this.exerciseEntityMapper.toEntity(domain.getExercises()));
         if (entity.getExercises() != null) {
             entity.getExercises().forEach(exerciseEntity -> exerciseEntity.setTraining(entity));
+        }
+        if (domain.getUser() != null) {
+            entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
         }
         return entity;
     }
