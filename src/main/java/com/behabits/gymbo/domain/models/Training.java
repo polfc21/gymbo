@@ -16,6 +16,7 @@ public class Training {
     private LocalDateTime trainingDate;
     private String name;
     private List<Exercise> exercises;
+    private User user;
 
     public void addExercise(Exercise exercise) {
         if (this.exercises == null) {
