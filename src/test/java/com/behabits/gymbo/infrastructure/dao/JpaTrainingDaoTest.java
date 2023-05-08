@@ -64,7 +64,8 @@ class JpaTrainingDaoTest {
     }
 
     @Test
-    void givenMonthWhenFindTrainingsByMonthThenReturnTrainings() {
+    void givenMonthAndYearAndUserIdWhenFindTrainingsByMonthAndYearAndPlayerIdThenReturnTrainings() {
+        Long userId = 1L;
         Training legTraining = this.trainingModelRepository.getLegTraining();
         TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
         Month legTrainingMonth = legTraining.getTrainingDate().getMonth();
@@ -72,10 +73,10 @@ class JpaTrainingDaoTest {
         Year legTrainingYear = Year.of(legTraining.getTrainingDate().getYear());
         Year legTrainingEntityYear = Year.of(legTrainingEntity.getTrainingDate().getYear());
 
-        when(this.trainingRepository.findAllByMonthAndYear(legTrainingEntityMonth.getValue(), legTrainingEntityYear.getValue())).thenReturn(List.of(legTrainingEntity));
+        when(this.trainingRepository.findAllByMonthAndYearAndPlayerId(legTrainingEntityMonth.getValue(), legTrainingEntityYear.getValue(), userId)).thenReturn(List.of(legTrainingEntity));
         when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
 
-        assertThat(this.trainingDao.findTrainingsByMonthAndYear(legTrainingMonth, legTrainingYear), is(List.of(legTraining)));
+        assertThat(this.trainingDao.findTrainingsByMonthAndYearAndUserId(legTrainingMonth, legTrainingYear, userId), is(List.of(legTraining)));
     }
 
     @Test
