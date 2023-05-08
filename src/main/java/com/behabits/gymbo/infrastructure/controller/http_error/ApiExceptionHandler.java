@@ -3,6 +3,7 @@ package com.behabits.gymbo.infrastructure.controller.http_error;
 import com.behabits.gymbo.domain.exceptions.ExistingUserException;
 import com.behabits.gymbo.domain.exceptions.LoginException;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,6 +33,15 @@ public class ApiExceptionHandler {
     @ResponseBody
     public ErrorMessage badRequest(Exception exception) {
         return new ErrorMessage(exception, HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler({
+            PermissionsException.class
+    })
+    @ResponseBody
+    public ErrorMessage forbiddenRequest(Exception exception) {
+        return new ErrorMessage(exception, HttpStatus.FORBIDDEN.value());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
