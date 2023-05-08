@@ -135,7 +135,7 @@ class TrainingServiceImplTest {
     void givenNonExistentIdWhenDeleteTrainingThenThrowNotFoundException() {
         Long id = 1L;
 
-        doThrow(NotFoundException.class).when(this.trainingDao).deleteTraining(id);
+        doThrow(NotFoundException.class).when(this.trainingDao).findTrainingById(id);
 
         assertThrows(NotFoundException.class, () -> this.trainingService.deleteTraining(id));
     }
@@ -147,7 +147,7 @@ class TrainingServiceImplTest {
 
         when(this.trainingDao.findTrainingById(id)).thenReturn(training);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(training);
-        doNothing().when(this.trainingDao).deleteTraining(id);
+        doNothing().when(this.trainingDao).deleteTraining(training);
 
         try {
             this.trainingService.deleteTraining(id);

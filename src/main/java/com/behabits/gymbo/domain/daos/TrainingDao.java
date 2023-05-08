@@ -11,5 +11,5 @@ public interface TrainingDao {
     Training findTrainingById(Long id);
     Training createTraining(Training training);
     Training updateTraining(Long id, Training training);
-    void deleteTraining(Long id);
+    void deleteTraining(Training training);
 }

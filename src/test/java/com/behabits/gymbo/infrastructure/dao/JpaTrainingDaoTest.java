@@ -91,29 +91,19 @@ class JpaTrainingDaoTest {
     }
 
     @Test
-    void givenNoExistentIdWhenFindTrainingByIdThenThrowNotFoundException() {
+    void givenNonExistentIdWhenFindTrainingByIdThenThrowNotFoundException() {
         when(this.trainingRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> this.trainingDao.findTrainingById(1L));
     }
 
     @Test
-    void givenNonExistentIdWhenUpdateTrainingThenThrowNotFoundException() {
-        Long id = 1L;
-        Training legTraining = this.trainingModelRepository.getLegTraining();
-
-        when(this.trainingRepository.findById(legTraining.getId())).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> this.trainingDao.updateTraining(id, legTraining));
-    }
-
-    @Test
-    void givenExistentIdWhenUpdateTrainingThenReturnTrainingUpdated() {
+    void givenTrainingWhenUpdateTrainingThenReturnTrainingUpdated() {
         Long id = 1L;
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
         TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTrainingWithSquatExerciseWithSeries();
 
-        when(this.trainingRepository.findById(legTraining.getId())).thenReturn(Optional.of(legTrainingEntity));
+        when(this.trainingRepository.getReferenceById(legTraining.getId())).thenReturn(legTrainingEntity);
         when(this.trainingRepository.save(legTrainingEntity)).thenReturn(legTrainingEntity);
         when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
 
@@ -121,19 +111,11 @@ class JpaTrainingDaoTest {
     }
 
     @Test
-    void givenNonExistentIdWhenDeleteTrainingThenThrowNotFoundException() {
-        when(this.trainingRepository.findById(1L)).thenReturn(Optional.empty());
+    void givenTrainingWhenDeleteTrainingThenTrainingRepositoryDeleteTraining() {
+        Training legTraining = this.trainingModelRepository.getLegTraining();
 
-        assertThrows(NotFoundException.class, () -> this.trainingDao.deleteTraining(1L));
-    }
+        this.trainingDao.deleteTraining(legTraining);
 
-    @Test
-    void givenExistentIdWhenDeleteTrainingThenTrainingRepositoryDeleteTraining() {
-        TrainingEntity legTraining = this.trainingEntityRepository.getLegTraining();
-
-        when(this.trainingRepository.findById(legTraining.getId())).thenReturn(Optional.of(legTraining));
-        this.trainingDao.deleteTraining(legTraining.getId());
-
-        verify(this.trainingRepository).delete(legTraining);
+        verify(this.trainingRepository).deleteById(legTraining.getId());
     }
 }
