@@ -3,6 +3,8 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.domain.daos.TrainingDao;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Training;
+import com.behabits.gymbo.domain.models.User;
+import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.TrainingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,35 +18,46 @@ import java.util.List;
 public class TrainingServiceImpl implements TrainingService {
 
     private final TrainingDao trainingDao;
+    private final AuthorityService authorityService;
 
     @Override
     public List<Training> findTrainingsByMonthAndYear(Month month, Year year) {
-        return this.trainingDao.findTrainingsByMonthAndYear(month, year);
+        Long loggedUserId = this.authorityService.getLoggedUser().getId();
+        return this.trainingDao.findTrainingsByMonthAndYearAndUserId(month, year, loggedUserId);
     }
 
     @Override
     public Training findTrainingById(Long id) {
-        return this.trainingDao.findTrainingById(id);
+        Training training = this.trainingDao.findTrainingById(id);
+        this.authorityService.checkLoggedUserHasPermissions(training);
+        return training;
     }
 
     @Override
     public Training createTraining(Training training) {
+        User loggedUser = this.authorityService.getLoggedUser();
+        training.setUser(loggedUser);
         return this.trainingDao.createTraining(training);
     }
 
     @Override
     public Training updateTraining(Long id, Training training) {
+        Training trainingToUpdate = this.trainingDao.findTrainingById(id);
+        this.authorityService.checkLoggedUserHasPermissions(trainingToUpdate);
         return this.trainingDao.updateTraining(id, training);
     }
 
     @Override
     public void deleteTraining(Long id) {
+        Training training = this.trainingDao.findTrainingById(id);
+        this.authorityService.checkLoggedUserHasPermissions(training);
         this.trainingDao.deleteTraining(id);
     }
 
     @Override
     public Training addExercise(Long id, Exercise exercise) {
         Training training = this.trainingDao.findTrainingById(id);
+        this.authorityService.checkLoggedUserHasPermissions(training);
         training.addExercise(exercise);
         return this.trainingDao.createTraining(training);
     }

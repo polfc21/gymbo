@@ -3,6 +3,8 @@ package com.behabits.gymbo.infrastructure.repository.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,4 +26,6 @@ public class UserEntity {
     private String email;
     private String password;
     private boolean enabled;
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TrainingEntity> trainings;
 }

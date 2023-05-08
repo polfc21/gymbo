@@ -21,8 +21,9 @@ public class JpaTrainingDao implements TrainingDao {
     private final TrainingEntityMapper mapper;
 
     @Override
-    public List<Training> findTrainingsByMonthAndYear(Month month, Year year) {
-        return this.trainingRepository.findAllByMonthAndYear(month.getValue(), year.getValue()).stream()
+    public List<Training> findTrainingsByMonthAndYearAndUserId(Month month, Year year, Long userId) {
+        return this.trainingRepository.findAllByMonthAndYearAndPlayerId(month.getValue(), year.getValue(), userId)
+                .stream()
                 .map(this.mapper::toDomain)
                 .toList();
     }

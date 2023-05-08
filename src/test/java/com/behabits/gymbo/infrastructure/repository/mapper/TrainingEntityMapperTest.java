@@ -2,8 +2,10 @@ package com.behabits.gymbo.infrastructure.repository.mapper;
 
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
+import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.TrainingEntity;
 import com.behabits.gymbo.infrastructure.repository.repositories.TrainingEntityRepository;
+import com.behabits.gymbo.infrastructure.repository.repositories.UserEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -93,5 +95,33 @@ class TrainingEntityMapperTest {
                 is(legTrainingEntity.getExercises().get(0).getSeries().get(0).getRepetitions()));
         assertThat(legTraining.getExercises().get(0).getSeries().get(0).getWeight(),
                 is(legTrainingEntity.getExercises().get(0).getSeries().get(0).getWeight()));
+    }
+
+    @Test
+    void givenLegTrainingOfUserWhenMapToEntityThenReturnLegTrainingEntityOfUser() {
+        Training legTraining = this.trainingModelRepository.getLegTraining();
+        legTraining.setUser(new UserModelRepository().getUser());
+
+        TrainingEntity legTrainingEntity = this.mapper.toEntity(legTraining);
+
+        assertThat(legTrainingEntity.getId(), is(legTraining.getId()));
+        assertThat(legTrainingEntity.getName(), is(legTraining.getName()));
+        assertThat(legTrainingEntity.getTrainingDate(), is(legTraining.getTrainingDate()));
+        assertThat(legTrainingEntity.getExercises(), is(legTraining.getExercises()));
+        assertThat(legTrainingEntity.getPlayer().getId(), is(legTraining.getUser().getId()));
+    }
+
+    @Test
+    void givenLegTrainingEntityOfUserWhenMapToDomainThenReturnLegTrainingOfUser() {
+        TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
+        legTrainingEntity.setPlayer(new UserEntityRepository().getUser());
+
+        Training legTraining = this.mapper.toDomain(legTrainingEntity);
+
+        assertThat(legTraining.getId(), is(legTrainingEntity.getId()));
+        assertThat(legTraining.getName(), is(legTrainingEntity.getName()));
+        assertThat(legTraining.getTrainingDate(), is(legTrainingEntity.getTrainingDate()));
+        assertThat(legTraining.getExercises(), is(legTrainingEntity.getExercises()));
+        assertThat(legTraining.getUser().getId(), is(legTrainingEntity.getPlayer().getId()));
     }
 }

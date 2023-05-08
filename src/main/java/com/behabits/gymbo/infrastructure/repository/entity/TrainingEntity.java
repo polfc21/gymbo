@@ -22,4 +22,6 @@ public class TrainingEntity {
     private LocalDateTime trainingDate;
     @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExerciseEntity> exercises;
+    @ManyToOne
+    private UserEntity player;
 }
