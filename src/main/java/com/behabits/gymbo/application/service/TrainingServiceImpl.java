@@ -51,13 +51,12 @@ public class TrainingServiceImpl implements TrainingService {
     public void deleteTraining(Long id) {
         Training training = this.trainingDao.findTrainingById(id);
         this.authorityService.checkLoggedUserHasPermissions(training);
-        this.trainingDao.deleteTraining(id);
+        this.trainingDao.deleteTraining(training);
     }
 
     @Override
     public Training addExercise(Long id, Exercise exercise) {
-        Training training = this.trainingDao.findTrainingById(id);
-        this.authorityService.checkLoggedUserHasPermissions(training);
+        Training training = this.findTrainingById(id);
         training.addExercise(exercise);
         return this.trainingDao.createTraining(training);
     }

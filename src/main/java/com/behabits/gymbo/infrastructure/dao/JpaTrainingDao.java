@@ -44,8 +44,7 @@ public class JpaTrainingDao implements TrainingDao {
 
     @Override
     public Training updateTraining(Long id, Training training) {
-        TrainingEntity trainingEntity = this.trainingRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Training with " + id + " not found"));
+        TrainingEntity trainingEntity = this.trainingRepository.getReferenceById(id);
         trainingEntity.setName(training.getName());
         trainingEntity.setTrainingDate(training.getTrainingDate());
         trainingEntity = this.trainingRepository.save(trainingEntity);
@@ -53,9 +52,7 @@ public class JpaTrainingDao implements TrainingDao {
     }
 
     @Override
-    public void deleteTraining(Long id) {
-        TrainingEntity trainingEntity = this.trainingRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Training with " + id + " not found"));
-        this.trainingRepository.delete(trainingEntity);
+    public void deleteTraining(Training training) {
+        this.trainingRepository.deleteById(training.getId());
     }
 }

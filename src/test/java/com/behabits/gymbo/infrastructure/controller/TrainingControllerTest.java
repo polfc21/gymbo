@@ -1,6 +1,7 @@
 package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
@@ -171,6 +172,20 @@ class TrainingControllerTest {
 
     @WithMockUser
     @Test
+    void givenLoggedUserHasNotPermissionsWhenFindTrainingByIdThenReturn403() throws Exception {
+        given(this.trainingService.findTrainingById(1L)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.TRAININGS + "/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
+    @Test
     void givenLegTrainingRequestWhenCreateTrainingThenReturnLegTrainingResponseAnd201() throws Exception {
         TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
@@ -309,6 +324,25 @@ class TrainingControllerTest {
 
     @WithMockUser
     @Test
+    void givenLoggedUserHasNotPermissionsWhenUpdateTrainingThenReturn403() throws Exception {
+        Long id = 1L;
+        TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
+        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+        given(this.mapper.toDomain(legRequest)).willReturn(legTraining);
+        given(this.trainingService.updateTraining(id, legTraining)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(legRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
+    @Test
     void givenExistentIdWhenUpdateTrainingThenReturn200() throws Exception {
         Long id = 1L;
         TrainingRequest legRequest = this.trainingRequestRepository.getLegTrainingRequestWithSquatExercise();
@@ -356,6 +390,21 @@ class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenDeleteTrainingThenReturn403() throws Exception {
+        Long id = 1L;
+        doThrow(PermissionsException.class).when(this.trainingService).deleteTraining(id);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
 
     @WithMockUser
@@ -426,6 +475,25 @@ class TrainingControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenLoggedUserHasNotPermissionsAndCorrectExerciseWhenAddExerciseThenReturn403() throws Exception {
+        Long id = 1L;
+        ExerciseRequest exerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        Exercise exercise = new ExerciseModelRepository().getSquatExercise();
+        given(this.exerciseMapper.toDomain(exerciseRequest)).willReturn(exercise);
+        given(this.trainingService.addExercise(id, exercise)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.TRAININGS + ApiConstant.ID + ApiConstant.EXERCISES, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(exerciseRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
 
     @WithMockUser
