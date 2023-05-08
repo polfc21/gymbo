@@ -2,10 +2,14 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.TrainingDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Training;
+import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
+import com.behabits.gymbo.domain.repositories.UserModelRepository;
+import com.behabits.gymbo.domain.services.AuthorityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +36,12 @@ class TrainingServiceImplTest {
     @Mock
     private TrainingDao trainingDao;
 
+    @Mock
+    private AuthorityService authorityService;
+
     private final TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
+
+    private final User loggedUser = new UserModelRepository().getUser();
 
     @Test
     void givenMonthWhenFindTrainingsByMonthThenReturnTrainingsOfMonth() {
@@ -40,19 +49,32 @@ class TrainingServiceImplTest {
         Year year = Year.now();
         Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
-        when(this.trainingDao.findTrainingsByMonthAndYear(month, year)).thenReturn(List.of(training));
+        when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
+        when(this.trainingDao.findTrainingsByMonthAndYearAndUserId(month, year, this.loggedUser.getId())).thenReturn(List.of(training));
 
         assertThat(this.trainingService.findTrainingsByMonthAndYear(month, year), is(List.of(training)));
     }
 
     @Test
-    void givenExistentIdWhenFindTrainingByIdThenReturnTraining() {
+    void givenExistentIdAndLoggedUserHasPermissionsWhenFindTrainingByIdThenReturnTraining() {
         Long id = 1L;
         Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(training);
         when(this.trainingDao.findTrainingById(id)).thenReturn(training);
 
         assertThat(this.trainingService.findTrainingById(id), is(training));
+    }
+
+    @Test
+    void givenExistentIdAndLoggedUserHasNotPermissionsWhenFindTrainingByIdThenThrowPermissionsException() {
+        Long id = 1L;
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(training);
+        when(this.trainingDao.findTrainingById(id)).thenReturn(training);
+
+        assertThrows(PermissionsException.class, () -> this.trainingService.findTrainingById(id));
     }
 
     @Test
@@ -68,9 +90,12 @@ class TrainingServiceImplTest {
     void givenTrainingWhenCreateTrainingThenReturnTraining() {
         Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
+        when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
         when(this.trainingDao.createTraining(training)).thenReturn(training);
 
-        assertThat(this.trainingService.createTraining(training), is(training));
+        Training createdTraining = this.trainingService.createTraining(training);
+        assertThat(createdTraining, is(training));
+        assertThat(createdTraining.getUser(), is(this.loggedUser));
     }
 
     @Test
@@ -84,13 +109,26 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void givenExistentIdWhenUpdateTrainingThenReturnTrainingUpdated() {
+    void givenExistentIdAndLoggedUserHasPermissionsWhenUpdateTrainingThenReturnTrainingUpdated() {
         Long id = 1L;
         Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
+        when(this.trainingDao.findTrainingById(id)).thenReturn(training);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(training);
         when(this.trainingDao.updateTraining(id, training)).thenReturn(training);
 
         assertThat(this.trainingService.updateTraining(id, training), is(training));
+    }
+
+    @Test
+    void givenExistentIdAndLoggedUserHasNotPermissionsWhenUpdateTrainingThenThrowPermissionsException() {
+        Long id = 1L;
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+
+        when(this.trainingDao.findTrainingById(id)).thenReturn(training);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(training);
+
+        assertThrows(PermissionsException.class, () -> this.trainingService.updateTraining(id, training));
     }
 
     @Test
@@ -103,9 +141,12 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void givenExistentIdWhenDeleteTrainingThenTrainingDaoDeleteTraining() {
+    void givenExistentIdAndLoggedUserHasPermissionsWhenDeleteTrainingThenTrainingDaoDeleteTraining() {
         Long id = 1L;
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
 
+        when(this.trainingDao.findTrainingById(id)).thenReturn(training);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(training);
         doNothing().when(this.trainingDao).deleteTraining(id);
 
         try {
@@ -116,12 +157,24 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void givenExistentIdWhenAddExerciseThenReturnTrainingWithExerciseAdded() {
+    void givenExistentIdAndLoggedUserHasNotPermissionsWhenDeleteTrainingThenThrowPermissionsException() {
+        Long id = 1L;
+        Training training = this.trainingModelRepository.getLegTrainingWithSquatExercise();
+
+        when(this.trainingDao.findTrainingById(id)).thenReturn(training);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(training);
+
+        assertThrows(PermissionsException.class, () -> this.trainingService.deleteTraining(id));
+    }
+
+    @Test
+    void givenExistentIdAndLoggedUserHasPermissionsWhenAddExerciseThenReturnTrainingWithExerciseAdded() {
         Long id = 1L;
         Exercise exercise = new ExerciseModelRepository().getSquatExercise();
         Training training = this.trainingModelRepository.getLegTraining();
 
         when(this.trainingDao.findTrainingById(id)).thenReturn(training);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(training);
         when(this.trainingDao.createTraining(training)).thenReturn(training);
         Training trainingWithExerciseAdded = this.trainingService.addExercise(id, exercise);
 
@@ -137,5 +190,17 @@ class TrainingServiceImplTest {
         when(this.trainingDao.findTrainingById(id)).thenThrow(NotFoundException.class);
 
         assertThrows(NotFoundException.class, () -> this.trainingService.addExercise(id, exercise));
+    }
+
+    @Test
+    void givenExistentIdAndLoggedUserHasNotPermissionsWhenAddExerciseThenThrowPermissionsException() {
+        Long id = 1L;
+        Exercise exercise = new ExerciseModelRepository().getSquatExercise();
+        Training training = this.trainingModelRepository.getLegTraining();
+
+        when(this.trainingDao.findTrainingById(id)).thenReturn(training);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(training);
+
+        assertThrows(PermissionsException.class, () -> this.trainingService.addExercise(id, exercise));
     }
 }
