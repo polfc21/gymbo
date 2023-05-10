@@ -28,4 +28,6 @@ public class UserEntity {
     private boolean enabled;
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TrainingEntity> trainings;
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ExerciseEntity> exercises;
 }
