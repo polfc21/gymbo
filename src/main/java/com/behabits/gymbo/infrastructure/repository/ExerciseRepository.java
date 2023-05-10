@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> {
     List<ExerciseEntity> findAllByTrainingId(Long trainingId);
+    ExerciseEntity findByIdAndPlayerId(Long id, Long playerId);
 }
