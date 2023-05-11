@@ -11,5 +11,5 @@ public interface ExerciseDao {
     List<Exercise> findExercisesByTrainingIdAndUserId(Long trainingId, Long userId);
     List<Serie> findSeriesByExerciseId(Long exerciseId);
     Serie createSerie(Long exerciseId, Serie serie);
-    void deleteExercise(Long id);
+    void deleteExercise(Exercise exercise);
 }

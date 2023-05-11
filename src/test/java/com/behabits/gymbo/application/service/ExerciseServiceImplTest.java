@@ -186,7 +186,7 @@ class ExerciseServiceImplTest {
 
         when(this.exerciseDao.findExerciseById(exercise.getId())).thenReturn(exercise);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(exercise);
-        doNothing().when(this.exerciseDao).deleteExercise(exercise.getId());
+        doNothing().when(this.exerciseDao).deleteExercise(exercise);
 
         try {
             this.exerciseService.deleteExercise(exercise.getId());

@@ -46,14 +46,13 @@ public class JpaExerciseDao implements ExerciseDao {
 
     @Override
     public List<Serie> findSeriesByExerciseId(Long exerciseId) {
-        Exercise exercise = this.findExerciseById(exerciseId);
-        return exercise.getSeries();
+        ExerciseEntity exerciseEntity = this.exerciseRepository.getReferenceById(exerciseId);
+        return this.serieMapper.toDomain(exerciseEntity.getSeries());
     }
 
     @Override
     public Serie createSerie(Long exerciseId, Serie serie) {
-        ExerciseEntity exerciseEntity = this.exerciseRepository.findById(exerciseId)
-                .orElseThrow(() -> new NotFoundException("Exercise with " + exerciseId + " not found"));
+        ExerciseEntity exerciseEntity = this.exerciseRepository.getReferenceById(exerciseId);
         SerieEntity serieEntity = this.serieMapper.toEntity(serie);
         serieEntity.setExercise(exerciseEntity);
         serieEntity = this.serieRepository.save(serieEntity);
@@ -61,9 +60,7 @@ public class JpaExerciseDao implements ExerciseDao {
     }
 
     @Override
-    public void deleteExercise(Long id) {
-        ExerciseEntity exerciseEntity = this.exerciseRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Exercise with " + id + " not found"));
-        this.exerciseRepository.delete(exerciseEntity);
+    public void deleteExercise(Exercise exercise) {
+        this.exerciseRepository.deleteById(exercise.getId());
     }
 }

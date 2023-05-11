@@ -56,6 +56,6 @@ public class ExerciseServiceImpl implements ExerciseService {
     public void deleteExercise(Long id) {
         Exercise exercise = this.findExerciseById(id);
         this.authorityService.checkLoggedUserHasPermissions(exercise);
-        this.exerciseDao.deleteExercise(id);
+        this.exerciseDao.deleteExercise(exercise);
     }
 }
