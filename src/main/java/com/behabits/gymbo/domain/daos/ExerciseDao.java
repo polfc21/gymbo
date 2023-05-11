@@ -8,7 +8,7 @@ import java.util.List;
 public interface ExerciseDao {
     Exercise findExerciseById(Long id);
     Exercise createExercise(Exercise exercise);
-    List<Exercise> findExercisesByTrainingId(Long trainingId);
+    List<Exercise> findExercisesByTrainingIdAndUserId(Long trainingId, Long userId);
     List<Serie> findSeriesByExerciseId(Long exerciseId);
     Serie createSerie(Long exerciseId, Serie serie);
     void deleteExercise(Long id);

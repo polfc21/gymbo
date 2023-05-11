@@ -93,15 +93,16 @@ class JpaExerciseDaoTest {
     }
 
     @Test
-    void givenExerciseWithTrainingIdWhenFindExercisesByTrainingIdThenReturnExerciseList() {
+    void givenExerciseWithTrainingIdAndUserIdWhenFindExercisesByTrainingIdThenReturnExerciseList() {
         Long trainingId = 1L;
+        Long userId = 1L;
         Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
         ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
 
-        when(this.exerciseRepository.findAllByTrainingId(trainingId)).thenReturn(List.of(squatExerciseEntity));
+        when(this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId)).thenReturn(List.of(squatExerciseEntity));
         when(this.mapper.toDomain(List.of(squatExerciseEntity))).thenReturn(List.of(squatExercise));
 
-        assertThat(this.exerciseDao.findExercisesByTrainingId(trainingId), is(List.of(squatExercise)));
+        assertThat(this.exerciseDao.findExercisesByTrainingIdAndUserId(trainingId, userId), is(List.of(squatExercise)));
     }
 
     @Test
