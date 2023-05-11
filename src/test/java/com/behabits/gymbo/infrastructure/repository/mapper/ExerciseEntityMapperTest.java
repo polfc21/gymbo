@@ -22,7 +22,7 @@ class ExerciseEntityMapperTest {
     private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
 
     @Test
-    void givenSquatExerciseWhenMapToEntityThenReturnSquatExerciseEntity() {
+    void givenSquatExerciseOfUserWhenMapToEntityThenReturnSquatExerciseEntityOfUser() {
         Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
 
         ExerciseEntity squatExerciseEntity = this.mapper.toEntity(squatExercise);
@@ -30,10 +30,11 @@ class ExerciseEntityMapperTest {
         assertThat(squatExerciseEntity.getId(), is(squatExercise.getId()));
         assertThat(squatExerciseEntity.getName(), is(squatExercise.getName()));
         assertThat(squatExerciseEntity.getSeries(), is(squatExercise.getSeries()));
+        assertThat(squatExerciseEntity.getPlayer().getId(), is(squatExercise.getUser().getId()));
     }
 
     @Test
-    void givenSquatExerciseEntityWhenMapToDomainThenReturnSquatExercise() {
+    void givenSquatExerciseEntityOfUserWhenMapToDomainThenReturnSquatExerciseOfUser() {
         ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExercise();
 
         Exercise squatExercise = this.mapper.toDomain(squatExerciseEntity);
@@ -41,10 +42,11 @@ class ExerciseEntityMapperTest {
         assertThat(squatExercise.getId(), is(squatExerciseEntity.getId()));
         assertThat(squatExercise.getName(), is(squatExerciseEntity.getName()));
         assertThat(squatExercise.getSeries(), is(squatExerciseEntity.getSeries()));
+        assertThat(squatExercise.getUser().getId(), is(squatExerciseEntity.getPlayer().getId()));
     }
 
     @Test
-    void givenSquatExerciseWithSerieWhenMapToEntityThenReturnSquatExerciseEntityWithSerie() {
+    void givenSquatExerciseWithSerieOfUserWhenMapToEntityThenReturnSquatExerciseEntityWithSerieOfUser() {
         Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
 
         ExerciseEntity squatExerciseEntity = this.mapper.toEntity(squatExercise);
@@ -60,6 +62,13 @@ class ExerciseEntityMapperTest {
                 is(squatExercise.getSeries().get(0).getRepetitions()));
         assertThat(squatExerciseEntity.getSeries().get(0).getWeight(),
                 is(squatExercise.getSeries().get(0).getWeight()));
+
+        assertThat(squatExerciseEntity.getPlayer().getId(),
+                is(squatExercise.getUser().getId()));
+        assertThat(squatExerciseEntity.getPlayer().getUsername(),
+                is(squatExercise.getUser().getUsername()));
+        assertThat(squatExerciseEntity.getPlayer().getPassword(),
+                is(squatExercise.getUser().getPassword()));
     }
 
     @Test
@@ -79,5 +88,12 @@ class ExerciseEntityMapperTest {
                 is(squatExerciseEntity.getSeries().get(0).getRepetitions()));
         assertThat(squatExercise.getSeries().get(0).getWeight(),
                 is(squatExerciseEntity.getSeries().get(0).getWeight()));
+
+        assertThat(squatExercise.getUser().getId(),
+                is(squatExerciseEntity.getPlayer().getId()));
+        assertThat(squatExercise.getUser().getUsername(),
+                is(squatExerciseEntity.getPlayer().getUsername()));
+        assertThat(squatExercise.getUser().getPassword(),
+                is(squatExerciseEntity.getPlayer().getPassword()));
     }
 }
