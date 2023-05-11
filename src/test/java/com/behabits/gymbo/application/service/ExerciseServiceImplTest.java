@@ -2,10 +2,14 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.ExerciseDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Serie;
+import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.repositories.SerieModelRepository;
+import com.behabits.gymbo.domain.repositories.UserModelRepository;
+import com.behabits.gymbo.domain.services.AuthorityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,18 +34,35 @@ class ExerciseServiceImplTest {
     @Mock
     private ExerciseDao exerciseDao;
 
+    @Mock
+    private AuthorityService authorityService;
+
     private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
 
     private final SerieModelRepository serieModelRepository = new SerieModelRepository();
 
+    private final User loggedUser = new UserModelRepository().getUser();
+
     @Test
-    void givenExistentIdWhenFindExerciseByIdThenReturnExercise() {
+    void givenExistentIdAndUserHasPermissionsWhenFindExerciseByIdThenReturnExercise() {
+        Long id = 1L;
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+        when(this.exerciseDao.findExerciseById(id)).thenReturn(exercise);
+
+        assertThat(this.exerciseService.findExerciseById(id), is(exercise));
+    }
+
+    @Test
+    void givenExistentIdAndUserHasNotPermissionsWhenFindExerciseByIdThenThrowPermissionsException() {
         Long id = 1L;
         Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
 
         when(this.exerciseDao.findExerciseById(id)).thenReturn(exercise);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(exercise);
 
-        assertThat(this.exerciseService.findExerciseById(id), is(exercise));
+        assertThrows(PermissionsException.class, () -> this.exerciseService.findExerciseById(id));
     }
 
     @Test
@@ -57,9 +78,12 @@ class ExerciseServiceImplTest {
     void givenExerciseWhenCreateExerciseThenReturnExercise() {
         Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
 
+        when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
         when(this.exerciseDao.createExercise(exercise)).thenReturn(exercise);
 
-        assertThat(this.exerciseService.createExercise(exercise), is(exercise));
+        Exercise createdExercise = this.exerciseService.createExercise(exercise);
+        assertThat(createdExercise, is(exercise));
+        assertThat(createdExercise.getUser(), is(this.loggedUser));
     }
 
     @Test
@@ -67,7 +91,8 @@ class ExerciseServiceImplTest {
         Long trainingId = 1L;
         Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
 
-        when(this.exerciseDao.findExercisesByTrainingId(trainingId)).thenReturn(List.of(exercise));
+        when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
+        when(this.exerciseDao.findExercisesByTrainingIdAndUserId(trainingId, this.loggedUser.getId())).thenReturn(List.of(exercise));
 
         assertThat(this.exerciseService.findExercisesByTrainingId(trainingId), is(List.of(exercise)));
     }
@@ -76,29 +101,54 @@ class ExerciseServiceImplTest {
     void givenNonExistentExerciseIdWhenFindSeriesByExerciseIdThenThrowNotFoundException() {
         Long exerciseId = 1L;
 
-        when(this.exerciseDao.findSeriesByExerciseId(exerciseId)).thenThrow(NotFoundException.class);
+        when(this.exerciseDao.findExerciseById(exerciseId)).thenThrow(NotFoundException.class);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.findSeriesByExerciseId(exerciseId));
     }
 
     @Test
-    void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturnSerieList() {
-        Long exerciseId = 1L;
+    void givenExistentExerciseIdAndLoggedUserHasPermissionsWhenFindSeriesByExerciseIdThenReturnSerieList() {
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
         Serie serie = this.serieModelRepository.getSquatSerie();
 
-        when(this.exerciseDao.findSeriesByExerciseId(exerciseId)).thenReturn(List.of(serie));
+        when(this.exerciseDao.findExerciseById(exercise.getId())).thenReturn(exercise);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+        when(this.exerciseDao.findSeriesByExerciseId(exercise.getId())).thenReturn(List.of(serie));
 
-        assertThat(this.exerciseService.findSeriesByExerciseId(exerciseId), is(List.of(serie)));
+        assertThat(this.exerciseService.findSeriesByExerciseId(exercise.getId()), is(List.of(serie)));
     }
 
     @Test
-    void givenExistentExerciseIdWhenCreateSerieThenReturnSerie() {
-        Long exerciseId = 1L;
+    void givenExistentExerciseIdAndLoggedUserHasNotPermissionsWhenFindSeriesByExerciseIdThenThrowPermissionsException() {
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+
+        when(this.exerciseDao.findExerciseById(exercise.getId())).thenReturn(exercise);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+
+        assertThrows(PermissionsException.class, () -> this.exerciseService.findSeriesByExerciseId(exercise.getId()));
+    }
+
+    @Test
+    void givenExistentExerciseIdAndUserHasPermissionsWhenCreateSerieThenReturnSerie() {
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
         Serie serie = this.serieModelRepository.getSquatSerie();
 
-        when(this.exerciseDao.createSerie(exerciseId, serie)).thenReturn(serie);
+        when(this.exerciseDao.findExerciseById(exercise.getId())).thenReturn(exercise);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+        when(this.exerciseDao.createSerie(exercise.getId(), serie)).thenReturn(serie);
 
-        assertThat(this.exerciseService.createSerie(exerciseId, serie), is(serie));
+        assertThat(this.exerciseService.createSerie(exercise.getId(), serie), is(serie));
+    }
+
+    @Test
+    void givenExistentExerciseIdAndUserHasNotPermissionsWhenCreateSerieThenThrowPermissionsException() {
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+        Serie serie = this.serieModelRepository.getSquatSerie();
+
+        when(this.exerciseDao.findExerciseById(exercise.getId())).thenReturn(exercise);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+
+        assertThrows(PermissionsException.class, () -> this.exerciseService.createSerie(exercise.getId(), serie));
     }
 
     @Test
@@ -106,7 +156,7 @@ class ExerciseServiceImplTest {
         Long exerciseId = 1L;
         Serie serie = this.serieModelRepository.getSquatSerie();
 
-        when(this.exerciseDao.createSerie(exerciseId, serie)).thenThrow(NotFoundException.class);
+        when(this.exerciseDao.findExerciseById(exerciseId)).thenThrow(NotFoundException.class);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.createSerie(exerciseId, serie));
     }
@@ -115,19 +165,31 @@ class ExerciseServiceImplTest {
     void givenNonExistentExerciseIdWhenDeleteExerciseThenThrowNotFoundException() {
         Long exerciseId = 1L;
 
-        doThrow(NotFoundException.class).when(this.exerciseDao).deleteExercise(exerciseId);
+        doThrow(NotFoundException.class).when(this.exerciseDao).findExerciseById(exerciseId);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.deleteExercise(exerciseId));
     }
 
     @Test
-    void givenExistentExerciseIdWhenDeleteExerciseThenDoNothing() {
-        Long exerciseId = 1L;
+    void givenExistentExerciseIdAndUserHasNotPermissionsWhenDeleteExerciseThenThrowPermissionsException() {
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
 
-        doNothing().when(this.exerciseDao).deleteExercise(exerciseId);
+        when(this.exerciseDao.findExerciseById(exercise.getId())).thenReturn(exercise);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+
+        assertThrows(PermissionsException.class, () -> this.exerciseService.deleteExercise(exercise.getId()));
+    }
+
+    @Test
+    void givenExistentExerciseIdAndUserHasPermissionsWhenDeleteExerciseThenDoNothing() {
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+
+        when(this.exerciseDao.findExerciseById(exercise.getId())).thenReturn(exercise);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+        doNothing().when(this.exerciseDao).deleteExercise(exercise.getId());
 
         try {
-            this.exerciseService.deleteExercise(exerciseId);
+            this.exerciseService.deleteExercise(exercise.getId());
         } catch (NotFoundException e) {
             fail("Should not throw NotFoundException");
         }
