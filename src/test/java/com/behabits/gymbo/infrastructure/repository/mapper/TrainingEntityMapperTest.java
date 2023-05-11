@@ -1,9 +1,13 @@
 package com.behabits.gymbo.infrastructure.repository.mapper;
 
+import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Training;
+import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
+import com.behabits.gymbo.infrastructure.repository.entity.ExerciseEntity;
 import com.behabits.gymbo.infrastructure.repository.entity.TrainingEntity;
+import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
 import com.behabits.gymbo.infrastructure.repository.repositories.TrainingEntityRepository;
 import com.behabits.gymbo.infrastructure.repository.repositories.UserEntityRepository;
 import org.junit.jupiter.api.Test;
@@ -48,19 +52,25 @@ class TrainingEntityMapperTest {
     }
 
     @Test
-    void givenLegTrainingWithSquatExerciseWhenMapToEntityThenReturnLegTrainingEntityWithSquatExercise() {
+    void givenLegTrainingOfUserWithSquatExerciseWhenMapToEntityThenReturnLegTrainingEntityWithSquatExerciseOfPlayer() {
         Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
-
+        User user = new UserModelRepository().getUser();
+        legTraining.setUser(user);
+        Exercise squatExercise = legTraining.getExercises().get(0);
+        squatExercise.setUser(user);
         TrainingEntity legTrainingEntity = this.mapper.toEntity(legTraining);
 
         assertThat(legTrainingEntity.getId(), is(legTraining.getId()));
         assertThat(legTrainingEntity.getName(), is(legTraining.getName()));
         assertThat(legTrainingEntity.getTrainingDate(), is(legTraining.getTrainingDate()));
+        assertThat(legTrainingEntity.getPlayer().getUsername(), is(legTraining.getUser().getUsername()));
 
         assertThat(legTrainingEntity.getExercises().get(0).getId(),
                 is(legTraining.getExercises().get(0).getId()));
         assertThat(legTrainingEntity.getExercises().get(0).getName(),
                 is(legTraining.getExercises().get(0).getName()));
+        assertThat(legTrainingEntity.getExercises().get(0).getPlayer().getUsername(),
+                is(legTraining.getExercises().get(0).getUser().getUsername()));
 
         assertThat(legTrainingEntity.getExercises().get(0).getSeries().get(0).getId(),
                 is(legTraining.getExercises().get(0).getSeries().get(0).getId()));
@@ -73,19 +83,26 @@ class TrainingEntityMapperTest {
     }
 
     @Test
-    void givenLegTrainingEntityWithSquatExerciseWhenMapToDomainThenReturnLegTrainingWithSquatExercise() {
+    void givenLegTrainingEntityWithSquatExerciseOfUserWhenMapToDomainThenReturnLegTrainingWithSquatExerciseOfUser() {
         TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTrainingWithSquatExerciseWithSeries();
-
+        UserEntity player = new UserEntityRepository().getUser();
+        legTrainingEntity.setPlayer(player);
+        ExerciseEntity squatExerciseEntity = legTrainingEntity.getExercises().get(0);
+        squatExerciseEntity.setPlayer(player);
         Training legTraining = this.mapper.toDomain(legTrainingEntity);
 
         assertThat(legTraining.getId(), is(legTrainingEntity.getId()));
         assertThat(legTraining.getName(), is(legTrainingEntity.getName()));
         assertThat(legTraining.getTrainingDate(), is(legTrainingEntity.getTrainingDate()));
+        assertThat(legTraining.getUser().getUsername(),
+                is(legTrainingEntity.getPlayer().getUsername()));
 
         assertThat(legTraining.getExercises().get(0).getId(),
                 is(legTrainingEntity.getExercises().get(0).getId()));
         assertThat(legTraining.getExercises().get(0).getName(),
                 is(legTrainingEntity.getExercises().get(0).getName()));
+        assertThat(legTraining.getExercises().get(0).getUser().getUsername(),
+                is(legTrainingEntity.getExercises().get(0).getPlayer().getUsername()));
 
         assertThat(legTraining.getExercises().get(0).getSeries().get(0).getId(),
                 is(legTrainingEntity.getExercises().get(0).getSeries().get(0).getId()));
