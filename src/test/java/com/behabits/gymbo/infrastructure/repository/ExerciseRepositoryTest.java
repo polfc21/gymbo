@@ -27,29 +27,53 @@ class ExerciseRepositoryTest {
     private TestEntityManager entityManager;
 
     @Test
-    void givenExerciseWithTrainingIdWhenFindAllByTrainingIdThenReturnExerciseListSizeIs1() {
+    void givenExerciseWithTrainingIdAndPlayerIdWhenFindAllByTrainingIdAndPlayerIdThenReturnExerciseListSizeIs1() {
+        UserEntity player = new UserEntityRepository().getUser();
+        player.setId(null);
         TrainingEntity training = new TrainingEntityRepository().getLegTraining();
         training.setId(null);
         ExerciseEntity exercise = new ExerciseEntityRepository().getSquatExercise();
         exercise.setId(null);
-        Long trainingId = entityManager.persistAndGetId(training, Long.class);
+        Long playerId = this.entityManager.persistAndGetId(player, Long.class);
+        training.setPlayer(player);
+        exercise.setPlayer(player);
+        Long trainingId = this.entityManager.persistAndGetId(training, Long.class);
         exercise.setTraining(training);
-        entityManager.persist(exercise);
+        this.entityManager.persist(exercise);
 
-        List<ExerciseEntity> exerciseList = exerciseRepository.findAllByTrainingId(trainingId);
+        List<ExerciseEntity> exerciseList = this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, playerId);
 
         assertThat(exerciseList.size(), is(1));
     }
 
     @Test
-    void givenExerciseWithoutTrainingIdWhenFindAllByTrainingIdNullThenReturnExerciseListSizeIs1() {
+    void givenExerciseWithoutTrainingIdAndWithPlayerIdWhenFindAllByTrainingIdNullThenReturnExerciseListSizeIs1() {
+        UserEntity player = new UserEntityRepository().getUser();
+        player.setId(null);
         ExerciseEntity exercise = new ExerciseEntityRepository().getSquatExercise();
         exercise.setId(null);
-        entityManager.persist(exercise);
+        Long playerId = this.entityManager.persistAndGetId(player, Long.class);
+        exercise.setPlayer(player);
+        this.entityManager.persist(exercise);
 
-        List<ExerciseEntity> exerciseList = exerciseRepository.findAllByTrainingId(null);
+        List<ExerciseEntity> exerciseList = this.exerciseRepository.findAllByTrainingIdAndPlayerId(null, playerId);
 
         assertThat(exerciseList.size(), is(1));
+    }
+
+    @Test
+    void givenExerciseWithoutTrainingIdAndOtherPlayerIdWhenFindAllByTrainingIdNullThenReturnExerciseListSizeIs0() {
+        UserEntity player = new UserEntityRepository().getUser();
+        player.setId(null);
+        ExerciseEntity exercise = new ExerciseEntityRepository().getSquatExercise();
+        exercise.setId(null);
+        Long playerId = this.entityManager.persistAndGetId(player, Long.class);
+        exercise.setPlayer(null);
+        this.entityManager.persist(exercise);
+
+        List<ExerciseEntity> exerciseList = this.exerciseRepository.findAllByTrainingIdAndPlayerId(null, playerId);
+
+        assertThat(exerciseList.size(), is(0));
     }
 
     @Test
