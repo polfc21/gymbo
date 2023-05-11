@@ -21,4 +21,6 @@ public class ExerciseEntity {
     private List<SerieEntity> series;
     @ManyToOne
     private TrainingEntity training;
+    @ManyToOne
+    private UserEntity player;
 }

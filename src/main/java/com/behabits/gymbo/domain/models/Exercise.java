@@ -13,4 +13,5 @@ public class Exercise {
     private Long id;
     private String name;
     private List<Serie> series;
+    private User user;
 }

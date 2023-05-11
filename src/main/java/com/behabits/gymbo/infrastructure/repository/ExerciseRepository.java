@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> {
-    List<ExerciseEntity> findAllByTrainingId(Long trainingId);
+    List<ExerciseEntity> findAllByTrainingIdAndPlayerId(Long trainingId, Long playerId);
+    ExerciseEntity findByIdAndPlayerId(Long id, Long playerId);
 }

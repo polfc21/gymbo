@@ -12,6 +12,7 @@ import java.util.List;
 public class ExerciseEntityMapper {
 
     private final SerieEntityMapper serieEntityMapper;
+    private final UserEntityMapper userEntityMapper;
 
     public List<Exercise> toDomain(List<ExerciseEntity> entities) {
         return entities != null ? entities.stream()
@@ -24,6 +25,7 @@ public class ExerciseEntityMapper {
         domain.setId(entity.getId());
         domain.setName(entity.getName());
         domain.setSeries(this.serieEntityMapper.toDomain(entity.getSeries()));
+        domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
         return domain;
     }
 
@@ -41,6 +43,7 @@ public class ExerciseEntityMapper {
         if (entity.getSeries() != null) {
             entity.getSeries().forEach(serieEntity -> serieEntity.setExercise(entity));
         }
+        entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
         return entity;
     }
 

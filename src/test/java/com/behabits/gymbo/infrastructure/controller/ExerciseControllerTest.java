@@ -1,6 +1,7 @@
 package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
@@ -100,6 +101,19 @@ class ExerciseControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenLoggedUserHasNotPermissionsWhenFindExerciseByIdThenReturn403() throws Exception {
+        given(this.exerciseService.findExerciseById(1L)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + "/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
 
     @WithMockUser
@@ -299,6 +313,19 @@ class ExerciseControllerTest {
         assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
     }
 
+    @Test
+    @WithMockUser
+    void givenLoggedUserHasNotPermissionsWhenFindSeriesByExerciseByIdThenReturn403() throws Exception {
+        given(this.exerciseService.findSeriesByExerciseId(1L)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
     @WithMockUser
     @Test
     void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturn200() throws Exception {
@@ -317,6 +344,24 @@ class ExerciseControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(seriesResponse)));
+    }
+
+    @Test
+    @WithMockUser
+    void givenLoggedUserHasNotPermissionsWhenCreateSerieThenReturn403() throws Exception {
+        SerieRequest squatSerieRequest = this.serieRequestRepository.getSquatSerieRequest();
+        Serie squatSerie = this.serieModelRepository.getSquatSerie();
+        given(this.serieMapper.toDomain(squatSerieRequest)).willReturn(squatSerie);
+        given(this.exerciseService.createSerie(1L, squatSerie)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(squatSerieRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
 
     @WithMockUser
@@ -369,6 +414,21 @@ class ExerciseControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(squatSerieRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenLoggedUserHasNotPermissionsWhenDeleteExerciseThenReturn403() throws Exception {
+        long exerciseId = 1L;
+        doThrow(PermissionsException.class).when(this.exerciseService).deleteExercise(exerciseId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));

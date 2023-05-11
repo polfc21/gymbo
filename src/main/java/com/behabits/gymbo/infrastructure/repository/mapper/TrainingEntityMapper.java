@@ -2,6 +2,7 @@ package com.behabits.gymbo.infrastructure.repository.mapper;
 
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.infrastructure.repository.entity.TrainingEntity;
+import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,10 @@ public class TrainingEntityMapper {
         entity.setExercises(this.exerciseEntityMapper.toEntity(domain.getExercises()));
         if (entity.getExercises() != null) {
             entity.getExercises().forEach(exerciseEntity -> exerciseEntity.setTraining(entity));
+            if (domain.getUser() != null) {
+                UserEntity player = this.userEntityMapper.toEntity(domain.getUser());
+                entity.getExercises().forEach(exerciseEntity -> exerciseEntity.setPlayer(player));
+            }
         }
         if (domain.getUser() != null) {
             entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));

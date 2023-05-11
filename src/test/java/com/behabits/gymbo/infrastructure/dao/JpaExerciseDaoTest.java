@@ -93,22 +93,16 @@ class JpaExerciseDaoTest {
     }
 
     @Test
-    void givenExerciseWithTrainingIdWhenFindExercisesByTrainingIdThenReturnExerciseList() {
+    void givenExerciseWithTrainingIdAndUserIdWhenFindExercisesByTrainingIdThenReturnExerciseList() {
         Long trainingId = 1L;
+        Long userId = 1L;
         Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
         ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
 
-        when(this.exerciseRepository.findAllByTrainingId(trainingId)).thenReturn(List.of(squatExerciseEntity));
+        when(this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId)).thenReturn(List.of(squatExerciseEntity));
         when(this.mapper.toDomain(List.of(squatExerciseEntity))).thenReturn(List.of(squatExercise));
 
-        assertThat(this.exerciseDao.findExercisesByTrainingId(trainingId), is(List.of(squatExercise)));
-    }
-
-    @Test
-    void givenNonExistentExerciseIdWhenFindSeriesByExerciseIdThenThrowNotFoundException() {
-        when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> this.exerciseDao.findSeriesByExerciseId(1L));
+        assertThat(this.exerciseDao.findExercisesByTrainingIdAndUserId(trainingId, userId), is(List.of(squatExercise)));
     }
 
     @Test
@@ -116,8 +110,8 @@ class JpaExerciseDaoTest {
         Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
         ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
 
-        when(this.exerciseRepository.findById(squatExerciseEntity.getId())).thenReturn(Optional.of(squatExerciseEntity));
-        when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
+        when(this.exerciseRepository.getReferenceById(squatExerciseEntity.getId())).thenReturn(squatExerciseEntity);
+        when(this.serieMapper.toDomain(squatExerciseEntity.getSeries())).thenReturn(squatExercise.getSeries());
 
         assertThat(this.exerciseDao.findSeriesByExerciseId(squatExercise.getId()), is(squatExercise.getSeries()));
     }
@@ -129,7 +123,7 @@ class JpaExerciseDaoTest {
         Serie squatSerie = this.serieModelRepository.getSquatSerie();
         SerieEntity squatSerieEntity = this.serieEntityRepository.getSquatSerie();
 
-        when(this.exerciseRepository.findById(existentId)).thenReturn(Optional.of(squatExerciseEntity));
+        when(this.exerciseRepository.getReferenceById(existentId)).thenReturn(squatExerciseEntity);
         when(this.serieMapper.toEntity(squatSerie)).thenReturn(squatSerieEntity);
         when(this.serieRepository.save(squatSerieEntity)).thenReturn(squatSerieEntity);
         when(this.serieMapper.toDomain(squatSerieEntity)).thenReturn(squatSerie);
@@ -139,26 +133,11 @@ class JpaExerciseDaoTest {
     }
 
     @Test
-    void givenNonExistentExerciseIdWhenCreateSerieThenThrowNotFoundException() {
-        when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
+    void givenExerciseWhenDeleteExerciseThenDeleteExercise() {
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
 
-        assertThrows(NotFoundException.class, () -> this.exerciseDao.findSeriesByExerciseId(1L));
-    }
+        this.exerciseDao.deleteExercise(squatExercise);
 
-    @Test
-    void givenNonExistentExerciseIdWhenDeleteExerciseThenThrowNotFoundException() {
-        when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> this.exerciseDao.deleteExercise(1L));
-    }
-
-    @Test
-    void givenExistentExerciseIdWhenDeleteExerciseThenDeleteExercise() {
-        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
-
-        when(this.exerciseRepository.findById(squatExerciseEntity.getId())).thenReturn(Optional.of(squatExerciseEntity));
-        this.exerciseDao.deleteExercise(squatExerciseEntity.getId());
-
-        verify(this.exerciseRepository).delete(squatExerciseEntity);
+        verify(this.exerciseRepository).deleteById(squatExercise.getId());
     }
 }
