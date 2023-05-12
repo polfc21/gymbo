@@ -3,6 +3,7 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.domain.daos.AuthorityDao;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
 import org.junit.jupiter.api.Test;
@@ -77,6 +78,28 @@ class AuthorityServiceImplTest {
         doThrow(PermissionsException.class).when(this.authorityDao).checkLoggedUserHasPermissions(exercise);
 
         assertThrows(PermissionsException.class, () -> this.authorityService.checkLoggedUserHasPermissions(exercise));
+    }
+
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckSeriePermissionsThenDoNothing() {
+        Serie serie = new Serie();
+
+        doNothing().when(this.authorityDao).checkLoggedUserHasPermissions(serie);
+
+        try {
+            this.authorityService.checkLoggedUserHasPermissions(serie);
+        } catch (Exception e) {
+            fail("Should not throw exception");
+        }
+    }
+
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckSeriePermissionsThenThrowException() {
+        Serie serie = new Serie();
+
+        doThrow(PermissionsException.class).when(this.authorityDao).checkLoggedUserHasPermissions(serie);
+
+        assertThrows(PermissionsException.class, () -> this.authorityService.checkLoggedUserHasPermissions(serie));
     }
 
 }

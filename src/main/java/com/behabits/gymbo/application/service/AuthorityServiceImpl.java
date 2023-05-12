@@ -2,6 +2,7 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.AuthorityDao;
 import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.AuthorityService;
@@ -27,6 +28,11 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public void checkLoggedUserHasPermissions(Exercise exercise) {
         this.authorityDao.checkLoggedUserHasPermissions(exercise);
+    }
+
+    @Override
+    public void checkLoggedUserHasPermissions(Serie serie) {
+        this.authorityDao.checkLoggedUserHasPermissions(serie);
     }
 
 }

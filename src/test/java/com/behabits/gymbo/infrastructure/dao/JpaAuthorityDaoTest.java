@@ -2,19 +2,28 @@ package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Exercise;
+import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
+import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
+import com.behabits.gymbo.infrastructure.repository.SerieRepository;
 import com.behabits.gymbo.infrastructure.repository.TrainingRepository;
 import com.behabits.gymbo.infrastructure.repository.UserRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.ExerciseEntity;
+import com.behabits.gymbo.infrastructure.repository.entity.SerieEntity;
 import com.behabits.gymbo.infrastructure.repository.entity.TrainingEntity;
 import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
 import com.behabits.gymbo.infrastructure.repository.mapper.UserEntityMapper;
+import com.behabits.gymbo.infrastructure.repository.repositories.ExerciseEntityRepository;
+import com.behabits.gymbo.infrastructure.repository.repositories.SerieEntityRepository;
+import com.behabits.gymbo.infrastructure.repository.repositories.TrainingEntityRepository;
 import com.behabits.gymbo.infrastructure.repository.repositories.UserEntityRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -46,42 +55,47 @@ class JpaAuthorityDaoTest {
     private ExerciseRepository exerciseRepository;
 
     @Mock
+    private SerieRepository serieRepository;
+
+    @Mock
     private UserEntityMapper userMapper;
 
-    private final UserEntityRepository userEntityRepository = new UserEntityRepository();
+    private final User user = new UserModelRepository().getUser();
+    private final UserEntity loggedUser = new UserEntityRepository().getUser();
+    private final Training training = new TrainingModelRepository().getLegTraining();
+    private final TrainingEntity trainingEntity = new TrainingEntityRepository().getLegTraining();
+    private final Exercise exercise = new ExerciseModelRepository().getSquatExercise();
+    private final ExerciseEntity exerciseEntity = new ExerciseEntityRepository().getSquatExercise();
+    private final Serie serie = new SerieModelRepository().getSquatSerie();
+    private final SerieEntity serieEntity = new SerieEntityRepository().getSquatSerie();
 
-    private final UserModelRepository userModelRepository = new UserModelRepository();
+    @BeforeEach
+    void setUp() {
+        Authentication authentication = new TestingAuthenticationToken(this.loggedUser.getUsername(), "password");
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 
-    private final TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
-    private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void givenLoggedUserWhenGetLoggedUserThenReturnLoggedUser() {
-        UserEntity userEntity = this.userEntityRepository.getUser();
-        User user = this.userModelRepository.getUser();
-        Authentication authentication = new TestingAuthenticationToken(userEntity.getUsername(), "password");
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
 
-        when(this.userRepository.findByUsername(userEntity.getUsername())).thenReturn(userEntity);
-        when(this.userMapper.toDomain(userEntity)).thenReturn(user);
-
-        assertThat(this.authorityDao.getLoggedUser(), is(user));
+        assertThat(this.authorityDao.getLoggedUser(), is(this.user));
     }
 
     @Test
     void givenLoggedUserHasPermissionsWhenCheckHasTrainingPermissionsThenDoNothing() {
-        Training training = this.trainingModelRepository.getLegTraining();
-        UserEntity userEntity = this.userEntityRepository.getUser();
-        User user = this.userModelRepository.getUser();
-        Authentication authentication = new TestingAuthenticationToken(userEntity.getUsername(), "password");
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        when(this.userRepository.findByUsername(userEntity.getUsername())).thenReturn(userEntity);
-        when(this.userMapper.toDomain(userEntity)).thenReturn(user);
-        when(this.trainingRepository.findByIdAndPlayerId(training.getId(), user.getId())).thenReturn(new TrainingEntity());
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+        when(this.trainingRepository.findByIdAndPlayerId(this.training.getId(), this.user.getId())).thenReturn(this.trainingEntity);
 
         try {
-            this.authorityDao.checkLoggedUserHasPermissions(training);
+            this.authorityDao.checkLoggedUserHasPermissions(this.training);
         } catch (Exception e) {
             fail("Should not throw exception");
         }
@@ -89,33 +103,21 @@ class JpaAuthorityDaoTest {
 
     @Test
     void givenLoggedUserHasNotPermissionsWhenCheckHasTrainingPermissionsThenThrowException() {
-        Training training = this.trainingModelRepository.getLegTraining();
-        UserEntity userEntity = this.userEntityRepository.getUser();
-        User user = this.userModelRepository.getUser();
-        Authentication authentication = new TestingAuthenticationToken(userEntity.getUsername(), "password");
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+        when(this.trainingRepository.findByIdAndPlayerId(this.training.getId(), this.user.getId())).thenReturn(null);
 
-        when(this.userRepository.findByUsername(userEntity.getUsername())).thenReturn(userEntity);
-        when(this.userMapper.toDomain(userEntity)).thenReturn(user);
-        when(this.trainingRepository.findByIdAndPlayerId(training.getId(), user.getId())).thenReturn(null);
-
-        assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(training));
+        assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(this.training));
     }
 
     @Test
     void givenLoggedUserHasPermissionsWhenCheckHasExercisePermissionsThenDoNothing() {
-        Exercise exercise = this.exerciseModelRepository.getSquatExercise();
-        UserEntity loggedUser = this.userEntityRepository.getUser();
-        User user = this.userModelRepository.getUser();
-        Authentication authentication = new TestingAuthenticationToken(loggedUser.getUsername(), "password");
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        when(this.userRepository.findByUsername(loggedUser.getUsername())).thenReturn(loggedUser);
-        when(this.userMapper.toDomain(loggedUser)).thenReturn(user);
-        when(this.exerciseRepository.findByIdAndPlayerId(exercise.getId(), user.getId())).thenReturn(new ExerciseEntity());
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+        when(this.exerciseRepository.findByIdAndPlayerId(exercise.getId(), this.user.getId())).thenReturn(this.exerciseEntity);
 
         try {
-            this.authorityDao.checkLoggedUserHasPermissions(exercise);
+            this.authorityDao.checkLoggedUserHasPermissions(this.exercise);
         } catch (Exception e) {
             fail("Should not throw exception");
         }
@@ -123,16 +125,32 @@ class JpaAuthorityDaoTest {
 
     @Test
     void givenLoggedUserHasNotPermissionsWhenCheckHasExercisePermissionsThenPermissionsException() {
-        Exercise exercise = this.exerciseModelRepository.getSquatExercise();
-        UserEntity loggedUser = this.userEntityRepository.getUser();
-        User user = this.userModelRepository.getUser();
-        Authentication authentication = new TestingAuthenticationToken(loggedUser.getUsername(), "password");
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+        when(this.exerciseRepository.findByIdAndPlayerId(this.exercise.getId(), this.user.getId())).thenReturn(null);
 
-        when(this.userRepository.findByUsername(loggedUser.getUsername())).thenReturn(loggedUser);
-        when(this.userMapper.toDomain(loggedUser)).thenReturn(user);
-        when(this.exerciseRepository.findByIdAndPlayerId(exercise.getId(), user.getId())).thenReturn(null);
+        assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(this.exercise));
+    }
 
-        assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(exercise));
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckSeriePermissionsThenThrowPermissionsException() {
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+        when(this.serieRepository.findByIdAndPlayerId(this.serieEntity.getId(), this.user.getId())).thenReturn(null);
+
+        assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(this.serie));
+    }
+
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckSeriePermissionsThenDoNothing() {
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+        when(this.serieRepository.findByIdAndPlayerId(this.serieEntity.getId(), this.user.getId())).thenReturn(this.serieEntity);
+
+        try {
+            this.authorityDao.checkLoggedUserHasPermissions(this.serie);
+        } catch (Exception e) {
+            fail("Should not throw exception");
+        }
     }
 }
