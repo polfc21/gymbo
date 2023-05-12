@@ -476,4 +476,78 @@ class ExerciseControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
+
+    @WithMockUser
+    @Test
+    void givenNonExistentIdWhenUpdateExerciseThenReturn404() throws Exception {
+        Long id = 1L;
+        ExerciseRequest squatExerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
+        given(this.mapper.toDomain(squatExerciseRequest)).willReturn(squatExercise);
+        given(this.exerciseService.updateExercise(id, squatExercise)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(squatExerciseRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenUpdateExerciseThenReturn403() throws Exception {
+        Long id = 1L;
+        ExerciseRequest squatExerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
+        given(this.mapper.toDomain(squatExerciseRequest)).willReturn(squatExercise);
+        given(this.exerciseService.updateExercise(id, squatExercise)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(squatExerciseRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenExistentIdWhenUpdateExerciseThenReturn200() throws Exception {
+        Long id = 1L;
+        ExerciseRequest squatExerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
+        ExerciseResponse squatExerciseResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
+        given(this.mapper.toDomain(squatExerciseRequest)).willReturn(squatExercise);
+        given(this.exerciseService.updateExercise(id, squatExercise)).willReturn(squatExercise);
+        given(this.mapper.toResponse(squatExercise)).willReturn(squatExerciseResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(squatExerciseRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatExerciseResponse)));
+    }
+
+    @Test
+    void givenNonAuthenticatedWhenUpdateExerciseThenReturn403() throws Exception {
+        Long id = 1L;
+        ExerciseRequest squatExerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(squatExerciseRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
 }
