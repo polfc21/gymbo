@@ -22,6 +22,9 @@ public class UserEntityMapper {
     }
 
     public UserEntity toEntity(User domain) {
+        if (domain == null) {
+            return null;
+        }
         UserEntity entity = new UserEntity();
         entity.setId(domain.getId());
         entity.setUsername(domain.getUsername());
