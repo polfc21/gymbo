@@ -4,9 +4,7 @@ import com.behabits.gymbo.domain.daos.SerieDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Serie;
-import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.SerieModelRepository;
-import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.domain.services.AuthorityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +30,32 @@ class SerieServiceImplTest {
 
     private final Serie squatSerie = new SerieModelRepository().getSquatSerie();
 
+    @Test
+    void givenNonExistentSerieWhenFindSerieByIdThenThrowNotFoundException() {
+        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(this.squatSerie.getId());
+
+        assertThrows(NotFoundException.class, () -> this.serieService.findSerieById(this.squatSerie.getId()));
+    }
+
+    @Test
+    void givenExistentSerieAndUserHasNotPermissionsWhenFindSerieByIdThenThrowPermissionsException() {
+        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
+
+        assertThrows(PermissionsException.class, () -> this.serieService.findSerieById(this.squatSerie.getId()));
+    }
+
+    @Test
+    void givenExistentSeriesAndUserHasPermissionsWhenFindSerieByIdThenReturnSerie() {
+        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
+
+        try {
+            this.serieService.findSerieById(this.squatSerie.getId());
+        } catch (Exception e) {
+            fail("Should not throw any exception");
+        }
+    }
 
     @Test
     void givenNonExistentSerieWhenDeleteSerieThenThrowNotFoundException() {
