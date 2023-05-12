@@ -140,4 +140,16 @@ class JpaExerciseDaoTest {
 
         verify(this.exerciseRepository).deleteById(squatExercise.getId());
     }
+
+    @Test
+    void givenExerciseWhenUpdateExerciseThenReturnExerciseUpdated() {
+        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
+        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExercise();
+
+        when(this.exerciseRepository.getReferenceById(squatExercise.getId())).thenReturn(squatExerciseEntity);
+        when(this.exerciseRepository.save(squatExerciseEntity)).thenReturn(squatExerciseEntity);
+        when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
+
+        assertThat(this.exerciseDao.updateExercise(squatExercise.getId(),squatExercise), is(squatExercise));
+    }
 }
