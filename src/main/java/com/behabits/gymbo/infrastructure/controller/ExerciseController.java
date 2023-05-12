@@ -64,4 +64,10 @@ public class ExerciseController {
         this.exerciseService.deleteExercise(id);
         return new ResponseEntity<>("Exercise with id " + id + " deleted successfully", HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping(ApiConstant.ID)
+    public ResponseEntity<ExerciseResponse> updateExercise(@PathVariable Long id, @RequestBody @Valid ExerciseRequest request) {
+        Exercise exercise = this.exerciseService.updateExercise(id, this.mapper.toDomain(request));
+        return new ResponseEntity<>(this.mapper.toResponse(exercise), HttpStatus.OK);
+    }
 }

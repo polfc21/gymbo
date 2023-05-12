@@ -63,4 +63,12 @@ public class JpaExerciseDao implements ExerciseDao {
     public void deleteExercise(Exercise exercise) {
         this.exerciseRepository.deleteById(exercise.getId());
     }
+
+    @Override
+    public Exercise updateExercise(Long id, Exercise exercise) {
+        ExerciseEntity exerciseEntity = this.exerciseRepository.getReferenceById(id);
+        exerciseEntity.setName(exercise.getName());
+        exerciseEntity = this.exerciseRepository.save(exerciseEntity);
+        return this.mapper.toDomain(exerciseEntity);
+    }
 }

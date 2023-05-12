@@ -194,4 +194,37 @@ class ExerciseServiceImplTest {
             fail("Should not throw NotFoundException");
         }
     }
+
+    @Test
+    void givenNonExistentIdWhenUpdateExerciseThenThrowNotFoundException() {
+        Long id = 1L;
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+
+        when(this.exerciseDao.findExerciseById(id)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.exerciseService.updateExercise(id, exercise));
+    }
+
+    @Test
+    void givenExistentIdAndLoggedUserHasPermissionsWhenUpdateExerciseThenReturnExercise() {
+        Long id = 1L;
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+
+        when(this.exerciseDao.findExerciseById(id)).thenReturn(exercise);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+        when(this.exerciseDao.updateExercise(id, exercise)).thenReturn(exercise);
+
+        assertThat(this.exerciseService.updateExercise(id, exercise), is(exercise));
+    }
+
+    @Test
+    void givenExistentIdAndLoggedUserHasNotPermissionsWhenUpdateExerciseThenThrowPermissionsException() {
+        Long id = 1L;
+        Exercise exercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
+
+        when(this.exerciseDao.findExerciseById(id)).thenReturn(exercise);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(exercise);
+
+        assertThrows(PermissionsException.class, () -> this.exerciseService.updateExercise(id, exercise));
+    }
 }
