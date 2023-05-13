@@ -7,8 +7,10 @@ import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.services.JwtService;
 import com.behabits.gymbo.domain.services.SerieService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
+import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.SerieApiMapper;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.response.SerieResponseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -47,6 +49,7 @@ class SerieControllerTest {
 
     private final Serie squatSerie = new SerieModelRepository().getSquatSerie();
     private final SerieResponse squatSerieResponse = new SerieResponseRepository().getSquatSerieResponse();
+    private final SerieRequest squatSerieRequest = new SerieRequestRepository().getSquatSerieRequest();
 
     @WithMockUser
     @Test
@@ -141,4 +144,77 @@ class SerieControllerTest {
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
 
+    @WithMockUser
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenUpdateSerieThenReturn403() throws Exception {
+        when(this.mapper.toDomain(this.squatSerieRequest)).thenReturn(this.squatSerie);
+        doThrow(PermissionsException.class).when(this.serieService).updateSerie(this.squatSerie.getId(), this.squatSerie);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.SERIES + ApiConstant.ID, this.squatSerie.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(this.squatSerieRequest))
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenLoggedUserHasPermissionsWhenUpdateSerieThenReturn200() throws Exception {
+        when(this.mapper.toDomain(this.squatSerieRequest)).thenReturn(this.squatSerie);
+        when(this.serieService.updateSerie(this.squatSerie.getId(), this.squatSerie)).thenReturn(this.squatSerie);
+        when(this.mapper.toResponse(this.squatSerie)).thenReturn(this.squatSerieResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.SERIES + ApiConstant.ID, this.squatSerie.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(this.squatSerieRequest))
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.squatSerieResponse)));
+    }
+
+    @WithMockUser
+    @Test
+    void givenNonExistentSerieWhenUpdateSerieThenReturn404() throws Exception {
+        when(this.mapper.toDomain(this.squatSerieRequest)).thenReturn(this.squatSerie);
+        doThrow(NotFoundException.class).when(this.serieService).updateSerie(this.squatSerie.getId(), this.squatSerie);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.SERIES + ApiConstant.ID, this.squatSerie.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(this.squatSerieRequest))
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenIncorrectSerieRequestWhenUpdateSerieThenReturn400() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.SERIES + ApiConstant.ID, this.squatSerie.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(new SerieRequest()))
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenUpdateSerieThenReturn403() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(
+                        put(ApiConstant.API_V1 + ApiConstant.SERIES + ApiConstant.ID, this.squatSerie.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(this.objectMapper.writeValueAsString(this.squatSerie)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
 }
