@@ -16,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+
 @ExtendWith(MockitoExtension.class)
 class SerieServiceImplTest {
 
@@ -83,5 +86,29 @@ class SerieServiceImplTest {
         } catch (Exception e) {
             fail("Should not throw any exception");
         }
+    }
+
+    @Test
+    void givenExistentSerieAndUserHasNotPermissionsWhenUpdateSerieThenThrowPermissionsException() {
+        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
+
+        assertThrows(PermissionsException.class, () -> this.serieService.updateSerie(this.squatSerie.getId(), this.squatSerie));
+    }
+
+    @Test
+    void givenExistentSerieAndUserHasPermissionsWhenUpdateSerieThenUpdateSerie() {
+        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
+        when(this.serieDao.updateSerie(this.squatSerie.getId(), this.squatSerie)).thenReturn(this.squatSerie);
+
+        assertThat(this.serieService.updateSerie(this.squatSerie.getId(), this.squatSerie), is(this.squatSerie));
+    }
+
+    @Test
+    void givenNonExistentSerieWhenUpdateSerieThenThrowNotFoundException() {
+        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(this.squatSerie.getId());
+
+        assertThrows(NotFoundException.class, () -> this.serieService.updateSerie(this.squatSerie.getId(), this.squatSerie));
     }
 }

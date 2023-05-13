@@ -3,8 +3,10 @@ package com.behabits.gymbo.infrastructure.controller;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.services.SerieService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
+import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.SerieApiMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,12 @@ public class SerieController {
     @GetMapping(ApiConstant.ID)
     public ResponseEntity<SerieResponse> findSerieById(@PathVariable Long id) {
         Serie serie = this.serieService.findSerieById(id);
+        return new ResponseEntity<>(this.mapper.toResponse(serie), HttpStatus.OK);
+    }
+
+    @PutMapping(ApiConstant.ID)
+    public ResponseEntity<SerieResponse> updateSerie(@PathVariable Long id, @Valid @RequestBody SerieRequest serieRequest) {
+        Serie serie = this.serieService.updateSerie(id, this.mapper.toDomain(serieRequest));
         return new ResponseEntity<>(this.mapper.toResponse(serie), HttpStatus.OK);
     }
 

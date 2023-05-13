@@ -24,6 +24,16 @@ public class JpaSerieDao implements SerieDao {
     }
 
     @Override
+    public Serie updateSerie(Long id, Serie serie) {
+        SerieEntity serieEntity = this.serieRepository.getReferenceById(id);
+        serieEntity.setNumber(serie.getNumber());
+        serieEntity.setRepetitions(serie.getRepetitions());
+        serieEntity.setWeight(serie.getWeight());
+        serieEntity = this.serieRepository.save(serieEntity);
+        return this.mapper.toDomain(serieEntity);
+    }
+
+    @Override
     public void deleteSerie(Serie serie) {
         this.serieRepository.deleteById(serie.getId());
     }

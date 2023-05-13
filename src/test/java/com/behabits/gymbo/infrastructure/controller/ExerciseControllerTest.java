@@ -537,6 +537,19 @@ class ExerciseControllerTest {
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatExerciseResponse)));
     }
 
+    @WithMockUser
+    @Test
+    void givenIncorrectExerciseWhenUpdateExerciseThenReturn400() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(new ExerciseRequest()))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
     @Test
     void givenNonAuthenticatedWhenUpdateExerciseThenReturn403() throws Exception {
         Long id = 1L;

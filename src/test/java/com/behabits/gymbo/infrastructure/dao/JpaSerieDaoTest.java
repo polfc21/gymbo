@@ -57,4 +57,13 @@ class JpaSerieDaoTest {
         assertThrows(NotFoundException.class, () -> this.serieDao.findSerieById(this.squatSerie.getId()));
     }
 
+    @Test
+    void givenSerieWhenUpdateSerieThenReturnSerieUpdated() {
+        when(this.serieRepository.getReferenceById(this.squatSerie.getId())).thenReturn(this.squatSerieEntity);
+        when(this.serieRepository.save(this.squatSerieEntity)).thenReturn(this.squatSerieEntity);
+        when(this.mapper.toDomain(this.squatSerieEntity)).thenReturn(this.squatSerie);
+
+        assertThat(this.serieDao.updateSerie(this.squatSerie.getId(), this.squatSerie), is(this.squatSerie));
+    }
+
 }
