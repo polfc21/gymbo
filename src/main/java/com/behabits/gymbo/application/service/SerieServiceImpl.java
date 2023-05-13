@@ -22,6 +22,13 @@ public class SerieServiceImpl implements SerieService {
     }
 
     @Override
+    public Serie updateSerie(Long id, Serie serie) {
+        Serie serieToUpdate = this.findSerieById(id);
+        this.authorityService.checkLoggedUserHasPermissions(serieToUpdate);
+        return this.serieDao.updateSerie(id, serie);
+    }
+
+    @Override
     public void deleteSerie(Long id) {
         Serie serie = this.findSerieById(id);
         this.serieDao.deleteSerie(serie);
