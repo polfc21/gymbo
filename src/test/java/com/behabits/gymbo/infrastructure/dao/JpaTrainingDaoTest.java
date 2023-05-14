@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.util.List;
@@ -35,87 +36,73 @@ class JpaTrainingDaoTest {
     @Mock
     private TrainingEntityMapper mapper;
 
-    private final TrainingEntityRepository trainingEntityRepository = new TrainingEntityRepository();
-
-    private final TrainingModelRepository trainingModelRepository = new TrainingModelRepository();
+    private final Training legTraining = new TrainingModelRepository().getLegTraining();
+    private final TrainingEntity legTrainingEntity = new TrainingEntityRepository().getLegTraining();
 
     @Test
     void givenLegTrainingWhenCreateTrainingThenReturnTraining() {
-        Training legTraining = this.trainingModelRepository.getLegTraining();
-        TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
+        when(this.mapper.toEntity(this.legTraining)).thenReturn(this.legTrainingEntity);
+        when(this.trainingRepository.save(this.legTrainingEntity)).thenReturn(this.legTrainingEntity);
+        when(this.mapper.toDomain(this.legTrainingEntity)).thenReturn(this.legTraining);
 
-        when(this.mapper.toEntity(legTraining)).thenReturn(legTrainingEntity);
-        when(this.trainingRepository.save(legTrainingEntity)).thenReturn(legTrainingEntity);
-        when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
-
-        assertThat(this.trainingDao.createTraining(legTraining), is(legTraining));
+        assertThat(this.trainingDao.createTraining(this.legTraining), is(this.legTraining));
     }
 
     @Test
     void givenLegTrainingWithSquatExerciseWhenCreateTrainingThenReturnTraining() {
-        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
-        TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTrainingWithSquatExerciseWithSeries();
+        when(this.mapper.toEntity(this.legTraining)).thenReturn(this.legTrainingEntity);
+        when(this.trainingRepository.save(this.legTrainingEntity)).thenReturn(this.legTrainingEntity);
+        when(this.mapper.toDomain(this.legTrainingEntity)).thenReturn(this.legTraining);
 
-        when(this.mapper.toEntity(legTraining)).thenReturn(legTrainingEntity);
-        when(this.trainingRepository.save(legTrainingEntity)).thenReturn(legTrainingEntity);
-        when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
-
-        assertThat(this.trainingDao.createTraining(legTraining), is(legTraining));
+        assertThat(this.trainingDao.createTraining(this.legTraining), is(this.legTraining));
     }
 
     @Test
     void givenMonthAndYearAndUserIdWhenFindTrainingsByMonthAndYearAndPlayerIdThenReturnTrainings() {
         Long userId = 1L;
-        Training legTraining = this.trainingModelRepository.getLegTraining();
-        TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
-        Month legTrainingMonth = legTraining.getTrainingDate().getMonth();
-        Month legTrainingEntityMonth = legTrainingEntity.getTrainingDate().getMonth();
-        Year legTrainingYear = Year.of(legTraining.getTrainingDate().getYear());
-        Year legTrainingEntityYear = Year.of(legTrainingEntity.getTrainingDate().getYear());
+        Month actualMonth = LocalDate.now().getMonth();
+        Year actualYear = Year.now();
 
-        when(this.trainingRepository.findAllByMonthAndYearAndPlayerId(legTrainingEntityMonth.getValue(), legTrainingEntityYear.getValue(), userId)).thenReturn(List.of(legTrainingEntity));
-        when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
+        when(this.trainingRepository.findAllByMonthAndYearAndPlayerId(actualMonth.getValue(), actualYear.getValue(), userId)).thenReturn(List.of(this.legTrainingEntity));
+        when(this.mapper.toDomain(this.legTrainingEntity)).thenReturn(this.legTraining);
 
-        assertThat(this.trainingDao.findTrainingsByMonthAndYearAndUserId(legTrainingMonth, legTrainingYear, userId), is(List.of(legTraining)));
+        assertThat(this.trainingDao.findTrainingsByMonthAndYearAndUserId(actualMonth, actualYear, userId), is(List.of(this.legTraining)));
     }
 
     @Test
     void givenExistentIdWhenFindTrainingByIdThenReturnTraining() {
-        Training legTraining = this.trainingModelRepository.getLegTraining();
-        TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTraining();
+        Long existentId = 1L;
 
-        when(this.trainingRepository.findById(legTrainingEntity.getId())).thenReturn(Optional.of(legTrainingEntity));
-        when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
+        when(this.trainingRepository.findById(existentId)).thenReturn(Optional.of(this.legTrainingEntity));
+        when(this.mapper.toDomain(this.legTrainingEntity)).thenReturn(this.legTraining);
 
-        assertThat(this.trainingDao.findTrainingById(legTraining.getId()), is(legTraining));
+        assertThat(this.trainingDao.findTrainingById(existentId), is(this.legTraining));
     }
 
     @Test
     void givenNonExistentIdWhenFindTrainingByIdThenThrowNotFoundException() {
-        when(this.trainingRepository.findById(1L)).thenReturn(Optional.empty());
+        Long nonExistentId = 1L;
 
-        assertThrows(NotFoundException.class, () -> this.trainingDao.findTrainingById(1L));
+        when(this.trainingRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.trainingDao.findTrainingById(nonExistentId));
     }
 
     @Test
     void givenTrainingWhenUpdateTrainingThenReturnTrainingUpdated() {
-        Long id = 1L;
-        Training legTraining = this.trainingModelRepository.getLegTrainingWithSquatExercise();
-        TrainingEntity legTrainingEntity = this.trainingEntityRepository.getLegTrainingWithSquatExerciseWithSeries();
+        Long existentId = 1L;
 
-        when(this.trainingRepository.getReferenceById(legTraining.getId())).thenReturn(legTrainingEntity);
-        when(this.trainingRepository.save(legTrainingEntity)).thenReturn(legTrainingEntity);
-        when(this.mapper.toDomain(legTrainingEntity)).thenReturn(legTraining);
+        when(this.trainingRepository.getReferenceById(existentId)).thenReturn(this.legTrainingEntity);
+        when(this.trainingRepository.save(this.legTrainingEntity)).thenReturn(this.legTrainingEntity);
+        when(this.mapper.toDomain(this.legTrainingEntity)).thenReturn(this.legTraining);
 
-        assertThat(this.trainingDao.updateTraining(id, legTraining), is(legTraining));
+        assertThat(this.trainingDao.updateTraining(existentId, this.legTraining), is(this.legTraining));
     }
 
     @Test
     void givenTrainingWhenDeleteTrainingThenTrainingRepositoryDeleteTraining() {
-        Training legTraining = this.trainingModelRepository.getLegTraining();
+        this.trainingDao.deleteTraining(this.legTraining);
 
-        this.trainingDao.deleteTraining(legTraining);
-
-        verify(this.trainingRepository).deleteById(legTraining.getId());
+        verify(this.trainingRepository).deleteById(this.legTraining.getId());
     }
 }
