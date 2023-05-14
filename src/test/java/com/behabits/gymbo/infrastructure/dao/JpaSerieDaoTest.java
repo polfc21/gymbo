@@ -44,26 +44,32 @@ class JpaSerieDaoTest {
 
     @Test
     void givenExistentSerieWhenFindSerieByIdThenReturnSerie() {
-        when(this.serieRepository.findById(this.squatSerie.getId())).thenReturn(Optional.of(this.squatSerieEntity));
+        Long existentId = 1L;
+
+        when(this.serieRepository.findById(existentId)).thenReturn(Optional.of(this.squatSerieEntity));
         when(this.mapper.toDomain(this.squatSerieEntity)).thenReturn(this.squatSerie);
 
-        assertThat(this.serieDao.findSerieById(this.squatSerie.getId()), is(this.squatSerie));
+        assertThat(this.serieDao.findSerieById(existentId), is(this.squatSerie));
     }
 
     @Test
     void givenNonExistentSeriesWhenFindSerieByIdThenThrowNotFoundException() {
-        when(this.serieRepository.findById(this.squatSerie.getId())).thenReturn(Optional.empty());
+        Long nonExistentId = 1L;
 
-        assertThrows(NotFoundException.class, () -> this.serieDao.findSerieById(this.squatSerie.getId()));
+        when(this.serieRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.serieDao.findSerieById(nonExistentId));
     }
 
     @Test
     void givenSerieWhenUpdateSerieThenReturnSerieUpdated() {
-        when(this.serieRepository.getReferenceById(this.squatSerie.getId())).thenReturn(this.squatSerieEntity);
+        Long existentId = 1L;
+
+        when(this.serieRepository.getReferenceById(existentId)).thenReturn(this.squatSerieEntity);
         when(this.serieRepository.save(this.squatSerieEntity)).thenReturn(this.squatSerieEntity);
         when(this.mapper.toDomain(this.squatSerieEntity)).thenReturn(this.squatSerie);
 
-        assertThat(this.serieDao.updateSerie(this.squatSerie.getId(), this.squatSerie), is(this.squatSerie));
+        assertThat(this.serieDao.updateSerie(existentId, this.squatSerie), is(this.squatSerie));
     }
 
 }
