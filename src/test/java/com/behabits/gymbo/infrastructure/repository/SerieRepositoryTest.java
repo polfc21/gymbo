@@ -26,13 +26,9 @@ class SerieRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    private final UserEntityRepository userEntityRepository = new UserEntityRepository();
-    private final ExerciseEntityRepository exerciseEntityRepository = new ExerciseEntityRepository();
-    private final SerieEntityRepository serieEntityRepository = new SerieEntityRepository();
-
-    private final UserEntity player = this.userEntityRepository.getUser();
-    private final ExerciseEntity exercise = this.exerciseEntityRepository.getSquatExercise();
-    private final SerieEntity serie = this.serieEntityRepository.getSquatSerie();
+    private final UserEntity player = new UserEntityRepository().getUser();
+    private final ExerciseEntity exercise = new ExerciseEntityRepository().getSquatExercise();
+    private final SerieEntity serie = new SerieEntityRepository().getSquatSerie();
 
     @BeforeEach
     void setUp() {
