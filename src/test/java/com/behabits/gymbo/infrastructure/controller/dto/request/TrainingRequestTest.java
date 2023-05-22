@@ -18,7 +18,7 @@ class TrainingRequestTest {
         trainingRequest2.setTrainingDate(null);
 
         assertThat(trainingRequest, is(trainingRequest2));
-
+        assertThat(trainingRequest.hashCode(), is(trainingRequest2.hashCode()));
     }
 
 }
