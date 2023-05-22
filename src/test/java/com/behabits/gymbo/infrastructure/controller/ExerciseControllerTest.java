@@ -61,11 +61,11 @@ class ExerciseControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
+    private final ExerciseRequest squatRequest = new ExerciseRequestRepository().getSquatExerciseRequest();
 
-    private final ExerciseResponseRepository exerciseResponseRepository = new ExerciseResponseRepository();
+    private final ExerciseResponse squatResponse = new ExerciseResponseRepository().getSquatExerciseResponse();
 
-    private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
+    private final Exercise squatExercise = new ExerciseModelRepository().getSquatExercise();
 
     private final SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
 
@@ -76,8 +76,6 @@ class ExerciseControllerTest {
     @Test
     @WithMockUser
     void givenExistentIdWhenFindExerciseByIdThenReturnExerciseResponseAnd200() throws Exception {
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
-        ExerciseResponse squatResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
         given(this.exerciseService.findExerciseById(1L)).willReturn(squatExercise);
         given(this.mapper.toResponse(squatExercise)).willReturn(squatResponse);
 
@@ -93,10 +91,12 @@ class ExerciseControllerTest {
     @Test
     @WithMockUser
     void givenNotExistentIdWhenFindExerciseByIdThenReturn404() throws Exception {
-        given(this.exerciseService.findExerciseById(1L)).willThrow(NotFoundException.class);
+        Long notExistentId = 1L;
+
+        given(this.exerciseService.findExerciseById(notExistentId)).willThrow(NotFoundException.class);
 
         MockHttpServletResponse response = this.mockMvc.perform(
-                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + "/1")
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, notExistentId)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
@@ -106,10 +106,12 @@ class ExerciseControllerTest {
     @Test
     @WithMockUser
     void givenLoggedUserHasNotPermissionsWhenFindExerciseByIdThenReturn403() throws Exception {
-        given(this.exerciseService.findExerciseById(1L)).willThrow(PermissionsException.class);
+        Long notPermissionsId = 1L;
+
+        given(this.exerciseService.findExerciseById(notPermissionsId)).willThrow(PermissionsException.class);
 
         MockHttpServletResponse response = this.mockMvc.perform(
-                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + "/1")
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, notPermissionsId)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
@@ -119,79 +121,67 @@ class ExerciseControllerTest {
     @WithMockUser
     @Test
     void givenSquatExerciseWithSeriesWhenCreateExerciseThenReturnSquatExerciseResponseAnd201() throws Exception {
-        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequestWithSeries();
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
-        ExerciseResponse squatResponse = this.exerciseResponseRepository.getSquatExerciseResponseWithSeries();
-        given(this.mapper.toDomain(squatRequest)).willReturn(squatExercise);
-        given(this.exerciseService.createExercise(squatExercise)).willReturn(squatExercise);
-        given(this.mapper.toResponse(squatExercise)).willReturn(squatResponse);
+        given(this.mapper.toDomain(this.squatRequest)).willReturn(this.squatExercise);
+        given(this.exerciseService.createExercise(this.squatExercise)).willReturn(this.squatExercise);
+        given(this.mapper.toResponse(this.squatExercise)).willReturn(this.squatResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
                         .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponse)));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.squatResponse)));
     }
 
     @WithMockUser
     @Test
     void givenSquatExerciseRequestWhenCreateExerciseThenReturnSquatExerciseResponseAnd201() throws Exception {
-        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
-        ExerciseResponse squatResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
-        given(this.mapper.toDomain(squatRequest)).willReturn(squatExercise);
-        given(this.exerciseService.createExercise(squatExercise)).willReturn(squatExercise);
-        given(this.mapper.toResponse(squatExercise)).willReturn(squatResponse);
+        given(this.mapper.toDomain(this.squatRequest)).willReturn(this.squatExercise);
+        given(this.exerciseService.createExercise(this.squatExercise)).willReturn(this.squatExercise);
+        given(this.mapper.toResponse(this.squatExercise)).willReturn(this.squatResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
                         .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponse)));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.squatResponse)));
     }
 
     @WithMockUser
     @Test
     void givenNullSerieListRequestWhenCreateExerciseThenReturn201() throws Exception {
-        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
-        squatRequest.setSeries(List.of());
-        ExerciseResponse squatResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
-        squatResponse.setSeries(List.of());
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
-        given(this.mapper.toDomain(squatRequest)).willReturn(squatExercise);
-        given(this.exerciseService.createExercise(squatExercise)).willReturn(squatExercise);
-        given(this.mapper.toResponse(squatExercise)).willReturn(squatResponse);
+        given(this.mapper.toDomain(this.squatRequest)).willReturn(this.squatExercise);
+        given(this.exerciseService.createExercise(this.squatExercise)).willReturn(this.squatExercise);
+        given(this.mapper.toResponse(this.squatExercise)).willReturn(this.squatResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
                         .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponse)));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.squatResponse)));
     }
 
     @WithMockUser
     @Test
     void givenNullSerieRequestWhenCreateExerciseThenReturn400() throws Exception {
         SerieRequest nullSerieRequest = this.serieRequestRepository.getNullSerieRequest();
-        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
-        squatRequest.setSeries(List.of(nullSerieRequest));
+        this.squatRequest.setSeries(List.of(nullSerieRequest));
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
                         .with(csrf())
         ).andReturn().getResponse();
 
@@ -202,13 +192,12 @@ class ExerciseControllerTest {
     @Test
     void givenIncorrectSerieRequestWhenCreateExerciseThenReturn400() throws Exception {
         SerieRequest incorrectSerieRequest = this.serieRequestRepository.getIncorrectSerieRequest();
-        ExerciseRequest squatRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
-        squatRequest.setSeries(List.of(incorrectSerieRequest));
+        this.squatRequest.setSeries(List.of(incorrectSerieRequest));
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
                         .with(csrf())
         ).andReturn().getResponse();
 
@@ -218,7 +207,7 @@ class ExerciseControllerTest {
     @WithMockUser
     @Test
     void givenIncorrectExerciseRequestWhenCreateExerciseThenReturn400() throws Exception {
-        ExerciseRequest incorrectRequest = this.exerciseRequestRepository.getIncorrectExerciseRequest();
+        ExerciseRequest incorrectRequest = new ExerciseRequestRepository().getIncorrectExerciseRequest();
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
@@ -233,7 +222,7 @@ class ExerciseControllerTest {
     @WithMockUser
     @Test
     void givenNullExerciseRequestWhenCreateExerciseThenReturn400() throws Exception {
-        ExerciseRequest nullRequest = this.exerciseRequestRepository.getNullExerciseRequest();
+        ExerciseRequest nullRequest = new ExerciseRequestRepository().getNullExerciseRequest();
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
@@ -247,7 +236,7 @@ class ExerciseControllerTest {
 
     @Test
     void givenNonAuthenticatedWhenCreateExerciseThenReturn403() throws Exception {
-        ExerciseRequest nullRequest = this.exerciseRequestRepository.getNullExerciseRequest();
+        ExerciseRequest nullRequest = new ExerciseRequestRepository().getNullExerciseRequest();
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.EXERCISES)
@@ -262,12 +251,10 @@ class ExerciseControllerTest {
     @Test
     void givenTrainingIdWhenFindExercisesByTrainingIdThenReturn200() throws Exception {
         long trainingId = 1L;
-        Exercise exercise = this.exerciseModelRepository.getSquatExercise();
-        List<Exercise> exercises = List.of(exercise);
-        ExerciseResponse exerciseResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
-        List<ExerciseResponse> exerciseResponses = List.of(exerciseResponse);
-        given(this.exerciseService.findExercisesByTrainingId(1L)).willReturn(exercises);
-        given(this.mapper.toResponse(exercises)).willReturn(exerciseResponses);
+        List<Exercise> squats = List.of(this.squatExercise);
+        List<ExerciseResponse> squatResponses = List.of(this.squatResponse);
+        given(this.exerciseService.findExercisesByTrainingId(1L)).willReturn(squats);
+        given(this.mapper.toResponse(squats)).willReturn(squatResponses);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.EXERCISES)
@@ -277,18 +264,16 @@ class ExerciseControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(exerciseResponses)));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponses)));
     }
 
     @WithMockUser
     @Test
     void givenNullTrainingIdWhenFindExercisesByTrainingIdThenReturn200() throws Exception {
-        Exercise exercise = this.exerciseModelRepository.getSquatExercise();
-        List<Exercise> exercises = List.of(exercise);
-        ExerciseResponse exerciseResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
-        List<ExerciseResponse> exerciseResponses = List.of(exerciseResponse);
-        given(this.exerciseService.findExercisesByTrainingId(null)).willReturn(exercises);
-        given(this.mapper.toResponse(exercises)).willReturn(exerciseResponses);
+        List<Exercise> squats = List.of(this.squatExercise);
+        List<ExerciseResponse> squatResponses = List.of(this.squatResponse);
+        given(this.exerciseService.findExercisesByTrainingId(null)).willReturn(squats);
+        given(this.mapper.toResponse(squats)).willReturn(squatResponses);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 get(ApiConstant.API_V1 + ApiConstant.EXERCISES)
@@ -296,7 +281,7 @@ class ExerciseControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(exerciseResponses)));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponses)));
     }
 
     @WithMockUser
@@ -316,10 +301,12 @@ class ExerciseControllerTest {
     @Test
     @WithMockUser
     void givenLoggedUserHasNotPermissionsWhenFindSeriesByExerciseByIdThenReturn403() throws Exception {
-        given(this.exerciseService.findSeriesByExerciseId(1L)).willThrow(PermissionsException.class);
+        Long nonPermissionsId = 1L;
+
+        given(this.exerciseService.findSeriesByExerciseId(nonPermissionsId)).willThrow(PermissionsException.class);
 
         MockHttpServletResponse response = this.mockMvc.perform(
-                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, 1L)
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, nonPermissionsId)
                         .contentType(MediaType.APPLICATION_JSON)
         ).andReturn().getResponse();
 
@@ -349,13 +336,14 @@ class ExerciseControllerTest {
     @Test
     @WithMockUser
     void givenLoggedUserHasNotPermissionsWhenCreateSerieThenReturn403() throws Exception {
+        Long notPermissionsId = 1L;
         SerieRequest squatSerieRequest = this.serieRequestRepository.getSquatSerieRequest();
         Serie squatSerie = this.serieModelRepository.getSquatSerie();
         given(this.serieMapper.toDomain(squatSerieRequest)).willReturn(squatSerie);
-        given(this.exerciseService.createSerie(1L, squatSerie)).willThrow(PermissionsException.class);
+        given(this.exerciseService.createSerie(notPermissionsId, squatSerie)).willThrow(PermissionsException.class);
 
         MockHttpServletResponse response = this.mockMvc.perform(
-                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, 1L)
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, notPermissionsId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(squatSerieRequest))
                         .with(csrf())
@@ -480,16 +468,14 @@ class ExerciseControllerTest {
     @WithMockUser
     @Test
     void givenNonExistentIdWhenUpdateExerciseThenReturn404() throws Exception {
-        Long id = 1L;
-        ExerciseRequest squatExerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
-        given(this.mapper.toDomain(squatExerciseRequest)).willReturn(squatExercise);
-        given(this.exerciseService.updateExercise(id, squatExercise)).willThrow(NotFoundException.class);
+        Long nonExistentId = 1L;
+        given(this.mapper.toDomain(this.squatRequest)).willReturn(this.squatExercise);
+        given(this.exerciseService.updateExercise(nonExistentId, this.squatExercise)).willThrow(NotFoundException.class);
 
         MockHttpServletResponse response = this.mockMvc.perform(
-                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
+                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, nonExistentId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatExerciseRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
                         .with(csrf())
         ).andReturn().getResponse();
 
@@ -499,16 +485,14 @@ class ExerciseControllerTest {
     @WithMockUser
     @Test
     void givenLoggedUserHasNotPermissionsWhenUpdateExerciseThenReturn403() throws Exception {
-        Long id = 1L;
-        ExerciseRequest squatExerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
-        given(this.mapper.toDomain(squatExerciseRequest)).willReturn(squatExercise);
-        given(this.exerciseService.updateExercise(id, squatExercise)).willThrow(PermissionsException.class);
+        Long notPermissionsId = 1L;
+        given(this.mapper.toDomain(this.squatRequest)).willReturn(this.squatExercise);
+        given(this.exerciseService.updateExercise(notPermissionsId, this.squatExercise)).willThrow(PermissionsException.class);
 
         MockHttpServletResponse response = this.mockMvc.perform(
-                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
+                put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, notPermissionsId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatExerciseRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
                         .with(csrf())
         ).andReturn().getResponse();
 
@@ -519,22 +503,19 @@ class ExerciseControllerTest {
     @Test
     void givenExistentIdWhenUpdateExerciseThenReturn200() throws Exception {
         Long id = 1L;
-        ExerciseRequest squatExerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
-        ExerciseResponse squatExerciseResponse = this.exerciseResponseRepository.getSquatExerciseResponse();
-        given(this.mapper.toDomain(squatExerciseRequest)).willReturn(squatExercise);
-        given(this.exerciseService.updateExercise(id, squatExercise)).willReturn(squatExercise);
-        given(this.mapper.toResponse(squatExercise)).willReturn(squatExerciseResponse);
+        given(this.mapper.toDomain(this.squatRequest)).willReturn(this.squatExercise);
+        given(this.exerciseService.updateExercise(id, this.squatExercise)).willReturn(this.squatExercise);
+        given(this.mapper.toResponse(this.squatExercise)).willReturn(this.squatResponse);
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatExerciseRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
                         .with(csrf())
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatExerciseResponse)));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.squatResponse)));
     }
 
     @WithMockUser
@@ -553,12 +534,10 @@ class ExerciseControllerTest {
     @Test
     void givenNonAuthenticatedWhenUpdateExerciseThenReturn403() throws Exception {
         Long id = 1L;
-        ExerciseRequest squatExerciseRequest = this.exerciseRequestRepository.getSquatExerciseRequest();
-
         MockHttpServletResponse response = this.mockMvc.perform(
                 put(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatExerciseRequest))
+                        .content(this.objectMapper.writeValueAsString(this.squatRequest))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));

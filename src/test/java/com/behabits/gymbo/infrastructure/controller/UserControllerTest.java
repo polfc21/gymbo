@@ -46,18 +46,12 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final UserRequestRepository userRequestRepository = new UserRequestRepository();
-
-    private final UserModelRepository userModelRepository = new UserModelRepository();
-
-    private final UserResponseRepository userResponseRepository = new UserResponseRepository();
-
     @Test
     @WithMockUser
     void givenCorrectUserRequestWhenCreateUserThenReturnUserCreatedAnd201() throws Exception {
-        UserRequest userRequest = this.userRequestRepository.getCorrectUserRequest();
-        User user = this.userModelRepository.getUser();
-        UserResponse userResponse = this.userResponseRepository.getUserResponse();
+        UserRequest userRequest = new UserRequestRepository().getCorrectUserRequest();
+        User user = new UserModelRepository().getUser();
+        UserResponse userResponse = new UserResponseRepository().getUserResponse();
         given(this.mapper.toDomain(userRequest)).willReturn(user);
         given(this.userService.createUser(user)).willReturn(user);
         given(this.mapper.toResponse(user)).willReturn(userResponse);
@@ -76,7 +70,7 @@ class UserControllerTest {
     @Test
     @WithMockUser
     void givenIncorrectUserRequestWhenCreateUserThenReturn400() throws Exception {
-        UserRequest incorrectUserRequest = this.userRequestRepository.getIncorrectUserRequest();
+        UserRequest incorrectUserRequest = new UserRequestRepository().getIncorrectUserRequest();
 
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.USERS)
@@ -90,12 +84,10 @@ class UserControllerTest {
 
     @Test
     void givenNonAuthenticatedWhenCreateUserThenReturn403() throws Exception {
-        UserRequest incorrectUserRequest = this.userRequestRepository.getIncorrectUserRequest();
-
         MockHttpServletResponse response = this.mockMvc.perform(
                 post(ApiConstant.API_V1 + ApiConstant.USERS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(incorrectUserRequest))
+                        .content(this.objectMapper.writeValueAsString(null))
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
