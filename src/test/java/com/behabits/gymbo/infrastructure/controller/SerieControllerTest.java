@@ -23,6 +23,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -217,4 +220,117 @@ class SerieControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
+
+
+    @WithMockUser
+    @Test
+    void givenNonExistentExerciseIdWhenFindSeriesByExerciseIdThenReturn404() throws Exception {
+        long exerciseId = 1L;
+        given(this.serieService.findSeriesByExerciseId(exerciseId)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenLoggedUserHasNotPermissionsWhenFindSeriesByExerciseByIdThenReturn403() throws Exception {
+        Long nonPermissionsId = 1L;
+
+        given(this.serieService.findSeriesByExerciseId(nonPermissionsId)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, nonPermissionsId)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturn200() throws Exception {
+        long exerciseId = 1L;
+        given(this.serieService.findSeriesByExerciseId(exerciseId)).willReturn(List.of(this.squatSerie));
+        given(this.mapper.toResponse(List.of(this.squatSerie))).willReturn(List.of(this.squatSerieResponse));
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(List.of(this.squatSerieResponse))));
+    }
+
+    @Test
+    @WithMockUser
+    void givenLoggedUserHasNotPermissionsWhenCreateSerieThenReturn403() throws Exception {
+        Long notPermissionsId = 1L;
+        given(this.mapper.toDomain(this.squatSerieRequest)).willReturn(this.squatSerie);
+        given(this.serieService.createSerie(notPermissionsId, this.squatSerie)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, notPermissionsId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(this.squatSerieRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @WithMockUser
+    @Test
+    void givenExistentExerciseIdWhenCreateSerieThenReturn201() throws Exception {
+        long exerciseId = 1L;
+        given(this.mapper.toDomain(this.squatSerieRequest)).willReturn(this.squatSerie);
+        given(this.serieService.createSerie(exerciseId, this.squatSerie)).willReturn(this.squatSerie);
+        given(this.mapper.toResponse(this.squatSerie)).willReturn(this.squatSerieResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(this.squatSerieRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.squatSerieResponse)));
+    }
+
+    @WithMockUser
+    @Test
+    void givenNonExistentExerciseIdWhenCreateSerieThenReturn404() throws Exception {
+        long exerciseId = 1L;
+        given(this.mapper.toDomain(this.squatSerieRequest)).willReturn(this.squatSerie);
+        given(this.serieService.createSerie(exerciseId, this.squatSerie)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(this.squatSerieRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedWhenCreateSerieThenReturn403() throws Exception {
+        long exerciseId = 1L;
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(this.squatSerieRequest))
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
 }
