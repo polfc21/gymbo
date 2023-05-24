@@ -4,10 +4,8 @@ import com.behabits.gymbo.domain.daos.ExerciseDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
-import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.domain.services.AuthorityService;
 import org.junit.jupiter.api.Test;
@@ -38,7 +36,6 @@ class ExerciseServiceImplTest {
     private AuthorityService authorityService;
 
     private final Exercise exercise = new ExerciseModelRepository().getSquatExerciseWithSquatSeries();
-    private final Serie serie = new SerieModelRepository().getSquatSerie();
     private final User loggedUser = new UserModelRepository().getUser();
 
     @Test
@@ -88,66 +85,6 @@ class ExerciseServiceImplTest {
         when(this.exerciseDao.findExercisesByTrainingIdAndUserId(trainingId, this.loggedUser.getId())).thenReturn(List.of(this.exercise));
 
         assertThat(this.exerciseService.findExercisesByTrainingId(trainingId), is(List.of(this.exercise)));
-    }
-
-    @Test
-    void givenNonExistentExerciseIdWhenFindSeriesByExerciseIdThenThrowNotFoundException() {
-        Long nonExistentId = 1L;
-
-        when(this.exerciseDao.findExerciseById(nonExistentId)).thenThrow(NotFoundException.class);
-
-        assertThrows(NotFoundException.class, () -> this.exerciseService.findSeriesByExerciseId(nonExistentId));
-    }
-
-    @Test
-    void givenExistentExerciseIdAndLoggedUserHasPermissionsWhenFindSeriesByExerciseIdThenReturnSerieList() {
-        Long existentId = 1L;
-
-        when(this.exerciseDao.findExerciseById(this.exercise.getId())).thenReturn(this.exercise);
-        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.exercise);
-        when(this.exerciseDao.findSeriesByExerciseId(existentId)).thenReturn(List.of(this.serie));
-
-        assertThat(this.exerciseService.findSeriesByExerciseId(existentId), is(List.of(this.serie)));
-    }
-
-    @Test
-    void givenExistentExerciseIdAndLoggedUserHasNotPermissionsWhenFindSeriesByExerciseIdThenThrowPermissionsException() {
-        Long existentId = 1L;
-
-        when(this.exerciseDao.findExerciseById(existentId)).thenReturn(this.exercise);
-        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(this.exercise);
-
-        assertThrows(PermissionsException.class, () -> this.exerciseService.findSeriesByExerciseId(existentId));
-    }
-
-    @Test
-    void givenExistentExerciseIdAndUserHasPermissionsWhenCreateSerieThenReturnSerie() {
-        Long existentId = 1L;
-
-        when(this.exerciseDao.findExerciseById(existentId)).thenReturn(this.exercise);
-        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.exercise);
-        when(this.exerciseDao.createSerie(existentId, this.serie)).thenReturn(this.serie);
-
-        assertThat(this.exerciseService.createSerie(existentId, this.serie), is(this.serie));
-    }
-
-    @Test
-    void givenExistentExerciseIdAndUserHasNotPermissionsWhenCreateSerieThenThrowPermissionsException() {
-        Long existentId = 1L;
-
-        when(this.exerciseDao.findExerciseById(existentId)).thenReturn(this.exercise);
-        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(this.exercise);
-
-        assertThrows(PermissionsException.class, () -> this.exerciseService.createSerie(existentId, this.serie));
-    }
-
-    @Test
-    void givenNonExistentExerciseIdWhenCreateSerieThenThrowNotFoundException() {
-        Long nonExistentId = 1L;
-
-        when(this.exerciseDao.findExerciseById(nonExistentId)).thenThrow(NotFoundException.class);
-
-        assertThrows(NotFoundException.class, () -> this.exerciseService.createSerie(nonExistentId, this.serie));
     }
 
     @Test
