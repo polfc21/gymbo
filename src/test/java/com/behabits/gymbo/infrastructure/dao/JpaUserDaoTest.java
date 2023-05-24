@@ -31,42 +31,33 @@ class JpaUserDaoTest {
     @Mock
     private UserEntityMapper userEntityMapper;
 
-    private final UserEntityRepository userEntityRepository = new UserEntityRepository();
+    private final User user = new UserModelRepository().getUser();
 
-    private final UserModelRepository userModelRepository = new UserModelRepository();
+    private final UserEntity userEntity = new UserEntityRepository().getUser();
 
     @Test
     void givenNonExistentUserWhenCreateUserThenReturnUser() {
-        User user = this.userModelRepository.getUser();
-        UserEntity userEntity = this.userEntityRepository.getUser();
+        when(this.userRepository.findByUsername(this.user.getUsername())).thenReturn(null);
+        when(this.userEntityMapper.toEntity(this.user)).thenReturn(this.userEntity);
+        when(this.userRepository.save(this.userEntity)).thenReturn(this.userEntity);
+        when(this.userEntityMapper.toDomain(this.userEntity)).thenReturn(this.user);
 
-        when(this.userRepository.findByUsername(user.getUsername())).thenReturn(null);
-        when(this.userEntityMapper.toEntity(user)).thenReturn(userEntity);
-        when(this.userRepository.save(userEntity)).thenReturn(userEntity);
-        when(this.userEntityMapper.toDomain(userEntity)).thenReturn(user);
-
-        assertThat(this.jpaUserDao.createUser(user), is(user));
+        assertThat(this.jpaUserDao.createUser(this.user), is(this.user));
     }
 
     @Test
     void givenExistentUserWhenCreateUserThenThrowExistingUsernameException() {
-        User user = this.userModelRepository.getUser();
-        UserEntity userEntity = this.userEntityRepository.getUser();
+        when(this.userRepository.findByUsername(this.user.getUsername())).thenReturn(this.userEntity);
 
-        when(this.userRepository.findByUsername(user.getUsername())).thenReturn(userEntity);
-
-        assertThrows(ExistingUserException.class, () -> this.jpaUserDao.createUser(user));
+        assertThrows(ExistingUserException.class, () -> this.jpaUserDao.createUser(this.user));
     }
 
     @Test
     void givenExistentUserWhenFindByUsernameThenReturnUser() {
-        User user = this.userModelRepository.getUser();
-        UserEntity userEntity = this.userEntityRepository.getUser();
+        when(this.userRepository.findByUsername(this.user.getUsername())).thenReturn(this.userEntity);
+        when(this.userEntityMapper.toDomain(this.userEntity)).thenReturn(this.user);
 
-        when(this.userRepository.findByUsername(user.getUsername())).thenReturn(userEntity);
-        when(this.userEntityMapper.toDomain(userEntity)).thenReturn(user);
-
-        assertThat(this.jpaUserDao.findByUsername(user.getUsername()), is(user));
+        assertThat(this.jpaUserDao.findByUsername(this.user.getUsername()), is(this.user));
     }
 
     @Test

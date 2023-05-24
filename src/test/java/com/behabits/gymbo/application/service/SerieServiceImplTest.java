@@ -35,26 +35,32 @@ class SerieServiceImplTest {
 
     @Test
     void givenNonExistentSerieWhenFindSerieByIdThenThrowNotFoundException() {
-        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(this.squatSerie.getId());
+        Long nonExistentId = 1L;
 
-        assertThrows(NotFoundException.class, () -> this.serieService.findSerieById(this.squatSerie.getId()));
+        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(nonExistentId);
+
+        assertThrows(NotFoundException.class, () -> this.serieService.findSerieById(nonExistentId));
     }
 
     @Test
     void givenExistentSerieAndUserHasNotPermissionsWhenFindSerieByIdThenThrowPermissionsException() {
-        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        Long existentId = 1L;
+
+        when(this.serieDao.findSerieById(existentId)).thenReturn(this.squatSerie);
         doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
 
-        assertThrows(PermissionsException.class, () -> this.serieService.findSerieById(this.squatSerie.getId()));
+        assertThrows(PermissionsException.class, () -> this.serieService.findSerieById(existentId));
     }
 
     @Test
     void givenExistentSeriesAndUserHasPermissionsWhenFindSerieByIdThenReturnSerie() {
-        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        Long existentId = 1L;
+
+        when(this.serieDao.findSerieById(existentId)).thenReturn(this.squatSerie);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
 
         try {
-            this.serieService.findSerieById(this.squatSerie.getId());
+            this.serieService.findSerieById(existentId);
         } catch (Exception e) {
             fail("Should not throw any exception");
         }
@@ -62,27 +68,33 @@ class SerieServiceImplTest {
 
     @Test
     void givenNonExistentSerieWhenDeleteSerieThenThrowNotFoundException() {
-        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(this.squatSerie.getId());
+        Long nonExistentId = 1L;
 
-        assertThrows(NotFoundException.class, () -> this.serieService.deleteSerie(this.squatSerie.getId()));
+        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(nonExistentId);
+
+        assertThrows(NotFoundException.class, () -> this.serieService.deleteSerie(nonExistentId));
     }
 
     @Test
     void givenExistentSerieAndUserHasNotPermissionsWhenDeleteSerieThenThrowPermissionsException() {
-        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        Long existentId = 1L;
+
+        when(this.serieDao.findSerieById(existentId)).thenReturn(this.squatSerie);
         doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
 
-        assertThrows(PermissionsException.class, () -> this.serieService.deleteSerie(this.squatSerie.getId()));
+        assertThrows(PermissionsException.class, () -> this.serieService.deleteSerie(existentId));
     }
 
     @Test
     void givenExistentSerieAndUserHasPermissionsWhenDeleteSerieThenDeleteSerie() {
-        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        Long existentId = 1L;
+
+        when(this.serieDao.findSerieById(existentId)).thenReturn(this.squatSerie);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
         doNothing().when(this.serieDao).deleteSerie(this.squatSerie);
 
         try {
-            this.serieService.deleteSerie(this.squatSerie.getId());
+            this.serieService.deleteSerie(existentId);
         } catch (Exception e) {
             fail("Should not throw any exception");
         }
@@ -90,25 +102,31 @@ class SerieServiceImplTest {
 
     @Test
     void givenExistentSerieAndUserHasNotPermissionsWhenUpdateSerieThenThrowPermissionsException() {
-        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
+        Long existentId = 1L;
+
+        when(this.serieDao.findSerieById(existentId)).thenReturn(this.squatSerie);
         doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
 
-        assertThrows(PermissionsException.class, () -> this.serieService.updateSerie(this.squatSerie.getId(), this.squatSerie));
+        assertThrows(PermissionsException.class, () -> this.serieService.updateSerie(existentId, this.squatSerie));
     }
 
     @Test
     void givenExistentSerieAndUserHasPermissionsWhenUpdateSerieThenUpdateSerie() {
-        when(this.serieDao.findSerieById(this.squatSerie.getId())).thenReturn(this.squatSerie);
-        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
-        when(this.serieDao.updateSerie(this.squatSerie.getId(), this.squatSerie)).thenReturn(this.squatSerie);
+        Long existentId = 1L;
 
-        assertThat(this.serieService.updateSerie(this.squatSerie.getId(), this.squatSerie), is(this.squatSerie));
+        when(this.serieDao.findSerieById(existentId)).thenReturn(this.squatSerie);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
+        when(this.serieDao.updateSerie(existentId, this.squatSerie)).thenReturn(this.squatSerie);
+
+        assertThat(this.serieService.updateSerie(existentId, this.squatSerie), is(this.squatSerie));
     }
 
     @Test
     void givenNonExistentSerieWhenUpdateSerieThenThrowNotFoundException() {
-        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(this.squatSerie.getId());
+        Long nonExistentId = 1L;
 
-        assertThrows(NotFoundException.class, () -> this.serieService.updateSerie(this.squatSerie.getId(), this.squatSerie));
+        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(nonExistentId);
+
+        assertThrows(NotFoundException.class, () -> this.serieService.updateSerie(nonExistentId, this.squatSerie));
     }
 }

@@ -27,43 +27,37 @@ class UserServiceImplTest {
     @Mock
     private UserDao userDao;
 
-    private final UserModelRepository userModelRepository = new UserModelRepository();
+    private final User user = new UserModelRepository().getUser();
 
     @Test
     void givenNonExistentUsernameWhenCreateUserThenReturnUser() {
-        User user = this.userModelRepository.getUser();
+        when(this.userDao.createUser(this.user)).thenReturn(this.user);
 
-        when(this.userDao.createUser(user)).thenReturn(user);
-
-        assertThat(this.userService.createUser(user), is(user));
+        assertThat(this.userService.createUser(this.user), is(this.user));
     }
 
     @Test
     void givenExistentUsernameWhenCreateUserThenThrowExistingUserException() {
-        User user = this.userModelRepository.getUser();
+        when(this.userDao.createUser(this.user)).thenThrow(ExistingUserException.class);
 
-        when(this.userDao.createUser(user)).thenThrow(ExistingUserException.class);
-
-        assertThrows(ExistingUserException.class, () -> this.userService.createUser(user));
+        assertThrows(ExistingUserException.class, () -> this.userService.createUser(this.user));
     }
 
     @Test
     void givenExistentUsernameWhenLoadUserByUsernameThenReturnUserDetails() {
-        User user = this.userModelRepository.getUser();
+        String existentUsername = this.user.getUsername();
 
-        when(this.userDao.findByUsername(user.getUsername())).thenReturn(user);
+        when(this.userDao.findByUsername(existentUsername)).thenReturn(this.user);
 
-        assertThat(this.userService.loadUserByUsername(user.getUsername()), is(new UserDetailsImpl(user)));
+        assertThat(this.userService.loadUserByUsername(existentUsername), is(new UserDetailsImpl(this.user)));
     }
 
     @Test
     void givenNonExistentUsernameWhenLoadUserByUsernameThenThrowUsernameNotFoundException() {
-        User user = this.userModelRepository.getUser();
-        String username = user.getUsername();
+        String nonExistentUsername = "nonExistentUsername";
 
-        when(this.userDao.findByUsername(user.getUsername())).thenReturn(null);
+        when(this.userDao.findByUsername(nonExistentUsername)).thenReturn(null);
 
-
-        assertThrows(UsernameNotFoundException.class, () -> this.userService.loadUserByUsername(username));
+        assertThrows(UsernameNotFoundException.class, () -> this.userService.loadUserByUsername(nonExistentUsername));
     }
 }

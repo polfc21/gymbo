@@ -45,111 +45,97 @@ class JpaExerciseDaoTest {
     @Mock
     private SerieEntityMapper serieMapper;
 
-    private final ExerciseEntityRepository exerciseEntityRepository = new ExerciseEntityRepository();
-    private final ExerciseModelRepository exerciseModelRepository = new ExerciseModelRepository();
-    private final SerieEntityRepository serieEntityRepository = new SerieEntityRepository();
-    private final SerieModelRepository serieModelRepository = new SerieModelRepository();
+    private final Exercise squatExercise = new ExerciseModelRepository().getSquatExercise();
+    private final ExerciseEntity squatExerciseEntity = new ExerciseEntityRepository().getSquatExercise();
+    private final Serie squatSerie = new SerieModelRepository().getSquatSerie();
+    private final SerieEntity squatSerieEntity = new SerieEntityRepository().getSquatSerie();
 
     @Test
     void givenSquatExerciseWhenCreateExerciseThenReturnSquatExercise() {
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
-        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExercise();
+        when(this.mapper.toEntity(this.squatExercise)).thenReturn(this.squatExerciseEntity);
+        when(this.exerciseRepository.save(this.squatExerciseEntity)).thenReturn(this.squatExerciseEntity);
+        when(this.mapper.toDomain(this.squatExerciseEntity)).thenReturn(this.squatExercise);
 
-        when(this.mapper.toEntity(squatExercise)).thenReturn(squatExerciseEntity);
-        when(this.exerciseRepository.save(squatExerciseEntity)).thenReturn(squatExerciseEntity);
-        when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
-
-        assertThat(this.exerciseDao.createExercise(squatExercise), is(squatExercise));
+        assertThat(this.exerciseDao.createExercise(this.squatExercise), is(this.squatExercise));
     }
 
     @Test
     void givenSquatExerciseWithSeriesWhenCreateExerciseThenReturnSquatExerciseWithSeries() {
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
-        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
+        when(this.mapper.toEntity(this.squatExercise)).thenReturn(this.squatExerciseEntity);
+        when(this.exerciseRepository.save(this.squatExerciseEntity)).thenReturn(this.squatExerciseEntity);
+        when(this.mapper.toDomain(this.squatExerciseEntity)).thenReturn(this.squatExercise);
 
-        when(this.mapper.toEntity(squatExercise)).thenReturn(squatExerciseEntity);
-        when(this.exerciseRepository.save(squatExerciseEntity)).thenReturn(squatExerciseEntity);
-        when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
-
-        assertThat(this.exerciseDao.createExercise(squatExercise), is(squatExercise));
+        assertThat(this.exerciseDao.createExercise(this.squatExercise), is(this.squatExercise));
     }
 
     @Test
     void givenExistentIdWhenFindExerciseByIdThenReturnExercise() {
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
-        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
+        Long existentId = 1L;
 
-        when(this.exerciseRepository.findById(squatExerciseEntity.getId())).thenReturn(Optional.of(squatExerciseEntity));
-        when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
+        when(this.exerciseRepository.findById(existentId)).thenReturn(Optional.of(this.squatExerciseEntity));
+        when(this.mapper.toDomain(this.squatExerciseEntity)).thenReturn(this.squatExercise);
 
-        assertThat(this.exerciseDao.findExerciseById(squatExercise.getId()), is(squatExercise));
+        assertThat(this.exerciseDao.findExerciseById(existentId), is(this.squatExercise));
     }
 
     @Test
     void givenNonExistentIdWhenFindExerciseByIdThenThrowNotFoundException() {
-        when(this.exerciseRepository.findById(1L)).thenReturn(Optional.empty());
+        Long nonExistentId = 1L;
 
-        assertThrows(NotFoundException.class, () -> this.exerciseDao.findExerciseById(1L));
+        when(this.exerciseRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.exerciseDao.findExerciseById(nonExistentId));
     }
 
     @Test
     void givenExerciseWithTrainingIdAndUserIdWhenFindExercisesByTrainingIdThenReturnExerciseList() {
         Long trainingId = 1L;
         Long userId = 1L;
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
-        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
 
-        when(this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId)).thenReturn(List.of(squatExerciseEntity));
-        when(this.mapper.toDomain(List.of(squatExerciseEntity))).thenReturn(List.of(squatExercise));
+        when(this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId)).thenReturn(List.of(this.squatExerciseEntity));
+        when(this.mapper.toDomain(List.of(this.squatExerciseEntity))).thenReturn(List.of(this.squatExercise));
 
-        assertThat(this.exerciseDao.findExercisesByTrainingIdAndUserId(trainingId, userId), is(List.of(squatExercise)));
+        assertThat(this.exerciseDao.findExercisesByTrainingIdAndUserId(trainingId, userId), is(List.of(this.squatExercise)));
     }
 
     @Test
     void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturnSeriesList() {
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExerciseWithSquatSeries();
-        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
+        Long existentId = 1L;
 
-        when(this.exerciseRepository.getReferenceById(squatExerciseEntity.getId())).thenReturn(squatExerciseEntity);
-        when(this.serieMapper.toDomain(squatExerciseEntity.getSeries())).thenReturn(squatExercise.getSeries());
+        when(this.exerciseRepository.getReferenceById(existentId)).thenReturn(this.squatExerciseEntity);
+        when(this.serieMapper.toDomain(this.squatExerciseEntity.getSeries())).thenReturn(this.squatExercise.getSeries());
 
-        assertThat(this.exerciseDao.findSeriesByExerciseId(squatExercise.getId()), is(squatExercise.getSeries()));
+        assertThat(this.exerciseDao.findSeriesByExerciseId(existentId), is(this.squatExercise.getSeries()));
     }
 
     @Test
     void givenExistentExerciseIdWhenCreateSerieThenReturnSerie() {
         Long existentId = 1L;
-        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExerciseWithSeries();
-        Serie squatSerie = this.serieModelRepository.getSquatSerie();
-        SerieEntity squatSerieEntity = this.serieEntityRepository.getSquatSerie();
 
-        when(this.exerciseRepository.getReferenceById(existentId)).thenReturn(squatExerciseEntity);
-        when(this.serieMapper.toEntity(squatSerie)).thenReturn(squatSerieEntity);
-        when(this.serieRepository.save(squatSerieEntity)).thenReturn(squatSerieEntity);
-        when(this.serieMapper.toDomain(squatSerieEntity)).thenReturn(squatSerie);
+        when(this.exerciseRepository.getReferenceById(existentId)).thenReturn(this.squatExerciseEntity);
+        when(this.serieMapper.toEntity(this.squatSerie)).thenReturn(this.squatSerieEntity);
+        when(this.serieRepository.save(this.squatSerieEntity)).thenReturn(this.squatSerieEntity);
+        when(this.serieMapper.toDomain(this.squatSerieEntity)).thenReturn(this.squatSerie);
 
-        assertThat(this.exerciseDao.createSerie(existentId, squatSerie), is(squatSerie));
-        assertThat(squatSerieEntity.getExercise(), is(squatExerciseEntity));
+        assertThat(this.exerciseDao.createSerie(existentId, this.squatSerie), is(this.squatSerie));
+        assertThat(this.squatSerieEntity.getExercise(), is(this.squatExerciseEntity));
     }
 
     @Test
     void givenExerciseWhenDeleteExerciseThenDeleteExercise() {
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
+        this.exerciseDao.deleteExercise(this.squatExercise);
 
-        this.exerciseDao.deleteExercise(squatExercise);
-
-        verify(this.exerciseRepository).deleteById(squatExercise.getId());
+        verify(this.exerciseRepository).deleteById(this.squatExercise.getId());
     }
 
     @Test
     void givenExerciseWhenUpdateExerciseThenReturnExerciseUpdated() {
-        Exercise squatExercise = this.exerciseModelRepository.getSquatExercise();
-        ExerciseEntity squatExerciseEntity = this.exerciseEntityRepository.getSquatExercise();
+        Long existentId = 1L;
 
-        when(this.exerciseRepository.getReferenceById(squatExercise.getId())).thenReturn(squatExerciseEntity);
-        when(this.exerciseRepository.save(squatExerciseEntity)).thenReturn(squatExerciseEntity);
+        when(this.exerciseRepository.getReferenceById(existentId)).thenReturn(this.squatExerciseEntity);
+        when(this.exerciseRepository.save(this.squatExerciseEntity)).thenReturn(this.squatExerciseEntity);
         when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
 
-        assertThat(this.exerciseDao.updateExercise(squatExercise.getId(),squatExercise), is(squatExercise));
+        assertThat(this.exerciseDao.updateExercise(existentId, this.squatExercise), is(this.squatExercise));
     }
 }
