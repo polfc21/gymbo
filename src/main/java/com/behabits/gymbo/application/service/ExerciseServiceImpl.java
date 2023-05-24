@@ -2,7 +2,6 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.ExerciseDao;
 import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.ExerciseService;
@@ -36,20 +35,6 @@ public class ExerciseServiceImpl implements ExerciseService {
     public List<Exercise> findExercisesByTrainingId(Long trainingId) {
         User user = this.authorityService.getLoggedUser();
         return this.exerciseDao.findExercisesByTrainingIdAndUserId(trainingId, user.getId());
-    }
-
-    @Override
-    public List<Serie> findSeriesByExerciseId(Long exerciseId) {
-        Exercise exercise = this.findExerciseById(exerciseId);
-        this.authorityService.checkLoggedUserHasPermissions(exercise);
-        return this.exerciseDao.findSeriesByExerciseId(exerciseId);
-    }
-
-    @Override
-    public Serie createSerie(Long exerciseId, Serie serie) {
-        Exercise exercise = this.findExerciseById(exerciseId);
-        this.authorityService.checkLoggedUserHasPermissions(exercise);
-        return this.exerciseDao.createSerie(exerciseId, serie);
     }
 
     @Override

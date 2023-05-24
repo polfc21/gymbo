@@ -2,14 +2,10 @@ package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
-import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.domain.services.ExerciseService;
 import com.behabits.gymbo.domain.services.JwtService;
-import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
-import com.behabits.gymbo.infrastructure.controller.mapper.SerieApiMapper;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.response.ExerciseResponseRepository;
@@ -18,7 +14,6 @@ import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.ExerciseResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.ExerciseApiMapper;
-import com.behabits.gymbo.infrastructure.controller.repositories.response.SerieResponseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +45,6 @@ class ExerciseControllerTest {
     private ExerciseApiMapper mapper;
 
     @MockBean
-    private SerieApiMapper serieMapper;
-
-    @MockBean
     private JwtService jwtService; // Added to load application context
 
     @Autowired
@@ -68,10 +60,6 @@ class ExerciseControllerTest {
     private final Exercise squatExercise = new ExerciseModelRepository().getSquatExercise();
 
     private final SerieRequestRepository serieRequestRepository = new SerieRequestRepository();
-
-    private final SerieResponseRepository serieResponseRepository = new SerieResponseRepository();
-
-    private final SerieModelRepository serieModelRepository = new SerieModelRepository();
 
     @Test
     @WithMockUser
@@ -282,129 +270,6 @@ class ExerciseControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatResponses)));
-    }
-
-    @WithMockUser
-    @Test
-    void givenNonExistentExerciseIdWhenFindSeriesByExerciseIdThenReturn404() throws Exception {
-        long exerciseId = 1L;
-        given(this.exerciseService.findSeriesByExerciseId(exerciseId)).willThrow(NotFoundException.class);
-
-        MockHttpServletResponse response = this.mockMvc.perform(
-                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andReturn().getResponse();
-
-        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
-    }
-
-    @Test
-    @WithMockUser
-    void givenLoggedUserHasNotPermissionsWhenFindSeriesByExerciseByIdThenReturn403() throws Exception {
-        Long nonPermissionsId = 1L;
-
-        given(this.exerciseService.findSeriesByExerciseId(nonPermissionsId)).willThrow(PermissionsException.class);
-
-        MockHttpServletResponse response = this.mockMvc.perform(
-                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, nonPermissionsId)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andReturn().getResponse();
-
-        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
-    }
-
-    @WithMockUser
-    @Test
-    void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturn200() throws Exception {
-        long exerciseId = 1L;
-        Serie serie = this.serieModelRepository.getSquatSerie();
-        List<Serie> series = List.of(serie);
-        SerieResponse serieResponse = this.serieResponseRepository.getSquatSerieResponse();
-        List<SerieResponse> seriesResponse = List.of(serieResponse);
-        given(this.exerciseService.findSeriesByExerciseId(exerciseId)).willReturn(series);
-        given(this.serieMapper.toResponse(series)).willReturn(seriesResponse);
-
-        MockHttpServletResponse response = this.mockMvc.perform(
-                get(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andReturn().getResponse();
-
-        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
-        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(seriesResponse)));
-    }
-
-    @Test
-    @WithMockUser
-    void givenLoggedUserHasNotPermissionsWhenCreateSerieThenReturn403() throws Exception {
-        Long notPermissionsId = 1L;
-        SerieRequest squatSerieRequest = this.serieRequestRepository.getSquatSerieRequest();
-        Serie squatSerie = this.serieModelRepository.getSquatSerie();
-        given(this.serieMapper.toDomain(squatSerieRequest)).willReturn(squatSerie);
-        given(this.exerciseService.createSerie(notPermissionsId, squatSerie)).willThrow(PermissionsException.class);
-
-        MockHttpServletResponse response = this.mockMvc.perform(
-                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, notPermissionsId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatSerieRequest))
-                        .with(csrf())
-        ).andReturn().getResponse();
-
-        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
-    }
-
-    @WithMockUser
-    @Test
-    void givenExistentExerciseIdWhenCreateSerieThenReturn201() throws Exception {
-        long exerciseId = 1L;
-        SerieRequest squatSerieRequest = this.serieRequestRepository.getSquatSerieRequest();
-        Serie serie = this.serieModelRepository.getSquatSerie();
-        SerieResponse squatSerieResponse = this.serieResponseRepository.getSquatSerieResponse();
-        given(this.serieMapper.toDomain(squatSerieRequest)).willReturn(serie);
-        given(this.exerciseService.createSerie(exerciseId, serie)).willReturn(serie);
-        given(this.serieMapper.toResponse(serie)).willReturn(squatSerieResponse);
-
-        MockHttpServletResponse response = this.mockMvc.perform(
-                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatSerieRequest))
-                        .with(csrf())
-        ).andReturn().getResponse();
-
-        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
-        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(squatSerieResponse)));
-    }
-
-    @WithMockUser
-    @Test
-    void givenNonExistentExerciseIdWhenCreateSerieThenReturn404() throws Exception {
-        long exerciseId = 1L;
-        SerieRequest squatSerieRequest = this.serieRequestRepository.getSquatSerieRequest();
-        Serie serie = this.serieModelRepository.getSquatSerie();
-        given(this.serieMapper.toDomain(squatSerieRequest)).willReturn(serie);
-        given(this.exerciseService.createSerie(exerciseId, serie)).willThrow(NotFoundException.class);
-
-        MockHttpServletResponse response = this.mockMvc.perform(
-                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatSerieRequest))
-                        .with(csrf())
-        ).andReturn().getResponse();
-
-        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
-    }
-
-    @Test
-    void givenNonAuthenticatedWhenCreateSerieThenReturn403() throws Exception {
-        long exerciseId = 1L;
-        SerieRequest squatSerieRequest = this.serieRequestRepository.getSquatSerieRequest();
-
-        MockHttpServletResponse response = this.mockMvc.perform(
-                post(ApiConstant.API_V1 + ApiConstant.EXERCISES + ApiConstant.ID + ApiConstant.SERIES, exerciseId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsString(squatSerieRequest))
-        ).andReturn().getResponse();
-
-        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
 
     @Test
