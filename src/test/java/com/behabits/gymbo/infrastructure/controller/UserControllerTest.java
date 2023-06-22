@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller;
 
+import com.behabits.gymbo.domain.exceptions.ExistingUserException;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
@@ -88,6 +89,24 @@ class UserControllerTest {
         ).andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentUsernameWhenCreateUserThenReturn409() throws Exception {
+        UserRequest userRequest = new UserRequestRepository().getCorrectUserRequest();
+        User user = new UserModelRepository().getUser();
+        given(this.mapper.toDomain(userRequest)).willReturn(user);
+        given(this.userService.createUser(user)).willThrow(ExistingUserException.class);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                post(ApiConstant.API_V1 + ApiConstant.AUTH + ApiConstant.REGISTER)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(userRequest))
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CONFLICT.value()));
     }
 
     @Test
