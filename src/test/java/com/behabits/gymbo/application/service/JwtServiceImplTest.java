@@ -1,30 +1,26 @@
 package com.behabits.gymbo.application.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.Verification;
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import com.behabits.gymbo.application.jwt.JwtBuilder;
+import com.behabits.gymbo.application.jwt.JwtParser;
+import com.behabits.gymbo.domain.repositories.UserModelRepository;
+import com.behabits.gymbo.domain.services.TokenService;
+import com.behabits.gymbo.domain.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,84 +30,123 @@ class JwtServiceImplTest {
     private JwtServiceImpl jwtService;
 
     @Mock
-    private UserServiceImpl userService;
+    private UserService userService;
 
-    @Value("${gymbo.jwt.issuer}")
-    private String issuer;
+    @Mock
+    private TokenService tokenService;
 
-    @Value("${gymbo.jwt.secret}")
-    private String secret;
+    @Mock
+    private JwtBuilder jwtBuilder;
 
-    private static MockedStatic<JWT> jwtMockedStatic;
-    private static MockedStatic<Algorithm> algorithmMockedStatic;
-    private static MockedStatic<Verification> verificationMockedStatic;
-
-    @BeforeAll
-    static void setUp() {
-        jwtMockedStatic = mockStatic(JWT.class);
-        algorithmMockedStatic = mockStatic(Algorithm.class);
-        verificationMockedStatic = mockStatic(Verification.class);
-    }
-
-    @AfterAll
-    static void tearDown() {
-        jwtMockedStatic.close();
-        algorithmMockedStatic.close();
-        verificationMockedStatic.close();
-    }
+    @Mock
+    private JwtParser jwtParser;
 
     @Test
-    void givenUsernameAndEmailWhenCreateTokenThenReturnToken() {
-        String username = "pol";
-        String email = "polfarreny@gmail.com";
+    void givenUserDetailsWhenGenerateTokenThenReturnTokenString() {
+        UserDetails userDetails = new UserDetailsImpl(new UserModelRepository().getUser());
         String expectedToken = "EXPECTED TOKEN";
-        JWTCreator.Builder jwtBuilder = mock(JWTCreator.Builder.class);
 
-        when(JWT.create()).thenReturn(jwtBuilder);
-        when(jwtBuilder.withIssuer(this.issuer)).thenReturn(jwtBuilder);
-        doReturn(jwtBuilder).when(jwtBuilder).withIssuedAt(any(Date.class));
-        doReturn(jwtBuilder).when(jwtBuilder).withNotBefore(any(Date.class));
-        doReturn(jwtBuilder).when(jwtBuilder).withExpiresAt(any(Date.class));
-        when(jwtBuilder.withClaim("username", username)).thenReturn(jwtBuilder);
-        when(jwtBuilder.withClaim("email", email)).thenReturn(jwtBuilder);
-        when(jwtBuilder.sign(Algorithm.HMAC256(this.secret))).thenReturn(expectedToken);
+        when(this.jwtBuilder.buildToken(userDetails)).thenReturn(expectedToken);
 
-        assertThat(this.jwtService.createToken(username, email), is(expectedToken));
+        assertThat(this.jwtService.generateToken(userDetails), is(expectedToken));
     }
 
     @Test
-    void givenValidTokenWhenGetAuthenticationThenReturnUsernamePasswordToken() {
-        String validToken = "VALID TOKEN";
-        String username = "pol";
-        Verification verification = mock(Verification.class);
-        JWTVerifier jwtVerifier = mock(JWTVerifier.class);
-        DecodedJWT decodedJWT = mock(DecodedJWT.class);
-        Claim claim = mock(Claim.class);
-        UserDetailsImpl userDetailsImpl = mock(UserDetailsImpl.class);
-
-        when(JWT.require(Algorithm.HMAC256(this.secret))).thenReturn(verification);
-        when(verification.withIssuer(this.issuer)).thenReturn(verification);
-        when(verification.build()).thenReturn(jwtVerifier);
-        when(jwtVerifier.verify(validToken)).thenReturn(decodedJWT);
-        when(decodedJWT.getClaim("username")).thenReturn(claim);
-        when(claim.asString()).thenReturn(username);
-        when(this.userService.loadUserByUsername(username)).thenReturn(userDetailsImpl);
-        when(userDetailsImpl.getUsername()).thenReturn(username);
-
-        assertThat(this.jwtService.getAuthentication(validToken).getPrincipal(), is(username));
+    void givenTokenIsNullWhenIsValidThenReturnFalse() {
+        assertThat(this.jwtService.isValid(null), is(false));
     }
 
     @Test
-    void givenInvalidTokenWhenGetAuthenticationThenReturnNull() {
-        String invalidToken = "INVALID TOKEN";
-        Verification verification = mock(Verification.class);
-        JWTVerifier jwtVerifier = mock(JWTVerifier.class);
+    void givenTokenIsNotBearerTokenWhenIsValidThenReturnFalse() {
+        String notBearerToken = "NOT BEARER TOKEN";
 
-        when(JWT.require(Algorithm.HMAC256(this.secret))).thenReturn(verification);
-        when(verification.withIssuer(this.issuer)).thenReturn(verification);
-        when(verification.build()).thenReturn(jwtVerifier);
-        when(jwtVerifier.verify(invalidToken)).thenThrow(JWTVerificationException.class);
-
-        assertNull(this.jwtService.getAuthentication(invalidToken));
+        assertThat(this.jwtService.isValid(notBearerToken), is(false));
     }
+
+    @Test
+    void givenTokenIsBearerTokenAndUsernameIsNullWhenIsValidThenReturnFalse() {
+        String bearerToken = "Bearer TOKEN";
+        String token = bearerToken.substring(7);
+
+        when(this.jwtParser.extractUsername(token)).thenReturn(null);
+
+        assertThat(this.jwtService.isValid(bearerToken), is(false));
+    }
+
+    @Test
+    void givenTokenIsBearerTokenAndUsernameIsNotSavedWhenIsValidThenThrowUsernameNotFoundException() {
+        String bearerToken = "Bearer TOKEN";
+        String token = bearerToken.substring(7);
+        String username = "USERNAME";
+
+        when(this.jwtParser.extractUsername(token)).thenReturn(username);
+        when(this.userService.loadUserByUsername(username)).thenThrow(UsernameNotFoundException.class);
+
+        assertThrows(UsernameNotFoundException.class, () -> this.jwtService.isValid(bearerToken));
+    }
+
+    @Test
+    void givenTokenIsBearerTokenAndTokenIsInvalidWhenIsValidThenReturnFalse() {
+        String bearerToken = "Bearer TOKEN";
+        String token = bearerToken.substring(7);
+        UserDetailsImpl userDetails = new UserDetailsImpl(new UserModelRepository().getUser());
+        String username = userDetails.getUsername();
+
+        when(this.jwtParser.extractUsername(token)).thenReturn(username);
+        when(this.userService.loadUserByUsername(username)).thenReturn(userDetails);
+        when(this.jwtParser.extractExpiration(token)).thenReturn(new Date());
+        when(this.tokenService.isValid(token, userDetails.getUser())).thenReturn(false);
+
+        assertThat(this.jwtService.isValid(bearerToken), is(false));
+    }
+
+    @Test
+    void givenTokenIsBearerAndTokenIsValidAndIsExpiredWhenIsValidThenReturnFalse() {
+        String bearerToken = "Bearer TOKEN";
+        String token = bearerToken.substring(7);
+        UserDetailsImpl userDetails = new UserDetailsImpl(new UserModelRepository().getUser());
+        String username = userDetails.getUsername();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        Date expiredDate = calendar.getTime();
+
+        when(this.jwtParser.extractUsername(token)).thenReturn(username);
+        when(this.userService.loadUserByUsername(username)).thenReturn(userDetails);
+        when(this.jwtParser.extractExpiration(token)).thenReturn(expiredDate);
+        when(this.tokenService.isValid(token, userDetails.getUser())).thenReturn(true);
+
+        assertThat(this.jwtService.isValid(bearerToken), is(false));
+    }
+
+    @Test
+    void givenTokenIsBearerAndTokenIsValidAndIsNotExpiredWhenIsValidThenReturnTrue() {
+        String bearerToken = "Bearer TOKEN";
+        String token = bearerToken.substring(7);
+        UserDetailsImpl userDetails = new UserDetailsImpl(new UserModelRepository().getUser());
+        String username = userDetails.getUsername();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, 1);
+        Date nonExpiredDate = calendar.getTime();
+
+        when(this.jwtParser.extractUsername(token)).thenReturn(username);
+        when(this.userService.loadUserByUsername(username)).thenReturn(userDetails);
+        when(this.jwtParser.extractExpiration(token)).thenReturn(nonExpiredDate);
+        when(this.tokenService.isValid(token, userDetails.getUser())).thenReturn(true);
+
+        assertThat(this.jwtService.isValid(bearerToken), is(true));
+    }
+
+    @Test
+    void givenTokenWhenGetAuthenticationThenReturnUsernameAuthenticationToken() {
+        String bearerToken = "Bearer TOKEN";
+        String token = bearerToken.substring(7);
+        UserDetails userDetails = new UserDetailsImpl(new UserModelRepository().getUser());
+        String username = userDetails.getUsername();
+
+        when(this.jwtParser.extractUsername(token)).thenReturn(username);
+        when(this.userService.loadUserByUsername(username)).thenReturn(userDetails);
+
+        assertThat(this.jwtService.getAuthentication(bearerToken).getName(), is(username));
+    }
+
 }

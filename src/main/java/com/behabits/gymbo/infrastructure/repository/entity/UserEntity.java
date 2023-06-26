@@ -30,4 +30,6 @@ public class UserEntity {
     private List<TrainingEntity> trainings;
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExerciseEntity> exercises;
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TokenEntity> tokens;
 }
