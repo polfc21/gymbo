@@ -1,5 +1,6 @@
 package com.behabits.gymbo.application.service;
 
+import com.behabits.gymbo.application.jwt.JwtBuilder;
 import com.behabits.gymbo.domain.daos.TokenDao;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.models.User;
@@ -14,10 +15,14 @@ import java.util.List;
 public class TokenServiceImpl implements TokenService {
 
     private final TokenDao tokenDao;
+    private final JwtBuilder jwtBuilder;
 
     @Override
-    public Token createToken(Token token) {
-        this.revokeAllUserTokens(token.getUser());
+    public Token createToken(User user) {
+        this.revokeAllUserTokens(user);
+        String tokenString = this.jwtBuilder.buildToken(user);
+        Token token = new Token(tokenString);
+        token.setUser(user);
         return this.tokenDao.createToken(token);
     }
 

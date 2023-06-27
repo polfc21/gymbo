@@ -4,6 +4,6 @@ import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.models.User;
 
 public interface TokenService {
-    Token createToken(Token token);
+    Token createToken(User user);
     Boolean isValid(String token, User user);
 }

@@ -1,12 +1,12 @@
 package com.behabits.gymbo.application.service;
 
+import com.behabits.gymbo.application.jwt.JwtBuilder;
 import com.behabits.gymbo.domain.daos.TokenDao;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.TokenModelRepository;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,29 +29,29 @@ class TokenServiceImplTest {
     @Mock
     private TokenDao tokenDao;
 
+    @Mock
+    private JwtBuilder jwtBuilder;
+
     private final Token token = new TokenModelRepository().getToken();
     private final User user = new UserModelRepository().getUser();
-
-    @BeforeEach
-    void setUp() {
-        this.token.setUser(this.user);
-    }
 
     @Test
     void givenTokenAndUserTokensIsEmptyWhenCreateTokenThenReturnToken() {
         when(this.tokenDao.findAllTokensByUserId(this.user.getId())).thenReturn(List.of());
-        when(this.tokenDao.createToken(this.token)).thenReturn(this.token);
+        when(this.jwtBuilder.buildToken(this.user)).thenReturn(this.token.getToken());
+        when(this.tokenDao.createToken(any(Token.class))).thenReturn(this.token);
 
         verify(this.tokenDao, times(0)).saveAll(anyList());
-        assertThat(this.tokenService.createToken(this.token), is(this.token));
+        assertThat(this.tokenService.createToken(this.user), is(this.token));
     }
 
     @Test
     void givenTokenAndUserTokensIsNotEmptyWhenCreateTokenThenReturnToken() {
         when(this.tokenDao.findAllTokensByUserId(this.user.getId())).thenReturn(List.of(this.token));
-        when(this.tokenDao.createToken(this.token)).thenReturn(this.token);
+        when(this.jwtBuilder.buildToken(this.user)).thenReturn(this.token.getToken());
+        when(this.tokenDao.createToken(any(Token.class))).thenReturn(this.token);
 
-        Token token = this.tokenService.createToken(this.token);
+        Token token = this.tokenService.createToken(this.user);
 
         verify(this.tokenDao, times(1)).saveAll(List.of(this.token));
         assertThat(token, is(this.token));
