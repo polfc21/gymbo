@@ -1,7 +1,6 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
-import com.behabits.gymbo.application.jwt.JwtBuilder;
 import com.behabits.gymbo.application.jwt.JwtParser;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.domain.services.TokenService;
@@ -14,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -36,20 +34,7 @@ class JwtServiceImplTest {
     private TokenService tokenService;
 
     @Mock
-    private JwtBuilder jwtBuilder;
-
-    @Mock
     private JwtParser jwtParser;
-
-    @Test
-    void givenUserDetailsWhenGenerateTokenThenReturnTokenString() {
-        UserDetails userDetails = new UserDetailsImpl(new UserModelRepository().getUser());
-        String expectedToken = "EXPECTED TOKEN";
-
-        when(this.jwtBuilder.buildToken(userDetails)).thenReturn(expectedToken);
-
-        assertThat(this.jwtService.generateToken(userDetails), is(expectedToken));
-    }
 
     @Test
     void givenTokenIsNullWhenIsValidThenReturnFalse() {

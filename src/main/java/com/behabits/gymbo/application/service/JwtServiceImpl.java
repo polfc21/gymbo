@@ -1,6 +1,5 @@
 package com.behabits.gymbo.application.service;
 
-import com.behabits.gymbo.application.jwt.JwtBuilder;
 import com.behabits.gymbo.application.jwt.JwtParser;
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
 import com.behabits.gymbo.domain.services.JwtService;
@@ -8,7 +7,6 @@ import com.behabits.gymbo.domain.services.TokenService;
 import com.behabits.gymbo.domain.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,13 +17,7 @@ public class JwtServiceImpl implements JwtService {
 
     private final UserService userService;
     private final TokenService tokenService;
-    private final JwtBuilder jwtBuilder;
     private final JwtParser jwtParser;
-
-    @Override
-    public String generateToken(UserDetails userDetails) {
-        return this.jwtBuilder.buildToken(userDetails);
-    }
 
     @Override
     public Boolean isValid(String token) {
