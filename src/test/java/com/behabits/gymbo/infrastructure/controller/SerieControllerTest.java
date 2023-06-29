@@ -4,8 +4,8 @@ import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.repositories.SerieModelRepository;
-import com.behabits.gymbo.domain.services.JwtService;
 import com.behabits.gymbo.domain.services.SerieService;
+import com.behabits.gymbo.domain.services.TokenService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.SerieRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.SerieResponse;
@@ -42,7 +42,7 @@ class SerieControllerTest {
     private SerieApiMapper mapper;
 
     @MockBean
-    private JwtService jwtService; // Added to load application context
+    private TokenService tokenService; // Added to load application context
 
     @Autowired
     private MockMvc mockMvc;

@@ -5,7 +5,7 @@ import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.domain.services.AuthenticationService;
-import com.behabits.gymbo.domain.services.JwtService;
+import com.behabits.gymbo.domain.services.TokenService;
 import com.behabits.gymbo.domain.services.UserService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.LoginRequest;
@@ -47,7 +47,7 @@ class UserControllerTest {
     private AuthenticationService authenticationService;
 
     @MockBean
-    private JwtService jwtService; // Added to load application context
+    private TokenService tokenService; // Added to load application context
 
     @Autowired
     private MockMvc mockMvc;
