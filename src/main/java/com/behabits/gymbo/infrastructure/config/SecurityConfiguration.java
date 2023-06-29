@@ -41,7 +41,7 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement((session) -> session
+                .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(this.authenticationProvider)
