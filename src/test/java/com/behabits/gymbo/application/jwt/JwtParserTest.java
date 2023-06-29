@@ -23,7 +23,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest
-public class JwtParserTest {
+class JwtParserTest {
 
     @Autowired
     private JwtParser jwtParser;

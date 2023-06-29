@@ -46,7 +46,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Boolean isValid(String tokenString) {
+    public boolean isValid(String tokenString) {
         if (tokenString == null || !tokenString.startsWith("Bearer ")) {
             return false;
         }
@@ -64,7 +64,7 @@ public class TokenServiceImpl implements TokenService {
         return !token.getIsExpired() && !token.getIsRevoked();
     }
 
-    private Boolean isExpired(Date expirationDate) {
+    private boolean isExpired(Date expirationDate) {
         return expirationDate.before(new Date());
     }
 

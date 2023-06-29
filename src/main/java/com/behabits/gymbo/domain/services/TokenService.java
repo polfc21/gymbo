@@ -6,6 +6,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 public interface TokenService {
     Token createToken(User user);
-    Boolean isValid(String token);
+    boolean isValid(String token);
     UsernamePasswordAuthenticationToken getAuthentication(String token);
 }

@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @SpringBootTest
-public class TokenEntityMapperTest {
+class TokenEntityMapperTest {
 
     @Autowired
     private TokenEntityMapper mapper;
