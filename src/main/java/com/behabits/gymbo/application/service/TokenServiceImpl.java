@@ -1,12 +1,19 @@
 package com.behabits.gymbo.application.service;
 
+import com.behabits.gymbo.application.domain.UserDetailsImpl;
+import com.behabits.gymbo.application.jwt.JwtBuilder;
+import com.behabits.gymbo.application.jwt.JwtParser;
 import com.behabits.gymbo.domain.daos.TokenDao;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.TokenService;
+import com.behabits.gymbo.domain.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -14,10 +21,16 @@ import java.util.List;
 public class TokenServiceImpl implements TokenService {
 
     private final TokenDao tokenDao;
+    private final JwtBuilder jwtBuilder;
+    private final JwtParser jwtParser;
+    private final UserService userService;
 
     @Override
-    public Token createToken(Token token) {
-        this.revokeAllUserTokens(token.getUser());
+    public Token createToken(User user) {
+        this.revokeAllUserTokens(user);
+        String tokenString = this.jwtBuilder.buildToken(user);
+        Token token = new Token(tokenString);
+        token.setUser(user);
         return this.tokenDao.createToken(token);
     }
 
@@ -33,9 +46,34 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Boolean isValid(String bearerToken, User user) {
-        Token token = this.tokenDao.findByTokenAndUserId(bearerToken, user.getId());
+    public Boolean isValid(String tokenString) {
+        if (tokenString == null || !tokenString.startsWith("Bearer ")) {
+            return false;
+        }
+        String bearerToken = tokenString.substring(7);
+        Date expirationDate = this.jwtParser.extractExpiration(bearerToken);
+        if (this.isExpired(expirationDate)) {
+            return false;
+        }
+        String username = this.jwtParser.extractUsername(bearerToken);
+        if (username == null) {
+            return false;
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) this.userService.loadUserByUsername(username);
+        Token token = this.tokenDao.findByTokenAndUserId(bearerToken, userDetails.getUser().getId());
         return !token.getIsExpired() && !token.getIsRevoked();
+    }
+
+    private Boolean isExpired(Date expirationDate) {
+        return expirationDate.before(new Date());
+    }
+
+    @Override
+    public UsernamePasswordAuthenticationToken getAuthentication(String token) {
+        String bearerToken = token.substring(7);
+        String username = this.jwtParser.extractUsername(bearerToken);
+        UserDetailsImpl userDetailsImpl = (UserDetailsImpl) this.userService.loadUserByUsername(username);
+        return new UsernamePasswordAuthenticationToken(userDetailsImpl.getUsername(), bearerToken, Collections.emptyList());
     }
 
 }

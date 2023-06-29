@@ -6,7 +6,7 @@ import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
 import com.behabits.gymbo.domain.models.Training;
-import com.behabits.gymbo.domain.services.JwtService;
+import com.behabits.gymbo.domain.services.TokenService;
 import com.behabits.gymbo.domain.services.TrainingService;
 import com.behabits.gymbo.infrastructure.controller.dto.request.ExerciseRequest;
 import com.behabits.gymbo.infrastructure.controller.mapper.ExerciseApiMapper;
@@ -52,7 +52,7 @@ class TrainingControllerTest {
     private ExerciseApiMapper exerciseMapper;
 
     @MockBean
-    private JwtService jwtService; // Added to load application context
+    private TokenService tokenService; // Added to load application context
 
     @Autowired
     private MockMvc mockMvc;

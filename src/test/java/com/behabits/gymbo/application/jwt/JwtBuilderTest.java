@@ -1,6 +1,6 @@
 package com.behabits.gymbo.application.jwt;
 
-import com.behabits.gymbo.application.domain.UserDetailsImpl;
+import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -50,7 +50,7 @@ class JwtBuilderTest {
         Key key = Keys.hmacShaKeyFor(keyBytes);
         io.jsonwebtoken.JwtBuilder jwtBuilder = mock(io.jsonwebtoken.JwtBuilder.class);
         String expectedToken = "token";
-        UserDetailsImpl userDetails = new UserDetailsImpl(new UserModelRepository().getUser());
+        User user = new UserModelRepository().getUser();
 
         when(Jwts.builder()).thenReturn(jwtBuilder);
         when(jwtBuilder.setClaims(new HashMap<>())).thenReturn(jwtBuilder);
@@ -62,6 +62,6 @@ class JwtBuilderTest {
         when(jwtBuilder.signWith(key, io.jsonwebtoken.SignatureAlgorithm.HS256)).thenReturn(jwtBuilder);
         when(jwtBuilder.compact()).thenReturn(expectedToken);
 
-        assertThat(this.jwtBuilder.buildToken(userDetails), is(expectedToken));
+        assertThat(this.jwtBuilder.buildToken(user), is(expectedToken));
     }
 }

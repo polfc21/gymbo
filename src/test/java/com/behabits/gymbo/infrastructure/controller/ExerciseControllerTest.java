@@ -5,7 +5,7 @@ import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.services.ExerciseService;
-import com.behabits.gymbo.domain.services.JwtService;
+import com.behabits.gymbo.domain.services.TokenService;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.ExerciseRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.SerieRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.response.ExerciseResponseRepository;
@@ -45,7 +45,7 @@ class ExerciseControllerTest {
     private ExerciseApiMapper mapper;
 
     @MockBean
-    private JwtService jwtService; // Added to load application context
+    private TokenService tokenService; // Added to load application context
 
     @Autowired
     private MockMvc mockMvc;

@@ -3,7 +3,6 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.models.User;
-import com.behabits.gymbo.domain.services.JwtService;
 import com.behabits.gymbo.domain.services.TokenService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,9 +29,6 @@ class AuthenticationServiceImplTest {
     private AuthenticationServiceImpl authenticationService;
 
     @Mock
-    private JwtService jwtService;
-
-    @Mock
     private AuthenticationManager authenticationManager;
 
     @Mock
@@ -43,20 +39,17 @@ class AuthenticationServiceImplTest {
         String username = "testUser";
         String password = "testPassword";
         UserDetailsImpl userDetails = new UserDetailsImpl(new User());
-        String tokenString = "testToken";
-        Token token = new Token(tokenString);
+        Token token = new Token();
         token.setUser(userDetails.getUser());
 
         Authentication authentication = Mockito.mock(Authentication.class);
         when(this.authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
-        when(this.jwtService.generateToken(userDetails)).thenReturn(tokenString);
-        when(this.tokenService.createToken(any(Token.class))).thenReturn(token);
+        when(this.tokenService.createToken(userDetails.getUser())).thenReturn(token);
 
         Token result = this.authenticationService.login(username, password);
         verify(this.authenticationManager).authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class));
-        verify(this.jwtService).generateToken(userDetails);
-        verify(this.tokenService).createToken(any(Token.class));
+        verify(this.tokenService).createToken(any(User.class));
         assertThat(result, is(token));
         assertThat(result.getUser(), is(userDetails.getUser()));
     }

@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.config;
 
-import com.behabits.gymbo.domain.services.JwtService;
+import com.behabits.gymbo.domain.services.TokenService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class JwtAuthorizationFilterTest {
 
     @Mock
-    private JwtService jwtService;
-
-
+    private TokenService tokenService;
 
     @Test
     void givenAuthenticatedEndpointsAndValidTokenThenSecurityContextHolderIsAuthenticated() throws Exception {
@@ -33,12 +31,12 @@ class JwtAuthorizationFilterTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
         UsernamePasswordAuthenticationToken auth = mock(UsernamePasswordAuthenticationToken.class);
-        JwtAuthorizationFilter filter = new JwtAuthorizationFilter(this.jwtService);
+        JwtAuthorizationFilter filter = new JwtAuthorizationFilter( this.tokenService);
 
         Mockito.when(request.getRequestURI()).thenReturn(ApiConstant.API_V1);
         when(request.getHeader("Authorization")).thenReturn(validToken);
-        when(this.jwtService.isValid(validToken)).thenReturn(true);
-        when(this.jwtService.getAuthentication(any(String.class))).thenReturn(auth);
+        when(this.tokenService.isValid(validToken)).thenReturn(true);
+        when(this.tokenService.getAuthentication(any(String.class))).thenReturn(auth);
         filter.doFilterInternal(request, response, chain);
 
         verify(chain, times(1)).doFilter(request, response);
@@ -50,14 +48,14 @@ class JwtAuthorizationFilterTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
-        JwtAuthorizationFilter filter = new JwtAuthorizationFilter(this.jwtService);
+        JwtAuthorizationFilter filter = new JwtAuthorizationFilter( this.tokenService);
 
         Mockito.when(request.getRequestURI()).thenReturn(ApiConstant.API_V1 + ApiConstant.AUTH);
         filter.doFilterInternal(request, response, chain);
 
         verify(chain, times(1)).doFilter(request, response);
-        verify(this.jwtService, times(0)).isValid(anyString());
-        verify(this.jwtService, times(0)).getAuthentication(anyString());
+        verify(this.tokenService, times(0)).isValid(anyString());
+        verify(this.tokenService, times(0)).getAuthentication(anyString());
     }
 
     @Test
@@ -66,15 +64,15 @@ class JwtAuthorizationFilterTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
-        JwtAuthorizationFilter filter = new JwtAuthorizationFilter(this.jwtService);
+        JwtAuthorizationFilter filter = new JwtAuthorizationFilter( this.tokenService);
 
         Mockito.when(request.getRequestURI()).thenReturn(ApiConstant.API_V1);
         when(request.getHeader("Authorization")).thenReturn(invalidToken);
-        when(this.jwtService.isValid(invalidToken)).thenReturn(false);
+        when(this.tokenService.isValid(invalidToken)).thenReturn(false);
         filter.doFilterInternal(request, response, chain);
 
         verify(chain, times(1)).doFilter(request, response);
-        verify(this.jwtService, times(1)).isValid(invalidToken);
-        verify(this.jwtService, times(0)).getAuthentication(anyString());
+        verify(this.tokenService, times(1)).isValid(invalidToken);
+        verify(this.tokenService, times(0)).getAuthentication(anyString());
     }
 }
