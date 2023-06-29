@@ -1,6 +1,6 @@
 package com.behabits.gymbo.infrastructure.config;
 
-import com.behabits.gymbo.domain.services.JwtService;
+import com.behabits.gymbo.domain.services.TokenService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -27,8 +27,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
         String token = request.getHeader("Authorization");
-        if (this.jwtService.isValid(token)) {
-            UsernamePasswordAuthenticationToken authentication = this.jwtService.getAuthentication(token);
+        if (this.tokenService.isValid(token)) {
+            UsernamePasswordAuthenticationToken authentication = this.tokenService.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
