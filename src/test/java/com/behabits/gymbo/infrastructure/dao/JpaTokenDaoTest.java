@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,6 +36,25 @@ class JpaTokenDaoTest {
 
     private final Token token = new TokenModelRepository().getToken();
     private final TokenEntity tokenEntity = new TokenEntityRepository().getToken();
+
+    @Test
+    void givenExistentTokenWhenFindByTokenThenReturnToken() {
+        String token = this.token.getToken();
+
+        when(this.tokenRepository.findByToken(token)).thenReturn(this.tokenEntity);
+        when(this.mapper.toDomain(this.tokenEntity)).thenReturn(this.token);
+
+        assertThat(this.tokenDao.findByToken(token), is(this.token));
+    }
+
+    @Test
+    void givenNonExistentTokenWhenFindByTokenThenReturnNull() {
+        String token = "nonExistentToken";
+
+        when(this.tokenRepository.findByToken(token)).thenReturn(null);
+
+        assertNull(this.tokenDao.findByToken(token));
+    }
 
     @Test
     void givenUserIdWhenFindAllTokensByUserIdThenReturnTokenList() {

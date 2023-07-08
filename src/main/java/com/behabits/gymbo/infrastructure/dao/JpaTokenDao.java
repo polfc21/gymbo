@@ -19,6 +19,15 @@ public class JpaTokenDao implements TokenDao {
     private final TokenEntityMapper tokenEntityMapper;
 
     @Override
+    public Token findByToken(String token) {
+        TokenEntity tokenEntity = this.tokenRepository.findByToken(token);
+        if (tokenEntity == null) {
+            return null;
+        }
+        return this.tokenEntityMapper.toDomain(tokenEntity);
+    }
+
+    @Override
     public List<Token> findAllTokensByUserId(Long userId) {
         return this.tokenRepository.findAllByPlayerId(userId).stream()
                 .map(this.tokenEntityMapper::toDomain)
