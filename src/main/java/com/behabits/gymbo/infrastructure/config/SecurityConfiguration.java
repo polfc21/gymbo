@@ -49,7 +49,7 @@ public class SecurityConfiguration {
                 )
                 .authenticationProvider(this.authenticationProvider)
                 .addFilterBefore(this.jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout((logout) -> logout
+                .logout(logout -> logout
                         .logoutUrl("/api/v1/logout")
                         .addLogoutHandler(this.logoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()));

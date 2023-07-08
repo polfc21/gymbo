@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class LogoutServiceImplTest {
+class LogoutServiceImplTest {
 
     @InjectMocks
     private LogoutServiceImpl logoutService;
@@ -25,7 +25,6 @@ public class LogoutServiceImplTest {
     @Mock
     private TokenService tokenService;
 
-    // mock static securityContextHolder
     private static MockedStatic<SecurityContextHolder> securityContextHolder;
 
     @BeforeAll
