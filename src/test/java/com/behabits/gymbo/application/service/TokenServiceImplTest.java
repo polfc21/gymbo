@@ -185,4 +185,26 @@ class TokenServiceImplTest {
         assertThat(this.tokenService.getAuthentication(BEARER_TOKEN).getName(), is(username));
     }
 
+    @Test
+    void givenExistentTokenWhenRevokeTokenThenRevokeToken() {
+        Token tokenToRevoke = mock(Token.class);
+        when(this.tokenDao.findByToken(TOKEN)).thenReturn(tokenToRevoke);
+        doNothing().when(this.tokenDao).saveAll(List.of(tokenToRevoke));
+
+        this.tokenService.revokeToken(TOKEN);
+
+        verify(tokenToRevoke, times(1)).setIsRevoked(true);
+        verify(tokenToRevoke, times(1)).setIsExpired(true);
+        verify(this.tokenDao, times(1)).saveAll(List.of(tokenToRevoke));
+    }
+
+    @Test
+    void givenNonExistentTokenWhenRevokeTokenThenDoNothing() {
+        when(this.tokenDao.findByToken(TOKEN)).thenReturn(null);
+
+        this.tokenService.revokeToken(TOKEN);
+
+        verify(this.tokenDao, times(0)).saveAll(anyList());
+    }
+
 }

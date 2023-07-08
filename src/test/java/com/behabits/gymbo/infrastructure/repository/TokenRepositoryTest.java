@@ -46,6 +46,20 @@ class TokenRepositoryTest {
     }
 
     @Test
+    void givenTokenIsPresentWhenFindByTokenThenReturnToken() {
+        TokenEntity token = this.tokenRepository.findByToken(this.token.getToken());
+
+        assertThat(token, is(this.token));
+    }
+
+    @Test
+    void givenTokenIsNotPresentWhenFindByTokenThenReturnNull() {
+        TokenEntity token = this.tokenRepository.findByToken("");
+
+        assertNull(token);
+    }
+
+    @Test
     void givenPlayerIdIsPresentWhenFindAllByPlayerIdThenReturnTokenList() {
         List<TokenEntity> tokens = this.tokenRepository.findAllByPlayerId(this.player.getId());
 
