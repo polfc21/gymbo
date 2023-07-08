@@ -76,4 +76,15 @@ public class TokenServiceImpl implements TokenService {
         return new UsernamePasswordAuthenticationToken(userDetailsImpl.getUsername(), bearerToken, Collections.emptyList());
     }
 
+    @Override
+    public void revokeToken(String token) {
+        Token savedToken = this.tokenDao.findByToken(token);
+        if (savedToken == null) {
+            return;
+        }
+        savedToken.setIsExpired(true);
+        savedToken.setIsRevoked(true);
+        this.tokenDao.saveAll(List.of(savedToken));
+    }
+
 }

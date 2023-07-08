@@ -8,4 +8,5 @@ public interface TokenService {
     Token createToken(User user);
     boolean isValid(String token);
     UsernamePasswordAuthenticationToken getAuthentication(String token);
+    void revokeToken(String token);
 }
