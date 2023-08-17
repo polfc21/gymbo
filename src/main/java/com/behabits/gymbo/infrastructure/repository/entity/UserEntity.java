@@ -32,4 +32,6 @@ public class UserEntity {
     private List<ExerciseEntity> exercises;
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TokenEntity> tokens;
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FileEntity> files;
 }
