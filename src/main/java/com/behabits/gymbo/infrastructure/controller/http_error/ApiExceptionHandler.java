@@ -1,6 +1,7 @@
 package com.behabits.gymbo.infrastructure.controller.http_error;
 
 import com.behabits.gymbo.domain.exceptions.ExistingUserException;
+import com.behabits.gymbo.domain.exceptions.IncorrectFileException;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,8 @@ public class ApiExceptionHandler {
             org.springframework.web.HttpRequestMethodNotSupportedException.class,
             org.springframework.web.bind.MethodArgumentNotValidException.class,
             org.springframework.http.converter.HttpMessageNotReadableException.class,
-            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class,
+            IncorrectFileException.class
     })
     @ResponseBody
     public ErrorMessage badRequest(Exception exception) {
