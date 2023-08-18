@@ -1,11 +1,9 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.AuthorityDao;
-import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.domain.models.Serie;
-import com.behabits.gymbo.domain.models.Training;
-import com.behabits.gymbo.domain.models.User;
+import com.behabits.gymbo.domain.models.*;
 import com.behabits.gymbo.domain.services.AuthorityService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +31,12 @@ public class AuthorityServiceImpl implements AuthorityService {
     @Override
     public void checkLoggedUserHasPermissions(Serie serie) {
         this.authorityDao.checkLoggedUserHasPermissions(serie);
+    }
+
+    @Transactional
+    @Override
+    public void checkLoggedUserHasPermissions(File file) {
+        this.authorityDao.checkLoggedUserHasPermissions(file);
     }
 
 }

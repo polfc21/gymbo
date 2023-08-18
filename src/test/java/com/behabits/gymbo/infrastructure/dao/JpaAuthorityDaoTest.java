@@ -1,27 +1,12 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
-import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.domain.models.Serie;
-import com.behabits.gymbo.domain.models.Training;
-import com.behabits.gymbo.domain.models.User;
-import com.behabits.gymbo.domain.repositories.ExerciseModelRepository;
-import com.behabits.gymbo.domain.repositories.SerieModelRepository;
-import com.behabits.gymbo.domain.repositories.TrainingModelRepository;
-import com.behabits.gymbo.domain.repositories.UserModelRepository;
-import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
-import com.behabits.gymbo.infrastructure.repository.SerieRepository;
-import com.behabits.gymbo.infrastructure.repository.TrainingRepository;
-import com.behabits.gymbo.infrastructure.repository.UserRepository;
-import com.behabits.gymbo.infrastructure.repository.entity.ExerciseEntity;
-import com.behabits.gymbo.infrastructure.repository.entity.SerieEntity;
-import com.behabits.gymbo.infrastructure.repository.entity.TrainingEntity;
-import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
+import com.behabits.gymbo.domain.models.*;
+import com.behabits.gymbo.domain.repositories.*;
+import com.behabits.gymbo.infrastructure.repository.*;
+import com.behabits.gymbo.infrastructure.repository.entity.*;
 import com.behabits.gymbo.infrastructure.repository.mapper.UserEntityMapper;
-import com.behabits.gymbo.infrastructure.repository.repositories.ExerciseEntityRepository;
-import com.behabits.gymbo.infrastructure.repository.repositories.SerieEntityRepository;
-import com.behabits.gymbo.infrastructure.repository.repositories.TrainingEntityRepository;
-import com.behabits.gymbo.infrastructure.repository.repositories.UserEntityRepository;
+import com.behabits.gymbo.infrastructure.repository.repositories.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +43,9 @@ class JpaAuthorityDaoTest {
     private SerieRepository serieRepository;
 
     @Mock
+    private FileRepository fileRepository;
+
+    @Mock
     private UserEntityMapper userMapper;
 
     private final User user = new UserModelRepository().getUser();
@@ -68,6 +56,8 @@ class JpaAuthorityDaoTest {
     private final ExerciseEntity exerciseEntity = new ExerciseEntityRepository().getSquatExercise();
     private final Serie serie = new SerieModelRepository().getSquatSerie();
     private final SerieEntity serieEntity = new SerieEntityRepository().getSquatSerie();
+    private final File file = new FileModelRepository().getFile();
+    private final FileEntity fileEntity = new FileEntityRepository().getFile();
 
     @BeforeEach
     void setUp() {
@@ -149,6 +139,28 @@ class JpaAuthorityDaoTest {
 
         try {
             this.authorityDao.checkLoggedUserHasPermissions(this.serie);
+        } catch (Exception e) {
+            fail("Should not throw exception");
+        }
+    }
+
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckFilePermissionsThenThrowPermissionsException() {
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+        when(this.fileRepository.findByIdAndPlayerId(this.fileEntity.getId(), this.user.getId())).thenReturn(null);
+
+        assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(this.file));
+    }
+
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckFilePermissionsThenDoNothing() {
+        when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+        when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+        when(this.fileRepository.findByIdAndPlayerId(this.fileEntity.getId(), this.user.getId())).thenReturn(this.fileEntity);
+
+        try {
+            this.authorityDao.checkLoggedUserHasPermissions(this.file);
         } catch (Exception e) {
             fail("Should not throw exception");
         }

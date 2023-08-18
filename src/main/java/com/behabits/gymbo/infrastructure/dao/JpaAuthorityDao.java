@@ -2,18 +2,9 @@ package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.AuthorityDao;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
-import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.domain.models.Serie;
-import com.behabits.gymbo.domain.models.Training;
-import com.behabits.gymbo.domain.models.User;
-import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
-import com.behabits.gymbo.infrastructure.repository.SerieRepository;
-import com.behabits.gymbo.infrastructure.repository.TrainingRepository;
-import com.behabits.gymbo.infrastructure.repository.UserRepository;
-import com.behabits.gymbo.infrastructure.repository.entity.ExerciseEntity;
-import com.behabits.gymbo.infrastructure.repository.entity.SerieEntity;
-import com.behabits.gymbo.infrastructure.repository.entity.TrainingEntity;
-import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
+import com.behabits.gymbo.domain.models.*;
+import com.behabits.gymbo.infrastructure.repository.*;
+import com.behabits.gymbo.infrastructure.repository.entity.*;
 import com.behabits.gymbo.infrastructure.repository.mapper.UserEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -31,6 +22,7 @@ public class JpaAuthorityDao implements AuthorityDao {
     private final TrainingRepository trainingRepository;
     private final ExerciseRepository exerciseRepository;
     private final SerieRepository serieRepository;
+    private final FileRepository fileRepository;
 
     @Override
     public User getLoggedUser() {
@@ -62,6 +54,15 @@ public class JpaAuthorityDao implements AuthorityDao {
         Long loggedUserId = this.getLoggedUser().getId();
         SerieEntity serieToCheck = this.serieRepository.findByIdAndPlayerId(serie.getId(), loggedUserId);
         if (serieToCheck == null) {
+            throw new PermissionsException(USER_HAS_NOT_PERMISSIONS);
+        }
+    }
+
+    @Override
+    public void checkLoggedUserHasPermissions(File file) {
+        Long loggedUserId = this.getLoggedUser().getId();
+        FileEntity fileToCheck = this.fileRepository.findByIdAndPlayerId(file.getId(), loggedUserId);
+        if (fileToCheck == null) {
             throw new PermissionsException(USER_HAS_NOT_PERMISSIONS);
         }
     }

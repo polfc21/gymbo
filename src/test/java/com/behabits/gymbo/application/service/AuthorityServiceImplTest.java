@@ -2,10 +2,7 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.AuthorityDao;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
-import com.behabits.gymbo.domain.models.Exercise;
-import com.behabits.gymbo.domain.models.Serie;
-import com.behabits.gymbo.domain.models.Training;
-import com.behabits.gymbo.domain.models.User;
+import com.behabits.gymbo.domain.models.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -102,4 +99,26 @@ class AuthorityServiceImplTest {
         assertThrows(PermissionsException.class, () -> this.authorityService.checkLoggedUserHasPermissions(serie));
     }
 
+
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckFileThenDoNothing() {
+        File file = new File();
+
+        doNothing().when(this.authorityDao).checkLoggedUserHasPermissions(file);
+
+        try {
+            this.authorityService.checkLoggedUserHasPermissions(file);
+        } catch (Exception e) {
+            fail("Should not throw exception");
+        }
+    }
+
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckFileThenThrowException() {
+        File file = new File();
+
+        doThrow(PermissionsException.class).when(this.authorityDao).checkLoggedUserHasPermissions(file);
+
+        assertThrows(PermissionsException.class, () -> this.authorityService.checkLoggedUserHasPermissions(file));
+    }
 }
