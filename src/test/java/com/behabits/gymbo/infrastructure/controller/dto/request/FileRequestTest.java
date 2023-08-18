@@ -8,7 +8,7 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class FileRequestTest {
+class FileRequestTest {
 
     private final FileRequestRepository fileRequestRepository = new FileRequestRepository();
 
