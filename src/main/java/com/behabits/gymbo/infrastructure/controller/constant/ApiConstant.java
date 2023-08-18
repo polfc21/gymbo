@@ -9,6 +9,7 @@ public class ApiConstant {
     public static final String TRAININGS = "/trainings";
     public static final String EXERCISES = "/exercises";
     public static final String SERIES = "/series";
+    public static final String FILES = "/files";
     public static final String AUTH = "/auth";
     public static final String REGISTER = "/register";
     public static final String LOGIN = "/login";
