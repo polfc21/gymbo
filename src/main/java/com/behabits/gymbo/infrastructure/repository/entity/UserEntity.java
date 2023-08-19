@@ -34,4 +34,6 @@ public class UserEntity {
     private List<TokenEntity> tokens;
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FileEntity> files;
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LocationEntity> locations;
 }
