@@ -46,6 +46,9 @@ class JpaAuthorityDaoTest {
     private FileRepository fileRepository;
 
     @Mock
+    private LocationRepository locationRepository;
+
+    @Mock
     private UserEntityMapper userMapper;
 
     private final User user = new UserModelRepository().getUser();
@@ -58,6 +61,9 @@ class JpaAuthorityDaoTest {
     private final SerieEntity serieEntity = new SerieEntityRepository().getSquatSerie();
     private final File file = new FileModelRepository().getFile();
     private final FileEntity fileEntity = new FileEntityRepository().getFile();
+    private final Location location = new LocationModelRepository().getBarcelona();
+    private final LocationEntity locationEntity = new LocationEntityRepository().getBarcelona();
+
 
     @BeforeEach
     void setUp() {
@@ -164,5 +170,27 @@ class JpaAuthorityDaoTest {
         } catch (Exception e) {
             fail("Should not throw exception");
         }
+    }
+
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckLocationPermissionsThenThrowPermissionsException() {
+    	when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+    	when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+    	when(this.locationRepository.findByIdAndPlayerId(this.locationEntity.getId(), this.user.getId())).thenReturn(null);
+
+    	assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(this.location));
+    }
+
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckLocationPermissionsThenDoNothing() {
+    	when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+    	when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+    	when(this.locationRepository.findByIdAndPlayerId(this.locationEntity.getId(), this.user.getId())).thenReturn(this.locationEntity);
+
+    	try {
+    		this.authorityDao.checkLoggedUserHasPermissions(this.location);
+    	} catch (Exception e) {
+    		fail("Should not throw exception");
+    	}
     }
 }
