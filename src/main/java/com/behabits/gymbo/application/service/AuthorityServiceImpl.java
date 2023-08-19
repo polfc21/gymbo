@@ -39,4 +39,9 @@ public class AuthorityServiceImpl implements AuthorityService {
         this.authorityDao.checkLoggedUserHasPermissions(file);
     }
 
+    @Override
+    public void checkLoggedUserHasPermissions(Location location) {
+        this.authorityDao.checkLoggedUserHasPermissions(location);
+    }
+
 }

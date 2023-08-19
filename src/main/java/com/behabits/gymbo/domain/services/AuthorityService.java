@@ -8,4 +8,5 @@ public interface AuthorityService {
     void checkLoggedUserHasPermissions(Exercise exercise);
     void checkLoggedUserHasPermissions(Serie serie);
     void checkLoggedUserHasPermissions(File file);
+    void checkLoggedUserHasPermissions(Location location);
 }
