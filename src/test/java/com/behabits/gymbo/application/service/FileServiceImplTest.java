@@ -4,6 +4,7 @@ import com.behabits.gymbo.domain.daos.FileDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.File;
+import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.FileModelRepository;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
@@ -140,5 +141,20 @@ class FileServiceImplTest {
         doThrow(NotFoundException.class).when(this.fileDao).findFileById(nonExistentId);
 
         assertThrows(NotFoundException.class, () -> this.fileService.deleteFile(nonExistentId));
+    }
+
+    @Test
+    void givenSetPublicationWhenSetPublicationThenDoNothing() {
+        File file = mock(File.class);
+        Publication publication = mock(Publication.class);
+
+        when(this.fileDao.saveFile(file)).thenReturn(file);
+
+        try {
+            this.fileService.setPublication(file, publication);
+        } catch (Exception e) {
+            assertThat(e, is(nullValue()));
+        }
+        verify(file).setPublication(publication);
     }
 }
