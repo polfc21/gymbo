@@ -11,6 +11,7 @@ public class ApiConstant {
     public static final String SERIES = "/series";
     public static final String FILES = "/files";
     public static final String LOCATIONS = "/locations";
+    public static final String PUBLICATIONS = "/publications";
     public static final String AUTH = "/auth";
     public static final String REGISTER = "/register";
     public static final String LOGIN = "/login";
