@@ -3,19 +3,18 @@ package com.behabits.gymbo.domain.models;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class File {
+public class Publication {
     private Long id;
-    private String name;
-    private String type;
-    private byte[] data;
+    private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private User user;
-    private Publication publication;
+    private User postedBy;
+    private List<File> files;
 }
