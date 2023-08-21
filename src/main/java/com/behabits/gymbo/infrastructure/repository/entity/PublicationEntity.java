@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -11,19 +12,16 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
-@Table(name = "file")
-public class FileEntity {
+@Table(name = "publication")
+public class PublicationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String name;
-    private String type;
+    private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    @Lob
-    private byte[] data;
     @ManyToOne
     private UserEntity player;
-    @ManyToOne
-    private PublicationEntity publication;
+    @OneToMany(mappedBy = "publication", orphanRemoval = true)
+    private List<FileEntity> files;
 }
