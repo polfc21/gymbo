@@ -32,6 +32,7 @@ class FileEntityMapperTest {
         assertThat(fileEntity.getCreatedAt(), is(this.file.getCreatedAt()));
         assertThat(fileEntity.getUpdatedAt(), is(this.file.getUpdatedAt()));
         assertThat(fileEntity.getPlayer().getId(), is(this.file.getUser().getId()));
+        assertThat(fileEntity.getPublication().getId(), is(this.file.getPublication().getId()));
     }
 
     @Test
@@ -45,6 +46,7 @@ class FileEntityMapperTest {
         assertThat(file.getCreatedAt(), is(this.fileEntity.getCreatedAt()));
         assertThat(file.getUpdatedAt(), is(this.fileEntity.getUpdatedAt()));
         assertThat(file.getUser().getId(), is(this.fileEntity.getPlayer().getId()));
+        assertThat(file.getPublication().getId(), is(this.fileEntity.getPublication().getId()));
     }
 
 }

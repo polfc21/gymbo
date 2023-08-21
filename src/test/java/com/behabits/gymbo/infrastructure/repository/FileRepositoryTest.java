@@ -34,6 +34,7 @@ class FileRepositoryTest {
         this.entityManager.persist(this.player);
         this.file.setId(null);
         this.file.setPlayer(this.player);
+        this.file.setPublication(null);
         this.entityManager.persist(this.file);
     }
 
