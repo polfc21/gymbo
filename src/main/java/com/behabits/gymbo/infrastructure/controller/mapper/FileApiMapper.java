@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class FileApiMapper {
@@ -18,6 +19,12 @@ public class FileApiMapper {
         domain.setType(file.getContentType());
         domain.setData(file.getBytes());
         return domain;
+    }
+
+    public List<FileResponse> toResponse(List<File> models) {
+        return models != null ? models.stream()
+                .map(this::toResponse)
+                .toList() : null;
     }
 
     public FileResponse toResponse(File domain) {
