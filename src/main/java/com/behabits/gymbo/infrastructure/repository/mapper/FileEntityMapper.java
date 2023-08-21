@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class FileEntityMapper {
 
     private final UserEntityMapper userEntityMapper;
+    private final PublicationEntityMapper publicationEntityMapper;
 
     public File toDomain(FileEntity entity) {
         File domain = new File();
@@ -20,6 +21,9 @@ public class FileEntityMapper {
         domain.setCreatedAt(entity.getCreatedAt());
         domain.setUpdatedAt(entity.getUpdatedAt());
         domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
+        if (entity.getPublication() != null) {
+            domain.setPublication(this.publicationEntityMapper.toDomain(entity.getPublication()));
+        }
         return domain;
     }
 
@@ -32,6 +36,9 @@ public class FileEntityMapper {
         entity.setCreatedAt(domain.getCreatedAt());
         entity.setUpdatedAt(domain.getUpdatedAt());
         entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
+        if (domain.getPublication() != null) {
+            entity.setPublication(this.publicationEntityMapper.toEntity(domain.getPublication()));
+        }
         return entity;
     }
 
