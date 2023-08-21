@@ -2,6 +2,7 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.FileDao;
 import com.behabits.gymbo.domain.models.File;
+import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.FileService;
@@ -50,6 +51,12 @@ public class FileServiceImpl implements FileService {
     public void deleteFile(Long id) {
         File file = this.findFileById(id);
         this.fileDao.deleteFile(file);
+    }
+
+    @Override
+    public void setPublication(File file, Publication publication) {
+        file.setPublication(publication);
+        this.fileDao.saveFile(file);
     }
 
 }
