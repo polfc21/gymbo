@@ -60,4 +60,22 @@ class UserServiceImplTest {
 
         assertThrows(UsernameNotFoundException.class, () -> this.userService.loadUserByUsername(nonExistentUsername));
     }
+
+    @Test
+    void givenExistentUsernameWhenFindUserByUsernameThenReturnUser() {
+        String existentUsername = this.user.getUsername();
+
+        when(this.userDao.findByUsername(existentUsername)).thenReturn(this.user);
+
+        assertThat(this.userService.findUserByUsername(existentUsername), is(this.user));
+    }
+
+    @Test
+    void givenNonExistentUsernameWhenFindUserByUsernameThenThrowUsernameNotFoundException() {
+        String nonExistentUsername = "nonExistentUsername";
+
+        when(this.userDao.findByUsername(nonExistentUsername)).thenReturn(null);
+
+        assertThrows(UsernameNotFoundException.class, () -> this.userService.findUserByUsername(nonExistentUsername));
+    }
 }

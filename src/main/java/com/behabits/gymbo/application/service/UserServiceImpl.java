@@ -17,11 +17,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return new UserDetailsImpl(this.findUserByUsername(username));
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
         User user = this.userDao.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User with username " + username + " not found");
         }
-        return new UserDetailsImpl(user);
+        return user;
     }
 
     @Override
