@@ -49,6 +49,9 @@ class JpaAuthorityDaoTest {
     private LocationRepository locationRepository;
 
     @Mock
+    private ReviewRepository reviewRepository;
+
+    @Mock
     private UserEntityMapper userMapper;
 
     private final User user = new UserModelRepository().getUser();
@@ -63,7 +66,8 @@ class JpaAuthorityDaoTest {
     private final FileEntity fileEntity = new FileEntityRepository().getFile();
     private final Location location = new LocationModelRepository().getBarcelona();
     private final LocationEntity locationEntity = new LocationEntityRepository().getBarcelona();
-
+    private final Review review = new ReviewModelRepository().getReview();
+    private final ReviewEntity reviewEntity = new ReviewEntityRepository().getReview();
 
     @BeforeEach
     void setUp() {
@@ -189,6 +193,28 @@ class JpaAuthorityDaoTest {
 
     	try {
     		this.authorityDao.checkLoggedUserHasPermissions(this.location);
+    	} catch (Exception e) {
+    		fail("Should not throw exception");
+    	}
+    }
+
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckReviewPermissionsThenThrowPermissionsException() {
+    	when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+    	when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+    	when(this.reviewRepository.findByIdAndPlayerIsReviewerOrReviewed(this.reviewEntity.getId(), this.user.getId())).thenReturn(null);
+
+    	assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(this.review));
+    }
+
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckReviewPermissionsThenDoNothing() {
+    	when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+    	when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+    	when(this.reviewRepository.findByIdAndPlayerIsReviewerOrReviewed(this.reviewEntity.getId(), this.user.getId())).thenReturn(this.reviewEntity);
+
+    	try {
+    		this.authorityDao.checkLoggedUserHasPermissions(this.review);
     	} catch (Exception e) {
     		fail("Should not throw exception");
     	}

@@ -33,4 +33,11 @@ public class ReviewServiceImpl implements ReviewService {
         return this.reviewDao.saveReview(review);
     }
 
+    @Override
+    public Review findReviewById(Long id) {
+        Review review = this.reviewDao.findReviewById(id);
+        this.authorityService.checkLoggedUserHasPermissions(review);
+        return review;
+    }
+
 }

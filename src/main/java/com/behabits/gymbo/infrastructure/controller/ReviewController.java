@@ -10,10 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(ApiConstant.API_V1 + ApiConstant.REVIEWS)
 @RestController
@@ -29,4 +26,11 @@ public class ReviewController {
         Review reviewCreated = this.reviewService.createReview(reviewToCreate, request.getUsernameReviewed());
         return new ResponseEntity<>(this.mapper.toResponse(reviewCreated), HttpStatus.CREATED);
     }
+
+    @GetMapping(ApiConstant.ID)
+    public ResponseEntity<ReviewResponse> findReviewById(@PathVariable Long id) {
+        Review review = this.reviewService.findReviewById(id);
+        return new ResponseEntity<>(this.mapper.toResponse(review), HttpStatus.OK);
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.behabits.gymbo.infrastructure.controller;
 
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Review;
 import com.behabits.gymbo.domain.repositories.ReviewModelRepository;
 import com.behabits.gymbo.domain.services.ReviewService;
@@ -88,6 +90,53 @@ class ReviewControllerTest {
                 post(ApiConstant.API_V1 + ApiConstant.REVIEWS)
                         .contentType("application/json")
                         .content(this.objectMapper.writeValueAsString(this.reviewRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentIdWhenFindReviewByIdThenReturnReviewResponse() throws Exception {
+        Long existentId = 1L;
+
+        given(this.reviewService.findReviewById(existentId)).willReturn(this.review);
+        given(this.mapper.toResponse(this.review)).willReturn(this.reviewResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, this.review.getId())
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.reviewResponse)));
+    }
+
+    @Test
+    @WithMockUser
+    void givenNonExistentIdWhenFindReviewByIdThenReturn404() throws Exception {
+        Long nonExistentId = 2L;
+
+        given(this.reviewService.findReviewById(nonExistentId)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, nonExistentId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenUserHasNotPermissionsWhenFindReviewByIdThenReturn403() throws Exception {
+        Long existentId = 1L;
+
+        given(this.reviewService.findReviewById(existentId)).willThrow(PermissionsException.class);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, existentId)
+                        .with(csrf()))
                 .andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
