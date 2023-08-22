@@ -16,4 +16,27 @@ public class UserEntityRepository {
                 .build();
     }
 
+    public UserEntity getReviewer() {
+        return UserEntity.builder()
+                .id(2L)
+                .username("reviewer")
+                .password("password")
+                .email("reviewer@gmail.com")
+                .firstName("Reviewer")
+                .lastName("Reviewer")
+                .enabled(true)
+                .build();
+    }
+
+    public UserEntity getReviewed() {
+        return UserEntity.builder()
+                .id(3L)
+                .username("reviewed")
+                .password("password")
+                .email("reviewed@gmail.com")
+                .firstName("Reviewed")
+                .lastName("Reviewed")
+                .enabled(true)
+                .build();
+    }
 }
