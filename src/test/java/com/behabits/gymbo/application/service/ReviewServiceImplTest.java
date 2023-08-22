@@ -1,9 +1,12 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.ReviewDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.exceptions.SameReviewerException;
 import com.behabits.gymbo.domain.models.Review;
 import com.behabits.gymbo.domain.models.User;
+import com.behabits.gymbo.domain.repositories.ReviewModelRepository;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.UserService;
@@ -36,6 +39,7 @@ class ReviewServiceImplTest {
 
     private final User reviewer = new UserModelRepository().getReviewer();
     private final User reviewed = new UserModelRepository().getReviewed();
+    private final Review review = new ReviewModelRepository().getReview();
 
     @Test
     void givenReviewWithExistentReviewedWhenCreateReviewThenReturnReview() {
@@ -72,6 +76,35 @@ class ReviewServiceImplTest {
         when(this.authorityService.getLoggedUser()).thenReturn(this.reviewer);
 
         assertThrows(SameReviewerException.class, () -> this.reviewService.createReview(reviewToCreate, usernameReviewed));
+    }
+
+    @Test
+    void givenExistentReviewIdAndUserHasPermissionsWhenFindReviewByIdThenReturnReview() {
+        Long existentId = 1L;
+
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.review);
+        when(this.reviewDao.findReviewById(existentId)).thenReturn(this.review);
+
+        assertThat(this.reviewService.findReviewById(existentId), is(this.review));
+    }
+
+    @Test
+    void givenExistentReviewIdAndUserHasNotPermissionsWhenFindReviewByIdThenThrowPermissionsException() {
+        Long nonExistentId = 1L;
+
+        when(this.reviewDao.findReviewById(nonExistentId)).thenReturn(this.review);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(this.review);
+
+        assertThrows(PermissionsException.class, () -> this.reviewService.findReviewById(nonExistentId));
+    }
+
+    @Test
+    void givenNonExistentReviewIdWhenFindReviewByIdThenThrowNotFoundException() {
+        Long nonExistentId = 1L;
+
+        when(this.reviewDao.findReviewById(nonExistentId)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.reviewService.findReviewById(nonExistentId));
     }
 
 }
