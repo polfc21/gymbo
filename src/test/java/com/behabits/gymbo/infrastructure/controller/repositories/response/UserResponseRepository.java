@@ -14,4 +14,24 @@ public class UserResponseRepository {
                 .build();
     }
 
+    public UserResponse getReviewer() {
+        return UserResponse.builder()
+                .id(2L)
+                .username("reviewer")
+                .firstName("Reviewer")
+                .lastName("Reviewer")
+                .email("reviewer@gmail.com")
+                .build();
+    }
+
+    public UserResponse getReviewed() {
+        return UserResponse.builder()
+                .id(3L)
+                .username("reviewed")
+                .firstName("Reviewed")
+                .lastName("Reviewed")
+                .email("reviewed@gmail.com")
+                .build();
+    }
+
 }
