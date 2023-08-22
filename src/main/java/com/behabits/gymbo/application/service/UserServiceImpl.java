@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.UserDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.UserService;
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
@@ -17,14 +18,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new UserDetailsImpl(this.findUserByUsername(username));
+        User user = this.userDao.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User with username " + username + " not found");
+        }
+        return new UserDetailsImpl(user);
     }
 
     @Override
     public User findUserByUsername(String username) {
         User user = this.userDao.findByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User with username " + username + " not found");
+            throw new NotFoundException("User with username " + username + " not found");
         }
         return user;
     }

@@ -2,6 +2,7 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.UserDao;
 import com.behabits.gymbo.domain.exceptions.ExistingUserException;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
@@ -76,6 +77,6 @@ class UserServiceImplTest {
 
         when(this.userDao.findByUsername(nonExistentUsername)).thenReturn(null);
 
-        assertThrows(UsernameNotFoundException.class, () -> this.userService.findUserByUsername(nonExistentUsername));
+        assertThrows(NotFoundException.class, () -> this.userService.findUserByUsername(nonExistentUsername));
     }
 }
