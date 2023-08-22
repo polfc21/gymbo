@@ -1,0 +1,36 @@
+package com.behabits.gymbo.application.service;
+
+import com.behabits.gymbo.domain.daos.ReviewDao;
+import com.behabits.gymbo.domain.exceptions.SameReviewerException;
+import com.behabits.gymbo.domain.models.Review;
+import com.behabits.gymbo.domain.models.User;
+import com.behabits.gymbo.domain.services.AuthorityService;
+import com.behabits.gymbo.domain.services.ReviewService;
+import com.behabits.gymbo.domain.services.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+
+@Service
+@RequiredArgsConstructor
+public class ReviewServiceImpl implements ReviewService {
+
+    private final ReviewDao reviewDao;
+    private final AuthorityService authorityService;
+    private final UserService userService;
+
+    @Override
+    public Review createReview(Review review, String usernameReviewed) {
+        User reviewed = this.userService.findUserByUsername(usernameReviewed);
+        User reviewer = this.authorityService.getLoggedUser();
+        if (reviewed.getUsername().equals(reviewer.getUsername())) {
+            throw new SameReviewerException("You can't review yourself");
+        }
+        review.setReviewed(reviewed);
+        review.setReviewer(reviewer);
+        review.setCreatedAt(LocalDateTime.now());
+        return this.reviewDao.saveReview(review);
+    }
+
+}
