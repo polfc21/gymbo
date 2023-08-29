@@ -24,4 +24,6 @@ public class PublicationEntity {
     private UserEntity player;
     @OneToMany(mappedBy = "publication", orphanRemoval = true)
     private List<FileEntity> files;
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LinkEntity> links;
 }
