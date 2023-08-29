@@ -74,6 +74,26 @@ class PublicationControllerTest {
 
     @Test
     @WithMockUser
+    void givenPublicationWithLinksWhenCreatePublicationThenReturnPublicationResponse() throws Exception {
+        PublicationRequest publicationRequestWithLinks = new PublicationRequestRepository().getPublicationRequestWithLinks();
+        Publication publicationWithLinks = new PublicationModelRepository().getPublicationWithLink();
+        PublicationResponse publicationResponseWithLinks = new PublicationResponseRepository().getPublicationResponseWithLinks();
+        given(this.mapper.toDomain(publicationRequestWithLinks)).willReturn(publicationWithLinks);
+        given(this.publicationService.createPublication(publicationWithLinks, publicationRequestWithLinks.getFiles())).willReturn(publicationWithLinks);
+        given(this.mapper.toResponse(publicationWithLinks)).willReturn(publicationResponseWithLinks);
+
+        MockHttpServletResponse response = this.mockMvc.perform(post(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS)
+                .with(csrf())
+                .contentType("application/json")
+                .content(this.objectMapper.writeValueAsString(publicationRequestWithLinks)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(publicationResponseWithLinks)));
+    }
+
+    @Test
+    @WithMockUser
     void givenPublicationRequestAndExistentFileIdsWithoutPermissionsWhenCreatePublicationThenReturn403() throws Exception {
         given(this.mapper.toDomain(this.publicationRequest)).willReturn(this.publication);
         doThrow(PermissionsException.class).when(this.publicationService).createPublication(this.publication, this.publicationRequest.getFiles());
