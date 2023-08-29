@@ -17,28 +17,69 @@ class PublicationEntityMapperTest {
      @Autowired
      private PublicationEntityMapper mapper;
 
-     private final PublicationEntity publicationEntity = new PublicationEntityRepository().getPublication();
-     private final Publication publication = new PublicationModelRepository().getPublication();
+     private final PublicationEntityRepository publicationEntityRepository = new PublicationEntityRepository();
+     private final PublicationModelRepository publicationModelRepository = new PublicationModelRepository();
 
     @Test
     void givenPublicationWhenMapToEntityThenReturnPublicationEntity() {
-        PublicationEntity publicationEntity = this.mapper.toEntity(this.publication);
+        Publication publication = this.publicationModelRepository.getPublication();
 
-        assertThat(publicationEntity.getId(), is(this.publication.getId()));
-        assertThat(publicationEntity.getDescription(), is(this.publication.getDescription()));
-        assertThat(publicationEntity.getCreatedAt(), is(this.publication.getCreatedAt()));
-        assertThat(publicationEntity.getUpdatedAt(), is(this.publication.getUpdatedAt()));
-        assertThat(publicationEntity.getPlayer().getId(), is(this.publication.getPostedBy().getId()));
+        PublicationEntity publicationEntity = this.mapper.toEntity(publication);
+
+        assertThat(publicationEntity.getId(), is(publication.getId()));
+        assertThat(publicationEntity.getDescription(), is(publication.getDescription()));
+        assertThat(publicationEntity.getCreatedAt(), is(publication.getCreatedAt()));
+        assertThat(publicationEntity.getUpdatedAt(), is(publication.getUpdatedAt()));
+        assertThat(publicationEntity.getPlayer().getId(), is(publication.getPostedBy().getId()));
     }
 
     @Test
     void givenPublicationEntityWhenMapToDomainThenReturnPublication() {
-        Publication publication = this.mapper.toDomain(this.publicationEntity);
+        PublicationEntity publicationEntity = this.publicationEntityRepository.getPublication();
 
-        assertThat(publication.getId(), is(this.publicationEntity.getId()));
-        assertThat(publication.getDescription(), is(this.publicationEntity.getDescription()));
-        assertThat(publication.getCreatedAt(), is(this.publicationEntity.getCreatedAt()));
-        assertThat(publication.getUpdatedAt(), is(this.publicationEntity.getUpdatedAt()));
-        assertThat(publication.getPostedBy().getId(), is(this.publicationEntity.getPlayer().getId()));
+        Publication publication = this.mapper.toDomain(publicationEntity);
+
+        assertThat(publication.getId(), is(publicationEntity.getId()));
+        assertThat(publication.getDescription(), is(publicationEntity.getDescription()));
+        assertThat(publication.getCreatedAt(), is(publicationEntity.getCreatedAt()));
+        assertThat(publication.getUpdatedAt(), is(publicationEntity.getUpdatedAt()));
+        assertThat(publication.getPostedBy().getId(), is(publicationEntity.getPlayer().getId()));
     }
+
+    @Test
+    void givenPublicationWithLinksWhenMapToEntityThenReturnPublicationEntityWithLinks() {
+        Publication publication = this.publicationModelRepository.getPublicationWithLink();
+
+        PublicationEntity publicationEntity = this.mapper.toEntity(publication);
+
+        assertThat(publicationEntity.getId(), is(publication.getId()));
+        assertThat(publicationEntity.getDescription(), is(publication.getDescription()));
+        assertThat(publicationEntity.getCreatedAt(), is(publication.getCreatedAt()));
+        assertThat(publicationEntity.getUpdatedAt(), is(publication.getUpdatedAt()));
+        assertThat(publicationEntity.getPlayer().getId(), is(publication.getPostedBy().getId()));
+
+        assertThat(publicationEntity.getLinks().get(0).getId(),
+                is(publication.getLinks().get(0).getId()));
+        assertThat(publicationEntity.getLinks().get(0).getEntity(),
+                is(publication.getLinks().get(0).getEntity()));
+    }
+
+    @Test
+    void givenPublicationEntityWithLinksWhenMapToDomainThenReturnPublicationWithLinks() {
+        PublicationEntity publicationEntity = this.publicationEntityRepository.getPublicationWithLink();
+
+        Publication publication = this.mapper.toDomain(publicationEntity);
+
+        assertThat(publication.getId(), is(publicationEntity.getId()));
+        assertThat(publication.getDescription(), is(publicationEntity.getDescription()));
+        assertThat(publication.getCreatedAt(), is(publicationEntity.getCreatedAt()));
+        assertThat(publication.getUpdatedAt(), is(publicationEntity.getUpdatedAt()));
+        assertThat(publication.getPostedBy().getId(), is(publicationEntity.getPlayer().getId()));
+
+        assertThat(publication.getLinks().get(0).getId(),
+                is(publicationEntity.getLinks().get(0).getId()));
+        assertThat(publication.getLinks().get(0).getEntity(),
+                is(publicationEntity.getLinks().get(0).getEntity()));
+    }
+
 }

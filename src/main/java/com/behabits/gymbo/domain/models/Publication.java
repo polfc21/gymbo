@@ -17,4 +17,5 @@ public class Publication {
     private LocalDateTime updatedAt;
     private User postedBy;
     private List<File> files;
+    private List<Link> links;
 }

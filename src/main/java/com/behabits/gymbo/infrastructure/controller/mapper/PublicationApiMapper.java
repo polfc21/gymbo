@@ -12,10 +12,14 @@ public class PublicationApiMapper {
 
     private final UserApiMapper userApiMapper;
     private final FileApiMapper fileApiMapper;
+    private final LinkApiMapper linkApiMapper;
 
     public Publication toDomain(PublicationRequest request) {
         Publication domain = new Publication();
         domain.setDescription(request.getDescription());
+        if (request.getLinks() != null) {
+            domain.setLinks(this.linkApiMapper.toDomain(request.getLinks()));
+        }
         return domain;
     }
 
@@ -28,6 +32,9 @@ public class PublicationApiMapper {
         response.setPostedBy(this.userApiMapper.toResponse(domain.getPostedBy()));
         if (domain.getFiles() != null) {
             response.setFiles(this.fileApiMapper.toResponse(domain.getFiles()));
+        }
+        if (domain.getLinks() != null) {
+            response.setLinks(this.linkApiMapper.toResponse(domain.getLinks()));
         }
         return response;
     }
