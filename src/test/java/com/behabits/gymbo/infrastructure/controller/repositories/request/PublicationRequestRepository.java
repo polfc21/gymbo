@@ -14,4 +14,14 @@ public class PublicationRequestRepository {
                 .files(List.of(1L))
                 .build();
     }
+
+    public PublicationRequest getPublicationRequestWithLinks() {
+        LinkRequestRepository linkRequestRepository = new LinkRequestRepository();
+        return PublicationRequest.builder()
+                .description("Description")
+                .files(List.of(1L))
+                .links(List.of(linkRequestRepository.getCorrectLinkRequest()))
+                .build();
+    }
+
 }
