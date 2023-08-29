@@ -18,4 +18,5 @@ public class PublicationResponse {
     private LocalDateTime updatedAt;
     private UserResponse postedBy;
     private List<FileResponse> files;
+    private List<LinkResponse> links;
 }
