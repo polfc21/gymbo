@@ -10,4 +10,5 @@ import lombok.*;
 public class Link {
     private Long id;
     private String entity;
+    private Exercise exercise;
 }

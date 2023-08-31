@@ -13,4 +13,12 @@ public class LinkModelRepository {
                 .build();
     }
 
+    public Link getLinkWithExercise() {
+        return Link.builder()
+                .id(1L)
+                .entity("entity")
+                .exercise(new ExerciseModelRepository().getSquatExercise())
+                .build();
+    }
+
 }
