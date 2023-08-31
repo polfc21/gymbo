@@ -131,4 +131,24 @@ class PublicationControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
+
+    @Test
+    @WithMockUser
+    void givenPublicationWithLinksWithExercisesLinkedWhenCreatePublicationThenReturnPublicationResponse() throws Exception {
+        PublicationRequest publicationRequestWithLinks = new PublicationRequestRepository().getPublicationRequestWithExerciseLink();
+        Publication publicationWithLinks = new PublicationModelRepository().getPublicationWithExerciseLink();
+        PublicationResponse publicationResponseWithLinks = new PublicationResponseRepository().getPublicationResponseWithExerciseLink();
+        given(this.mapper.toDomain(publicationRequestWithLinks)).willReturn(publicationWithLinks);
+        given(this.publicationService.createPublication(publicationWithLinks, publicationRequestWithLinks.getFiles())).willReturn(publicationWithLinks);
+        given(this.mapper.toResponse(publicationWithLinks)).willReturn(publicationResponseWithLinks);
+
+        MockHttpServletResponse response = this.mockMvc.perform(post(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS)
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content(this.objectMapper.writeValueAsString(publicationRequestWithLinks)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(publicationResponseWithLinks)));
+    }
 }
