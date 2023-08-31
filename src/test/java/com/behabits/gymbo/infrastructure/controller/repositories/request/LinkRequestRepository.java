@@ -12,4 +12,11 @@ public class LinkRequestRepository {
                 .build();
     }
 
+    public LinkRequest getLinkWithExerciseRequest() {
+        return LinkRequest.builder()
+                .entity("exercise")
+                .exerciseId(1L)
+                .build();
+    }
+
 }

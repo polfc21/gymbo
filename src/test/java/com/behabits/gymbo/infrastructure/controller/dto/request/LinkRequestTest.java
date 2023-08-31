@@ -16,4 +16,12 @@ class LinkRequestTest {
         assertThat(linkRequest.hashCode(), is(linkRequest2.hashCode()));
     }
 
+    @Test
+    void givenSameLinkRequestWithExerciseWhenEqualsAndHashCodeThenReturnTrueSameHashCode() {
+        LinkRequest linkRequest = new LinkRequestRepository().getLinkWithExerciseRequest();
+        LinkRequest linkRequest2 = new LinkRequestRepository().getLinkWithExerciseRequest();
+        assertThat(linkRequest, is(linkRequest2));
+        assertThat(linkRequest.hashCode(), is(linkRequest2.hashCode()));
+    }
+
 }
