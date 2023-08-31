@@ -11,6 +11,7 @@ import java.util.List;
 public class PublicationResponseRepository {
 
     private final UserResponse user = new UserResponseRepository().getUserResponse();
+    private final LinkResponseRepository linkResponseRepository = new LinkResponseRepository();
 
     public PublicationResponse getPublicationResponse() {
         return PublicationResponse.builder()
@@ -23,14 +24,24 @@ public class PublicationResponseRepository {
     }
 
     public PublicationResponse getPublicationResponseWithLinks() {
-        LinkResponseRepository linkResponseRepository = new LinkResponseRepository();
         return PublicationResponse.builder()
                 .id(1L)
                 .description("description")
                 .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .postedBy(this.user)
-                .links(List.of(linkResponseRepository.getLinkResponse()))
+                .links(List.of(this.linkResponseRepository.getLinkResponse()))
+                .build();
+    }
+
+    public PublicationResponse getPublicationResponseWithExerciseLink() {
+        return PublicationResponse.builder()
+                .id(1L)
+                .description("description")
+                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .postedBy(this.user)
+                .links(List.of(this.linkResponseRepository.getLinkResponseWithExercise()))
                 .build();
     }
 
