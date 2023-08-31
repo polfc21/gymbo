@@ -17,4 +17,6 @@ public class LinkEntity {
     private String entity;
     @ManyToOne
     private PublicationEntity publication;
+    @ManyToOne
+    private ExerciseEntity exercise;
 }
