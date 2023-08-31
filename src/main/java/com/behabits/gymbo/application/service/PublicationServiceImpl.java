@@ -6,6 +6,7 @@ import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.FileService;
+import com.behabits.gymbo.domain.services.LinkService;
 import com.behabits.gymbo.domain.services.PublicationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class PublicationServiceImpl implements PublicationService {
     private final PublicationDao publicationDao;
     private final AuthorityService authorityService;
     private final FileService fileService;
+    private final LinkService linkService;
 
     @Transactional
     @Override
@@ -29,6 +31,7 @@ public class PublicationServiceImpl implements PublicationService {
         publication.setPostedBy(user);
         publication.setCreatedAt(LocalDateTime.now());
         List<File> filesToSet = this.getFiles(files);
+        this.linkService.setExercises(publication.getLinks());
         Publication publicationCreated = this.publicationDao.savePublication(publication);
         filesToSet.forEach(file -> this.fileService.setPublication(file, publicationCreated));
         publicationCreated.setFiles(filesToSet);

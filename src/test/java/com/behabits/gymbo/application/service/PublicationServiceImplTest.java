@@ -4,11 +4,13 @@ import com.behabits.gymbo.domain.daos.PublicationDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.File;
+import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.FileService;
+import com.behabits.gymbo.domain.services.LinkService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +37,9 @@ class PublicationServiceImplTest {
 
     @Mock
     private FileService fileService;
+
+    @Mock
+    private LinkService linkService;
 
     private final User loggedUser = new UserModelRepository().getUser();
 
@@ -76,4 +81,49 @@ class PublicationServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> this.publicationService.createPublication(publicationToCreate, List.of(nonExistentFileId)));
     }
+
+    @Test
+    void givenPublicationWithExistentOwnLinksWhenCreatePublicationThenReturnPublication() {
+        Publication publicationToCreate = mock(Publication.class);
+        Publication publicationCreated = mock(Publication.class);
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+
+        when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
+        when(publicationToCreate.getLinks()).thenReturn(links);
+        doNothing().when(this.linkService).setExercises(links);
+        when(this.publicationDao.savePublication(publicationToCreate)).thenReturn(publicationCreated);
+
+        assertThat(this.publicationService.createPublication(publicationToCreate, List.of()), is(publicationCreated));
+        verify(publicationToCreate).setPostedBy(this.loggedUser);
+        verify(publicationToCreate).setCreatedAt(any());
+        verify(this.linkService).setExercises(links);
+    }
+
+    @Test
+    void givenPublicationWithExistentNotOwnLinksWhenCreatePublicationThenThrowsPermissionsException() {
+        Publication publicationToCreate = mock(Publication.class);
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+
+        when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
+        when(publicationToCreate.getLinks()).thenReturn(links);
+        doThrow(PermissionsException.class).when(this.linkService).setExercises(links);
+
+        assertThrows(PermissionsException.class, () -> this.publicationService.createPublication(publicationToCreate, List.of()));
+    }
+
+    @Test
+    void givenPublicationWithNonExistentLinksWhenCreatePublicationThenThrowsNotFoundException() {
+        Publication publicationToCreate = mock(Publication.class);
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+
+        when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
+        when(publicationToCreate.getLinks()).thenReturn(links);
+        doThrow(NotFoundException.class).when(this.linkService).setExercises(links);
+
+        assertThrows(NotFoundException.class, () -> this.publicationService.createPublication(publicationToCreate, List.of()));
+    }
+
 }

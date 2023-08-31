@@ -23,4 +23,6 @@ public class ExerciseEntity {
     private TrainingEntity training;
     @ManyToOne
     private UserEntity player;
+    @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LinkEntity> links;
 }

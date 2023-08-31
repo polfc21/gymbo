@@ -11,4 +11,5 @@ import lombok.*;
 public class LinkResponse {
     private Long id;
     private String entity;
+    private ExerciseResponse exercise;
 }

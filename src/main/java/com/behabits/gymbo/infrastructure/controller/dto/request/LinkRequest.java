@@ -10,4 +10,5 @@ import lombok.*;
 @AllArgsConstructor
 public class LinkRequest {
     private String entity;
+    private Long exerciseId;
 }

@@ -12,6 +12,7 @@ import java.util.List;
 public class PublicationModelRepository {
 
     private final User user = new UserModelRepository().getUser();
+    private final LinkModelRepository linkModelRepository = new LinkModelRepository();
 
     public Publication getPublication() {
         return Publication.builder()
@@ -24,7 +25,19 @@ public class PublicationModelRepository {
     }
 
     public Publication getPublicationWithLink() {
-        Link link = new LinkModelRepository().getLink();
+        Link link = this.linkModelRepository.getLink();
+        return Publication.builder()
+                .id(1L)
+                .description("description")
+                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .postedBy(this.user)
+                .links(List.of(link))
+                .build();
+    }
+
+    public Publication getPublicationWithExerciseLink() {
+        Link link = this.linkModelRepository.getLinkWithExercise();
         return Publication.builder()
                 .id(1L)
                 .description("description")

@@ -17,23 +17,45 @@ class LinkEntityMapperTest {
     @Autowired
     private LinkEntityMapper mapper;
 
-    private final LinkEntity linkEntity = new LinkEntityRepository().getLink();
-    private final Link link = new LinkModelRepository().getLink();
+    private final LinkEntityRepository linkEntityRepository = new LinkEntityRepository();
+    private final LinkModelRepository linkModelRepository = new LinkModelRepository();
 
     @Test
     void givenLinkWhenMapToEntityThenReturnLinkEntity() {
-        LinkEntity linkEntity = this.mapper.toEntity(this.link);
+        Link link = this.linkModelRepository.getLink();
+        LinkEntity linkEntity = this.mapper.toEntity(link);
 
-        assertThat(linkEntity.getId(), is(this.link.getId()));
-        assertThat(linkEntity.getEntity(), is(this.link.getEntity()));
+        assertThat(linkEntity.getId(), is(link.getId()));
+        assertThat(linkEntity.getEntity(), is(link.getEntity()));
     }
 
     @Test
     void givenLinkEntityWhenMapToDomainThenReturnLink() {
-        Link link = this.mapper.toDomain(this.linkEntity);
+        LinkEntity linkEntity = this.linkEntityRepository.getLink();
+        Link link = this.mapper.toDomain(linkEntity);
 
-        assertThat(link.getId(), is(this.linkEntity.getId()));
-        assertThat(link.getEntity(), is(this.linkEntity.getEntity()));
+        assertThat(link.getId(), is(linkEntity.getId()));
+        assertThat(link.getEntity(), is(linkEntity.getEntity()));
+    }
+
+    @Test
+    void givenLinkWithExerciseWhenMapToEntityThenReturnLinkEntityWithExercise() {
+        Link link = this.linkModelRepository.getLinkWithExercise();
+        LinkEntity linkEntity = this.mapper.toEntity(link);
+
+        assertThat(linkEntity.getId(), is(link.getId()));
+        assertThat(linkEntity.getEntity(), is(link.getEntity()));
+        assertThat(linkEntity.getExercise().getId(), is(link.getExercise().getId()));
+    }
+
+    @Test
+    void givenLinkEntityWithExerciseWhenMapToDomainThenReturnLinkWithExercise() {
+        LinkEntity linkEntity = this.linkEntityRepository.getLinkWithExercise();
+        Link link = this.mapper.toDomain(linkEntity);
+
+        assertThat(link.getId(), is(linkEntity.getId()));
+        assertThat(link.getEntity(), is(linkEntity.getEntity()));
+        assertThat(link.getExercise().getId(), is(linkEntity.getExercise().getId()));
     }
 
 }

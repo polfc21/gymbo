@@ -8,6 +8,8 @@ import java.util.List;
 @NoArgsConstructor
 public class PublicationRequestRepository {
 
+    private final LinkRequestRepository linkRequestRepository = new LinkRequestRepository();
+
     public PublicationRequest getPublicationRequest() {
         return PublicationRequest.builder()
                 .description("Description")
@@ -16,11 +18,18 @@ public class PublicationRequestRepository {
     }
 
     public PublicationRequest getPublicationRequestWithLinks() {
-        LinkRequestRepository linkRequestRepository = new LinkRequestRepository();
         return PublicationRequest.builder()
                 .description("Description")
                 .files(List.of(1L))
-                .links(List.of(linkRequestRepository.getCorrectLinkRequest()))
+                .links(List.of(this.linkRequestRepository.getCorrectLinkRequest()))
+                .build();
+    }
+
+    public PublicationRequest getPublicationRequestWithExerciseLink() {
+        return PublicationRequest.builder()
+                .description("Description")
+                .files(List.of(1L))
+                .links(List.of(this.linkRequestRepository.getLinkWithExerciseRequest()))
                 .build();
     }
 

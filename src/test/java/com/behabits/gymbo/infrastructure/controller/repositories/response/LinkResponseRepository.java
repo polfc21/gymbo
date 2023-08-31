@@ -12,4 +12,11 @@ public class LinkResponseRepository {
                 .build();
     }
 
+    public LinkResponse getLinkResponseWithExercise() {
+        return LinkResponse.builder()
+                .entity("exercise")
+                .exercise(new ExerciseResponseRepository().getSquatExerciseResponse())
+                .build();
+    }
+
 }
