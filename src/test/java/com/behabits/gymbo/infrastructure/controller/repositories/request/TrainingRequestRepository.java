@@ -13,6 +13,7 @@ public class TrainingRequestRepository {
         return TrainingRequest.builder()
                 .name("Training 1")
                 .trainingDate(LocalDateTime.now())
+                .sport("FOOTBALL")
                 .build();
     }
 
@@ -20,6 +21,8 @@ public class TrainingRequestRepository {
         return TrainingRequest.builder()
                 .name("")
                 .trainingDate(null)
+                .sport("")
+                .exercises(List.of(new ExerciseRequestRepository().getIncorrectExerciseRequest()))
                 .build();
     }
 
@@ -27,6 +30,8 @@ public class TrainingRequestRepository {
         return TrainingRequest.builder()
                 .name(null)
                 .trainingDate(null)
+                .exercises(List.of(new ExerciseRequestRepository().getNullExerciseRequest()))
+                .sport(null)
                 .build();
     }
 
@@ -34,15 +39,8 @@ public class TrainingRequestRepository {
         return TrainingRequest.builder()
                 .name("Leg")
                 .trainingDate(LocalDateTime.now())
+                .sport("FOOTBALL")
                 .build();
     }
 
-    public TrainingRequest getLegTrainingRequestWithSquatExercise() {
-        ExerciseRequestRepository exerciseRequestRepository = new ExerciseRequestRepository();
-        return TrainingRequest.builder()
-                .name("Leg")
-                .trainingDate(LocalDateTime.now())
-                .exercises(List.of(exerciseRequestRepository.getSquatExerciseRequest()))
-                .build();
-    }
 }
