@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -61,5 +62,15 @@ class JpaReviewDaoTest {
         when(this.reviewRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> this.reviewDao.findReviewById(nonExistentId));
+    }
+
+    @Test
+    void givenReviewedIdWhenFindAllReviewsByReviewedIdThenReturnListOfReviews() {
+        Long reviewedId = 1L;
+
+        when(this.reviewRepository.findAllByReviewedId(reviewedId)).thenReturn(List.of(this.reviewEntity));
+        when(this.reviewEntityMapper.toDomain(this.reviewEntity)).thenReturn(this.review);
+
+        assertThat(this.reviewDao.findAllReviewsByReviewedId(reviewedId), is(List.of(this.review)));
     }
 }

@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping(ApiConstant.API_V1 + ApiConstant.REVIEWS)
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +33,15 @@ public class ReviewController {
     public ResponseEntity<ReviewResponse> findReviewById(@PathVariable Long id) {
         Review review = this.reviewService.findReviewById(id);
         return new ResponseEntity<>(this.mapper.toResponse(review), HttpStatus.OK);
+    }
+
+    @GetMapping(ApiConstant.REVIEWED + ApiConstant.USERNAME)
+    public ResponseEntity<List<ReviewResponse>> findAllReviewsByUsername(@PathVariable String username) {
+        List<ReviewResponse> reviews = this.reviewService.findAllReviewsByUsername(username)
+                .stream()
+                .map(this.mapper::toResponse)
+                .toList();
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
 }

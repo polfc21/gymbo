@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -80,6 +82,13 @@ class ReviewRepositoryTest {
         ReviewEntity reviewFound = this.reviewRepository.findByIdAndPlayerIsReviewerOrReviewed(this.review.getId() + 100, this.reviewed.getId());
 
         assertNull(reviewFound);
+    }
+
+    @Test
+    void givenReviewedIdWhenFindAllByReviewedIdThenReturnReviews() {
+        List<ReviewEntity> reviews = this.reviewRepository.findAllByReviewedId(this.reviewed.getId());
+
+        assertThat(reviews, is(List.of(this.review)));
     }
 
 }

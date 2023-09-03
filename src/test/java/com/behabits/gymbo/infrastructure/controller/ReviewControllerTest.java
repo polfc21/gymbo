@@ -23,6 +23,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
@@ -140,6 +142,49 @@ class ReviewControllerTest {
                 .andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentUsernameWhenFindAllReviewsByUsernameThenReturnReviewResponses() throws Exception {
+        String existentUsername = "existentUsername";
+
+        given(this.reviewService.findAllReviewsByUsername(existentUsername)).willReturn(List.of(this.review));
+        given(this.mapper.toResponse(this.review)).willReturn(this.reviewResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.REVIEWED + ApiConstant.USERNAME, existentUsername)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(List.of(this.reviewResponse))));
+    }
+
+    @Test
+    @WithMockUser
+    void givenNonExistentUsernameWhenFindAllReviewsByUsernameThenReturn404() throws Exception {
+        String nonExistentUsername = "nonExistentUsername";
+
+        given(this.reviewService.findAllReviewsByUsername(nonExistentUsername)).willThrow(NotFoundException.class);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.REVIEWED + ApiConstant.USERNAME, nonExistentUsername)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenFindAllReviewsByUsernameThenReturn403() throws Exception {
+        String existentUsername = "existentUsername";
+
+        MockHttpServletResponse response = mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.REVIEWED + ApiConstant.USERNAME, existentUsername))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED.value()));
     }
 
 }
