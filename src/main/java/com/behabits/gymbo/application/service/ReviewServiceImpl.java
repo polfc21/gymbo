@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,12 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = this.reviewDao.findReviewById(id);
         this.authorityService.checkLoggedUserHasPermissions(review);
         return review;
+    }
+
+    @Override
+    public List<Review> findAllReviewsByUsername(String username) {
+        User user = this.userService.findUserByUsername(username);
+        return this.reviewDao.findAllReviewsByReviewedId(user.getId());
     }
 
 }

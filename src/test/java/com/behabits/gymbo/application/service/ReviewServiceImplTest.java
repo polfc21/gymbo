@@ -17,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -105,6 +107,25 @@ class ReviewServiceImplTest {
         when(this.reviewDao.findReviewById(nonExistentId)).thenThrow(NotFoundException.class);
 
         assertThrows(NotFoundException.class, () -> this.reviewService.findReviewById(nonExistentId));
+    }
+
+    @Test
+    void givenExistentUsernameWhenFindAllReviewsByUsernameThenReturnReviews() {
+        String existentUsername = this.reviewed.getUsername();
+
+        when(this.userService.findUserByUsername(existentUsername)).thenReturn(this.reviewed);
+        when(this.reviewDao.findAllReviewsByReviewedId(this.reviewed.getId())).thenReturn(List.of(this.review));
+
+        assertThat(this.reviewService.findAllReviewsByUsername(existentUsername), is(List.of(this.review)));
+    }
+
+    @Test
+    void givenNonExistentUsernameWhenFindAllReviewsByUsernameThenThrowUsernameNotFoundException() {
+        String nonExistentUsername = this.reviewed.getUsername();
+
+        when(this.userService.findUserByUsername(nonExistentUsername)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.reviewService.findAllReviewsByUsername(nonExistentUsername));
     }
 
 }
