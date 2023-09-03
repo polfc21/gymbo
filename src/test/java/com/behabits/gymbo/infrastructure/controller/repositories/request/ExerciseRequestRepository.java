@@ -11,12 +11,14 @@ public class ExerciseRequestRepository {
     public ExerciseRequest getCorrectExerciseRequest() {
         return ExerciseRequest.builder()
                 .name("Bench Press")
+                .sport("FOOTBALL")
                 .build();
     }
 
     public ExerciseRequest getIncorrectExerciseRequest() {
         return ExerciseRequest.builder()
                 .name("")
+                .sport("")
                 .build();
     }
 
@@ -29,6 +31,7 @@ public class ExerciseRequestRepository {
     public ExerciseRequest getSquatExerciseRequest() {
         return ExerciseRequest.builder()
                 .name("Squat")
+                .sport("FOOTBALL")
                 .build();
     }
 

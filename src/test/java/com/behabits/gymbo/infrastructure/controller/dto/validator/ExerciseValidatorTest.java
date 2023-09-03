@@ -42,7 +42,7 @@ class ExerciseValidatorTest {
 
         Set<ConstraintViolation<ExerciseRequest>> violations = this.validator.validate(exerciseRequest);
 
-        assertThat(violations.size(), is(1));
+        assertThat(violations.size(), is(ExerciseRequest.class.getDeclaredFields().length - 1));
     }
 
     @Test
