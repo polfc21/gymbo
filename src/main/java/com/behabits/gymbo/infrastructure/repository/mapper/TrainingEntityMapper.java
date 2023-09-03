@@ -22,6 +22,7 @@ public class TrainingEntityMapper {
         if (entity.getPlayer() != null) {
             domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
         }
+        domain.setSport(entity.getSport());
         return domain;
     }
 
@@ -41,6 +42,7 @@ public class TrainingEntityMapper {
         if (domain.getUser() != null) {
             entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
         }
+        entity.setSport(domain.getSport());
         return entity;
     }
 }

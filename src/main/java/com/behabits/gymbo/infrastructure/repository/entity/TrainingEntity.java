@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.repository.entity;
 
+import com.behabits.gymbo.domain.models.Sport;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,4 +25,6 @@ public class TrainingEntity {
     private List<ExerciseEntity> exercises;
     @ManyToOne
     private UserEntity player;
+    @Enumerated(EnumType.STRING)
+    private Sport sport;
 }
