@@ -9,6 +9,8 @@ import com.behabits.gymbo.infrastructure.repository.mapper.ReviewEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class JpaReviewDao implements ReviewDao {
@@ -28,5 +30,13 @@ public class JpaReviewDao implements ReviewDao {
         ReviewEntity entity = this.reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Review with id " + id + " not found"));
         return this.mapper.toDomain(entity);
+    }
+
+    @Override
+    public List<Review> findAllReviewsByReviewedId(Long reviewedId) {
+        return this.reviewRepository.findAllByReviewedId(reviewedId)
+                .stream()
+                .map(this.mapper::toDomain)
+                .toList();
     }
 }
