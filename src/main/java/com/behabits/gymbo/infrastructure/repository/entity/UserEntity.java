@@ -1,9 +1,11 @@
 package com.behabits.gymbo.infrastructure.repository.entity;
 
+import com.behabits.gymbo.domain.models.Sport;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -42,4 +44,8 @@ public class UserEntity {
     private List<ReviewEntity> reviews;
     @OneToMany(mappedBy = "reviewed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> reviewers;
+    @ElementCollection(targetClass = Sport.class)
+    @CollectionTable(name = "player_sports", joinColumns = @JoinColumn(name = "player_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Sport> sports;
 }

@@ -2,6 +2,8 @@ package com.behabits.gymbo.infrastructure.controller.repositories.request;
 
 import com.behabits.gymbo.infrastructure.controller.dto.request.UserRequest;
 
+import java.util.Set;
+
 public class UserRequestRepository {
 
     public UserRequest getCorrectUserRequest() {
@@ -12,6 +14,7 @@ public class UserRequestRepository {
                 .lastName("Farreny Capdevila")
                 .password("12345678")
                 .matchingPassword("12345678")
+                .sports(Set.of("FOOTBALL"))
                 .build();
     }
 
@@ -23,6 +26,7 @@ public class UserRequestRepository {
                 .lastName("")
                 .password("")
                 .matchingPassword("")
+                .sports(Set.of(""))
                 .build();
     }
 

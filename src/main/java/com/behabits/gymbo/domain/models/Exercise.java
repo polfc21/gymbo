@@ -14,4 +14,5 @@ public class Exercise {
     private String name;
     private List<Serie> series;
     private User user;
+    private Sport sport;
 }

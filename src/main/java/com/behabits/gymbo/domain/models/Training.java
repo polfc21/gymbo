@@ -17,6 +17,7 @@ public class Training {
     private String name;
     private List<Exercise> exercises;
     private User user;
+    private Sport sport;
 
     public void addExercise(Exercise exercise) {
         if (this.exercises == null) {

@@ -31,6 +31,7 @@ class TrainingApiMapperTest {
         assertThat(training.getName(), is(trainingRequest.getName()));
         assertThat(training.getTrainingDate(), is(trainingRequest.getTrainingDate()));
         assertThat(training.getExercises(), is(trainingRequest.getExercises()));
+        assertThat(training.getSport().name(), is(trainingRequest.getSport()));
     }
 
     @Test
@@ -43,6 +44,7 @@ class TrainingApiMapperTest {
         assertThat(trainingResponse.getName(), is(training.getName()));
         assertThat(trainingResponse.getTrainingDate(), is(training.getTrainingDate()));
         assertThat(trainingResponse.getExercises(), is(training.getExercises()));
+        assertThat(trainingResponse.getSport(), is(training.getSport()));
     }
 
 }

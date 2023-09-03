@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.dto.request;
 
+import com.behabits.gymbo.infrastructure.controller.dto.validator.ValidSport;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -17,4 +18,6 @@ public class ExerciseRequest {
     private String name;
     @Valid
     private List<SerieRequest> series;
+    @ValidSport
+    private String sport;
 }

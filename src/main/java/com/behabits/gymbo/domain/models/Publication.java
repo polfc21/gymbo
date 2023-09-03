@@ -18,4 +18,5 @@ public class Publication {
     private User postedBy;
     private List<File> files;
     private List<Link> links;
+    private Sport sport;
 }

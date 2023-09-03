@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface TrainingRepository extends JpaRepository<TrainingEntity, Long> {
-    @Query(value = "SELECT id, name, training_date, player_id FROM training  WHERE EXTRACT(MONTH FROM training_date) = ?1 AND EXTRACT(YEAR FROM training_date) = ?2 AND player_id = ?3", nativeQuery = true)
+    @Query(value = "SELECT * FROM training WHERE EXTRACT(MONTH FROM training_date) = ?1 AND EXTRACT(YEAR FROM training_date) = ?2 AND player_id = ?3", nativeQuery = true)
     List<TrainingEntity> findAllByMonthAndYearAndPlayerId(Integer month, Integer year, Long playerId);
     TrainingEntity findByIdAndPlayerId(Long id, Long playerId);
 }

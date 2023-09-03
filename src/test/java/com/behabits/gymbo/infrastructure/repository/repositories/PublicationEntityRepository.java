@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.repository.repositories;
 
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.infrastructure.repository.entity.LinkEntity;
 import com.behabits.gymbo.infrastructure.repository.entity.PublicationEntity;
 import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
@@ -20,6 +21,7 @@ public class PublicationEntityRepository {
                 .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .player(this.player)
+                .sport(Sport.FOOTBALL)
                 .build();
     }
 
@@ -32,6 +34,7 @@ public class PublicationEntityRepository {
                 .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .player(this.player)
                 .links(List.of(link))
+                .sport(Sport.FOOTBALL)
                 .build();
     }
 

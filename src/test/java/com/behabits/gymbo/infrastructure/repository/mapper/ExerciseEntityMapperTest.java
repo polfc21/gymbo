@@ -31,6 +31,7 @@ class ExerciseEntityMapperTest {
         assertThat(squatExerciseEntity.getName(), is(squatExercise.getName()));
         assertThat(squatExerciseEntity.getSeries(), is(squatExercise.getSeries()));
         assertThat(squatExerciseEntity.getPlayer().getId(), is(squatExercise.getUser().getId()));
+        assertThat(squatExerciseEntity.getSport(), is(squatExercise.getSport()));
     }
 
     @Test
@@ -43,6 +44,7 @@ class ExerciseEntityMapperTest {
         assertThat(squatExercise.getName(), is(squatExerciseEntity.getName()));
         assertThat(squatExercise.getSeries(), is(squatExerciseEntity.getSeries()));
         assertThat(squatExercise.getUser().getId(), is(squatExerciseEntity.getPlayer().getId()));
+        assertThat(squatExercise.getSport(), is(squatExerciseEntity.getSport()));
     }
 
     @Test
@@ -53,6 +55,7 @@ class ExerciseEntityMapperTest {
 
         assertThat(squatExerciseEntity.getId(), is(squatExercise.getId()));
         assertThat(squatExerciseEntity.getName(), is(squatExercise.getName()));
+        assertThat(squatExerciseEntity.getSport(), is(squatExercise.getSport()));
 
         assertThat(squatExerciseEntity.getSeries().get(0).getId(),
                 is(squatExercise.getSeries().get(0).getId()));
@@ -79,6 +82,7 @@ class ExerciseEntityMapperTest {
 
         assertThat(squatExercise.getId(), is(squatExerciseEntity.getId()));
         assertThat(squatExercise.getName(), is(squatExerciseEntity.getName()));
+        assertThat(squatExercise.getSport(), is(squatExerciseEntity.getSport()));
 
         assertThat(squatExercise.getSeries().get(0).getId(),
                 is(squatExerciseEntity.getSeries().get(0).getId()));

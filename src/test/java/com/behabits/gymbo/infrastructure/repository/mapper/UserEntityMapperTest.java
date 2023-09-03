@@ -33,6 +33,7 @@ class UserEntityMapperTest {
         assertThat(userEntity.getFirstName(), is(user.getFirstName()));
         assertThat(userEntity.getLastName(), is(user.getLastName()));
         assertThat(userEntity.getEmail(), is(user.getEmail()));
+        assertThat(userEntity.getSports(), is(user.getSports()));
     }
 
     @Test
@@ -47,5 +48,6 @@ class UserEntityMapperTest {
         assertThat(user.getFirstName(), is(userEntity.getFirstName()));
         assertThat(user.getLastName(), is(userEntity.getLastName()));
         assertThat(user.getEmail(), is(userEntity.getEmail()));
+        assertThat(user.getSports(), is(userEntity.getSports()));
     }
 }

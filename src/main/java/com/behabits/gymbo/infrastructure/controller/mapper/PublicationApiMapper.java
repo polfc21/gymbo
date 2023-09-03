@@ -13,6 +13,7 @@ public class PublicationApiMapper {
     private final UserApiMapper userApiMapper;
     private final FileApiMapper fileApiMapper;
     private final LinkApiMapper linkApiMapper;
+    private final SportApiMapper sportApiMapper;
 
     public Publication toDomain(PublicationRequest request) {
         Publication domain = new Publication();
@@ -20,6 +21,7 @@ public class PublicationApiMapper {
         if (request.getLinks() != null) {
             domain.setLinks(this.linkApiMapper.toDomain(request.getLinks()));
         }
+        domain.setSport(this.sportApiMapper.toDomain(request.getSport()));
         return domain;
     }
 
@@ -36,6 +38,7 @@ public class PublicationApiMapper {
         if (domain.getLinks() != null) {
             response.setLinks(this.linkApiMapper.toResponse(domain.getLinks()));
         }
+        response.setSport(domain.getSport());
         return response;
     }
 }

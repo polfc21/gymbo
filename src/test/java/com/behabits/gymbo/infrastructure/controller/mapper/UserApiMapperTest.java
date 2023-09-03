@@ -37,6 +37,7 @@ class UserApiMapperTest {
         assertThat(user.getEmail(), is(userRequest.getEmail()));
         assertThat(user.getFirstName(), is(userRequest.getFirstName()));
         assertThat(user.getLastName(), is(userRequest.getLastName()));
+        assertThat(user.getSports().size(), is(userRequest.getSports().size()));
     }
 
     @Test
@@ -50,5 +51,6 @@ class UserApiMapperTest {
         assertThat(userResponse.getEmail(), is(user.getEmail()));
         assertThat(userResponse.getFirstName(), is(user.getFirstName()));
         assertThat(userResponse.getLastName(), is(user.getLastName()));
+        assertThat(userResponse.getSports(), is(user.getSports()));
     }
 }

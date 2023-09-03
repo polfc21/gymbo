@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.dto.response;
 
+import com.behabits.gymbo.domain.models.Sport;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,4 +20,5 @@ public class PublicationResponse {
     private UserResponse postedBy;
     private List<FileResponse> files;
     private List<LinkResponse> links;
+    private Sport sport;
 }

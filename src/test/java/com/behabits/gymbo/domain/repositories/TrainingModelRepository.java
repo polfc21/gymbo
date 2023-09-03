@@ -1,5 +1,6 @@
 package com.behabits.gymbo.domain.repositories;
 
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.domain.models.Training;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ public class TrainingModelRepository {
                 .id(1L)
                 .name("Leg")
                 .trainingDate(LocalDateTime.now())
+                .sport(Sport.FOOTBALL)
                 .build();
     }
 
@@ -24,6 +26,7 @@ public class TrainingModelRepository {
                 .name("Leg")
                 .trainingDate(LocalDateTime.now())
                 .exercises(List.of(exerciseModelRepository.getSquatExerciseWithSquatSeries()))
+                .sport(Sport.FOOTBALL)
                 .build();
     }
 }

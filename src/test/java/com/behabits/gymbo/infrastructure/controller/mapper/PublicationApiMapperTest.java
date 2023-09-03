@@ -29,6 +29,7 @@ class PublicationApiMapperTest {
 
         assertThat(publication.getDescription(), is(publicationRequest.getDescription()));
         assertThat(publication.getLinks(), is(publicationRequest.getLinks()));
+        assertThat(publication.getSport().name(), is(publicationRequest.getSport()));
     }
 
     @Test
@@ -45,6 +46,7 @@ class PublicationApiMapperTest {
         assertThat(publicationResponse.getPostedBy().getId(), is(publication.getPostedBy().getId()));
         assertThat(publicationResponse.getFiles().size(), is(publication.getFiles().size()));
         assertThat(publicationResponse.getLinks(), is(publication.getLinks()));
+        assertThat(publicationResponse.getSport(), is(publication.getSport()));
     }
 
 }

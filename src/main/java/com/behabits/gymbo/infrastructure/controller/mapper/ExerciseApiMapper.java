@@ -13,6 +13,7 @@ import java.util.List;
 public class ExerciseApiMapper {
 
     private final SerieApiMapper serieApiMapper;
+    private final SportApiMapper sportApiMapper;
 
     public List<Exercise> toDomain(List<ExerciseRequest> requests) {
         return requests != null ? requests.stream()
@@ -24,6 +25,7 @@ public class ExerciseApiMapper {
         Exercise domain = new Exercise();
         domain.setName(request.getName());
         domain.setSeries(this.serieApiMapper.toDomain(request.getSeries()));
+        domain.setSport(this.sportApiMapper.toDomain(request.getSport()));
         return domain;
     }
 
@@ -38,6 +40,7 @@ public class ExerciseApiMapper {
         response.setId(domain.getId());
         response.setName(domain.getName());
         response.setSeries(this.serieApiMapper.toResponse(domain.getSeries()));
+        response.setSport(domain.getSport());
         return response;
     }
 }

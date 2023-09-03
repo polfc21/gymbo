@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.repository.entity;
 
+import com.behabits.gymbo.domain.models.Sport;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,4 +27,6 @@ public class PublicationEntity {
     private List<FileEntity> files;
     @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LinkEntity> links;
+    @Enumerated(EnumType.STRING)
+    private Sport sport;
 }

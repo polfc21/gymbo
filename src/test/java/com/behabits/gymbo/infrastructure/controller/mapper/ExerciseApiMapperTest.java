@@ -30,6 +30,7 @@ class ExerciseApiMapperTest {
 
         assertThat(exercise.getName(), is(exerciseRequest.getName()));
         assertThat(exercise.getSeries(), is(exerciseRequest.getSeries()));
+        assertThat(exercise.getSport().name(), is(exerciseRequest.getSport()));
     }
 
     @Test
@@ -41,5 +42,6 @@ class ExerciseApiMapperTest {
         assertThat(exerciseResponse.getId(), is(exercise.getId()));
         assertThat(exerciseResponse.getName(), is(exercise.getName()));
         assertThat(exerciseResponse.getSeries(), is(exercise.getSeries()));
+        assertThat(exerciseResponse.getSport(), is(exercise.getSport()));
     }
 }

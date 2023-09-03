@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.controller.repositories.response;
 
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.infrastructure.controller.dto.response.ExerciseResponse;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ public class ExerciseResponseRepository {
                 .id(1L)
                 .name("Squat")
                 .series(List.of())
+                .sport(Sport.FOOTBALL)
                 .build();
     }
 

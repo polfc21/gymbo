@@ -1,6 +1,9 @@
 package com.behabits.gymbo.infrastructure.repository.repositories;
 
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
+
+import java.util.Set;
 
 public class UserEntityRepository {
 
@@ -12,6 +15,7 @@ public class UserEntityRepository {
                 .email("polfarreny@gmail.com")
                 .firstName("Pol")
                 .lastName("Farreny Capdevila")
+                .sports(Set.of(Sport.FOOTBALL))
                 .enabled(true)
                 .build();
     }

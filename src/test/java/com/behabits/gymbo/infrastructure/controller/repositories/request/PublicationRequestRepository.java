@@ -14,6 +14,7 @@ public class PublicationRequestRepository {
         return PublicationRequest.builder()
                 .description("Description")
                 .files(List.of(1L))
+                .sport("FOOTBALL")
                 .build();
     }
 
@@ -22,6 +23,7 @@ public class PublicationRequestRepository {
                 .description("Description")
                 .files(List.of(1L))
                 .links(List.of(this.linkRequestRepository.getCorrectLinkRequest()))
+                .sport("FOOTBALL")
                 .build();
     }
 
@@ -30,6 +32,7 @@ public class PublicationRequestRepository {
                 .description("Description")
                 .files(List.of(1L))
                 .links(List.of(this.linkRequestRepository.getLinkWithExerciseRequest()))
+                .sport("FOOTBALL")
                 .build();
     }
 

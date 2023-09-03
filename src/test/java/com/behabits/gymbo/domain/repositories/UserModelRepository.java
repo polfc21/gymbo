@@ -1,7 +1,10 @@
 package com.behabits.gymbo.domain.repositories;
 
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.domain.models.User;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @NoArgsConstructor
 public class UserModelRepository {
@@ -13,6 +16,7 @@ public class UserModelRepository {
                 .firstName("Pol")
                 .lastName("Farreny Capdevila")
                 .email("polfarreny@gmail.com")
+                .sports(Set.of(Sport.FOOTBALL))
                 .build();
     }
 

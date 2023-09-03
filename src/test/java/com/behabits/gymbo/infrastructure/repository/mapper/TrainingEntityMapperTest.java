@@ -37,6 +37,7 @@ class TrainingEntityMapperTest {
         assertThat(legTrainingEntity.getName(), is(legTraining.getName()));
         assertThat(legTrainingEntity.getTrainingDate(), is(legTraining.getTrainingDate()));
         assertThat(legTrainingEntity.getExercises(), is(legTraining.getExercises()));
+        assertThat(legTrainingEntity.getSport(), is(legTraining.getSport()));
     }
 
     @Test
@@ -49,6 +50,7 @@ class TrainingEntityMapperTest {
         assertThat(legTraining.getName(), is(legTrainingEntity.getName()));
         assertThat(legTraining.getTrainingDate(), is(legTrainingEntity.getTrainingDate()));
         assertThat(legTraining.getExercises(), is(legTrainingEntity.getExercises()));
+        assertThat(legTraining.getSport(), is(legTrainingEntity.getSport()));
     }
 
     @Test
@@ -64,6 +66,7 @@ class TrainingEntityMapperTest {
         assertThat(legTrainingEntity.getName(), is(legTraining.getName()));
         assertThat(legTrainingEntity.getTrainingDate(), is(legTraining.getTrainingDate()));
         assertThat(legTrainingEntity.getPlayer().getUsername(), is(legTraining.getUser().getUsername()));
+        assertThat(legTrainingEntity.getSport(), is(legTraining.getSport()));
 
         assertThat(legTrainingEntity.getExercises().get(0).getId(),
                 is(legTraining.getExercises().get(0).getId()));
@@ -96,6 +99,7 @@ class TrainingEntityMapperTest {
         assertThat(legTraining.getTrainingDate(), is(legTrainingEntity.getTrainingDate()));
         assertThat(legTraining.getUser().getUsername(),
                 is(legTrainingEntity.getPlayer().getUsername()));
+        assertThat(legTraining.getSport(), is(legTrainingEntity.getSport()));
 
         assertThat(legTraining.getExercises().get(0).getId(),
                 is(legTrainingEntity.getExercises().get(0).getId()));
@@ -126,6 +130,7 @@ class TrainingEntityMapperTest {
         assertThat(legTrainingEntity.getTrainingDate(), is(legTraining.getTrainingDate()));
         assertThat(legTrainingEntity.getExercises(), is(legTraining.getExercises()));
         assertThat(legTrainingEntity.getPlayer().getId(), is(legTraining.getUser().getId()));
+        assertThat(legTrainingEntity.getSport(), is(legTraining.getSport()));
     }
 
     @Test
@@ -140,5 +145,6 @@ class TrainingEntityMapperTest {
         assertThat(legTraining.getTrainingDate(), is(legTrainingEntity.getTrainingDate()));
         assertThat(legTraining.getExercises(), is(legTrainingEntity.getExercises()));
         assertThat(legTraining.getUser().getId(), is(legTrainingEntity.getPlayer().getId()));
+        assertThat(legTraining.getSport(), is(legTrainingEntity.getSport()));
     }
 }
