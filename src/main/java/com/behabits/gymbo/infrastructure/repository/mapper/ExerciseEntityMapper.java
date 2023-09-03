@@ -26,6 +26,7 @@ public class ExerciseEntityMapper {
         domain.setName(entity.getName());
         domain.setSeries(this.serieEntityMapper.toDomain(entity.getSeries()));
         domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
+        domain.setSport(entity.getSport());
         return domain;
     }
 
@@ -44,6 +45,7 @@ public class ExerciseEntityMapper {
             entity.getSeries().forEach(serieEntity -> serieEntity.setExercise(entity));
         }
         entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
+        entity.setSport(domain.getSport());
         return entity;
     }
 
