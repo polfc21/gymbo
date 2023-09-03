@@ -18,6 +18,7 @@ public class UserEntityMapper {
         domain.setLastName(entity.getLastName());
         domain.setEmail(entity.getEmail());
         domain.setPassword(entity.getPassword());
+        domain.setSports(entity.getSports());
         return domain;
     }
 
@@ -32,6 +33,7 @@ public class UserEntityMapper {
         entity.setLastName(domain.getLastName());
         entity.setEmail(domain.getEmail());
         entity.setPassword(domain.getPassword());
+        entity.setSports(domain.getSports());
         return entity;
     }
 }
