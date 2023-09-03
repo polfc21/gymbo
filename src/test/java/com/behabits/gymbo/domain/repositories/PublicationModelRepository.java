@@ -2,6 +2,7 @@ package com.behabits.gymbo.domain.repositories;
 
 import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Publication;
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.domain.models.User;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +22,7 @@ public class PublicationModelRepository {
                 .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .postedBy(this.user)
+                .sport(Sport.FOOTBALL)
                 .build();
     }
 
@@ -33,6 +35,7 @@ public class PublicationModelRepository {
                 .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .postedBy(this.user)
                 .links(List.of(link))
+                .sport(Sport.FOOTBALL)
                 .build();
     }
 
@@ -45,6 +48,7 @@ public class PublicationModelRepository {
                 .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .postedBy(this.user)
                 .links(List.of(link))
+                .sport(Sport.FOOTBALL)
                 .build();
     }
 
