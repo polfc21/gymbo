@@ -1,6 +1,9 @@
 package com.behabits.gymbo.infrastructure.controller.dto.response;
 
+import com.behabits.gymbo.domain.models.Sport;
 import lombok.*;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,4 +17,5 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String email;
+    private Set<Sport> sports;
 }

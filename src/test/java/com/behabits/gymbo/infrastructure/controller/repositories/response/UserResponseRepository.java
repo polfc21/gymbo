@@ -1,6 +1,9 @@
 package com.behabits.gymbo.infrastructure.controller.repositories.response;
 
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.infrastructure.controller.dto.response.UserResponse;
+
+import java.util.Set;
 
 public class UserResponseRepository {
 
@@ -11,6 +14,7 @@ public class UserResponseRepository {
                 .firstName("Pol")
                 .lastName("Farreny Capdevila")
                 .email("polfarreny@gmail.com")
+                .sports(Set.of(Sport.FOOTBALL))
                 .build();
     }
 
