@@ -20,6 +20,7 @@ public class PublicationEntityMapper {
         domain.setUpdatedAt(entity.getUpdatedAt());
         domain.setPostedBy(this.userEntityMapper.toDomain(entity.getPlayer()));
         domain.setLinks(this.linkEntityMapper.toDomain(entity.getLinks()));
+        domain.setSport(entity.getSport());
         return domain;
     }
 
@@ -34,6 +35,7 @@ public class PublicationEntityMapper {
         if (entity.getLinks() != null) {
             entity.getLinks().forEach(linkEntity -> linkEntity.setPublication(entity));
         }
+        entity.setSport(domain.getSport());
         return entity;
     }
 }

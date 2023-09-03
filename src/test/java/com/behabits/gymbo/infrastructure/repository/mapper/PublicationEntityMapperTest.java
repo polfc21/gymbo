@@ -31,6 +31,7 @@ class PublicationEntityMapperTest {
         assertThat(publicationEntity.getCreatedAt(), is(publication.getCreatedAt()));
         assertThat(publicationEntity.getUpdatedAt(), is(publication.getUpdatedAt()));
         assertThat(publicationEntity.getPlayer().getId(), is(publication.getPostedBy().getId()));
+        assertThat(publicationEntity.getSport(), is(publication.getSport()));
     }
 
     @Test
@@ -44,6 +45,7 @@ class PublicationEntityMapperTest {
         assertThat(publication.getCreatedAt(), is(publicationEntity.getCreatedAt()));
         assertThat(publication.getUpdatedAt(), is(publicationEntity.getUpdatedAt()));
         assertThat(publication.getPostedBy().getId(), is(publicationEntity.getPlayer().getId()));
+        assertThat(publication.getSport(), is(publicationEntity.getSport()));
     }
 
     @Test
@@ -57,6 +59,7 @@ class PublicationEntityMapperTest {
         assertThat(publicationEntity.getCreatedAt(), is(publication.getCreatedAt()));
         assertThat(publicationEntity.getUpdatedAt(), is(publication.getUpdatedAt()));
         assertThat(publicationEntity.getPlayer().getId(), is(publication.getPostedBy().getId()));
+        assertThat(publicationEntity.getSport(), is(publication.getSport()));
 
         assertThat(publicationEntity.getLinks().get(0).getId(),
                 is(publication.getLinks().get(0).getId()));
@@ -75,6 +78,7 @@ class PublicationEntityMapperTest {
         assertThat(publication.getCreatedAt(), is(publicationEntity.getCreatedAt()));
         assertThat(publication.getUpdatedAt(), is(publicationEntity.getUpdatedAt()));
         assertThat(publication.getPostedBy().getId(), is(publicationEntity.getPlayer().getId()));
+        assertThat(publication.getSport(), is(publicationEntity.getSport()));
 
         assertThat(publication.getLinks().get(0).getId(),
                 is(publicationEntity.getLinks().get(0).getId()));
