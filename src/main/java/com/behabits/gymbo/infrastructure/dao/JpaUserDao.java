@@ -9,6 +9,8 @@ import com.behabits.gymbo.infrastructure.repository.mapper.UserEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class JpaUserDao implements UserDao {
@@ -31,6 +33,14 @@ public class JpaUserDao implements UserDao {
     public User findByUsername(String username) {
         UserEntity entity = this.userRepository.findByUsername(username);
         return this.mapper.toDomain(entity);
+    }
+
+    @Override
+    public List<User> findUsersInKilometersOrderedByDistanceFromLoggedUser(Long userId, Double kilometers) {
+        return this.userRepository.findUsersInKilometersOrderedByDistanceFromPlayerId(userId, kilometers)
+                .stream()
+                .map(this.mapper::toDomain)
+                .toList();
     }
 
     private Boolean existsUsername(String username) {

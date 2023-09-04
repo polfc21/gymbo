@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
@@ -67,5 +69,18 @@ class JpaUserDaoTest {
         when(this.userRepository.findByUsername(nonExistentUsername)).thenReturn(null);
 
         assertThat(this.jpaUserDao.findByUsername(nonExistentUsername), is(nullValue()));
+    }
+
+    @Test
+    void givenKilometersAndLoggedUserIdWhenFindUsersInKilometersOrderedByDistanceThenReturnUsers() {
+        double kilometers = 1.0;
+        long loggedUserId = 1L;
+        User nearUser = new UserModelRepository().getReviewed();
+        UserEntity nearUserEntity = new UserEntityRepository().getReviewed();
+
+        when(this.userRepository.findUsersInKilometersOrderedByDistanceFromPlayerId(loggedUserId, kilometers)).thenReturn(List.of(nearUserEntity));
+        when(this.userEntityMapper.toDomain(nearUserEntity)).thenReturn(nearUser);
+
+        assertThat(this.jpaUserDao.findUsersInKilometersOrderedByDistanceFromLoggedUser(loggedUserId, kilometers), is(List.of(nearUser)));
     }
 }
