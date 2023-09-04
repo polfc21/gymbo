@@ -18,4 +18,6 @@ public class ApiConstant {
     public static final String REGISTER = "/register";
     public static final String LOGIN = "/login";
     public static final String REVIEWED = "/reviewed";
+    public static final String USERS = "/users";
+    public static final String KILOMETERS = "/{kilometers}";
 }
