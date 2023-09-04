@@ -6,12 +6,15 @@ import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
+import com.behabits.gymbo.domain.services.AuthorityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
@@ -27,6 +30,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private AuthorityService authorityService;
 
     private final User user = new UserModelRepository().getUser();
 
@@ -79,4 +85,17 @@ class UserServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> this.userService.findUserByUsername(nonExistentUsername));
     }
+
+    @Test
+    void givenKilometersWhenFindUsersInKilometersOrderedByDistanceFromLoggedUserThenReturnUsers() {
+        Double kilometers = 1.0;
+        Long loggedUserId = this.user.getId();
+        User nearUser = new UserModelRepository().getReviewer();
+
+        when(this.authorityService.getLoggedUser()).thenReturn(this.user);
+        when(this.userDao.findUsersInKilometersOrderedByDistanceFromLoggedUser(loggedUserId, kilometers)).thenReturn(List.of(nearUser));
+
+        assertThat(this.userService.findUsersInKilometersOrderedByDistanceFromLoggedUser(kilometers), is(List.of(nearUser)));
+    }
+
 }

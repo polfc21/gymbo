@@ -3,6 +3,7 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.domain.daos.UserDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.User;
+import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.UserService;
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +11,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+    private final AuthorityService authorityService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -37,6 +41,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
         return this.userDao.createUser(user);
+    }
+
+    @Override
+    public List<User> findUsersInKilometersOrderedByDistanceFromLoggedUser(Double kilometers) {
+        Long loggedUserId = this.authorityService.getLoggedUser().getId();
+        return this.userDao.findUsersInKilometersOrderedByDistanceFromLoggedUser(loggedUserId, kilometers);
     }
 
 }
