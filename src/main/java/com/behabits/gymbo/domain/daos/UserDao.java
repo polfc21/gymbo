@@ -8,4 +8,5 @@ public interface UserDao {
     User createUser(User user);
     User findByUsername(String username);
     List<User> findUsersInKilometersOrderedByDistanceFromLoggedUser(Long userId, Double kilometers);
+    List<User> findAll();
 }

@@ -43,6 +43,14 @@ public class JpaUserDao implements UserDao {
                 .toList();
     }
 
+    @Override
+    public List<User> findAll() {
+        return this.userRepository.findAll()
+                .stream()
+                .map(this.mapper::toDomain)
+                .toList();
+    }
+
     private Boolean existsUsername(String username) {
         return this.userRepository.findByUsername(username) != null;
     }
