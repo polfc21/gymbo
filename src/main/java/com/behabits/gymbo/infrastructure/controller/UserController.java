@@ -1,10 +1,12 @@
 package com.behabits.gymbo.infrastructure.controller;
 
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.UserService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.UserRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.UserResponse;
+import com.behabits.gymbo.infrastructure.controller.dto.validator.ValidSport;
 import com.behabits.gymbo.infrastructure.controller.mapper.UserApiMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,16 @@ public class UserController {
     @GetMapping(ApiConstant.KILOMETERS)
     public ResponseEntity<List<UserResponse>> findUsersInKilometersOrderedByDistanceFromPlayerId(@PathVariable Double kilometers) {
         List<UserResponse> users = this.userService.findUsersInKilometersOrderedByDistanceFromLoggedUser(kilometers)
+                .stream()
+                .map(this.mapper::toResponse)
+                .toList();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping(ApiConstant.SPORTS)
+    public ResponseEntity<List<UserResponse>> findUsersBySport(@RequestParam @ValidSport String sport) {
+        Sport sportEnum = Sport.valueOf(sport.toUpperCase());
+        List<UserResponse> users = this.userService.findUsersBySport(sportEnum)
                 .stream()
                 .map(this.mapper::toResponse)
                 .toList();

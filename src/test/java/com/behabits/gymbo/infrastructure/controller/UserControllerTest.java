@@ -1,6 +1,7 @@
 package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.exceptions.ExistingUserException;
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.domain.services.TokenService;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -132,6 +134,52 @@ class UserControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.OK.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(List.of(userResponse))));
+    }
+
+    @Test
+    @WithMockUser
+    void givenCorrectSportWhenFindUsersBySportThenReturnUsersAnd200() throws Exception {
+        String sport = "football";
+        User user = new UserModelRepository().getUser();
+        UserResponse userResponse = new UserResponseRepository().getUserResponse();
+        given(this.userService.findUsersBySport(Sport.FOOTBALL)).willReturn(List.of(user));
+        given(this.mapper.toResponse(user)).willReturn(userResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.USERS + ApiConstant.SPORTS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("sport", sport)
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(List.of(userResponse))));
+    }
+
+    @Test
+    @WithMockUser
+    void givenIncorrectSportWhenFindUsersBySportThenReturn400() throws Exception {
+        String sport = "incorrectSport";
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.USERS + ApiConstant.SPORTS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("sport", sport)
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedWhenFindUsersBySportThenReturn403() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.USERS + ApiConstant.SPORTS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED.value()));
     }
 
 }
