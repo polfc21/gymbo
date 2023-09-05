@@ -83,4 +83,16 @@ class JpaUserDaoTest {
 
         assertThat(this.jpaUserDao.findUsersInKilometersOrderedByDistanceFromLoggedUser(loggedUserId, kilometers), is(List.of(nearUser)));
     }
+
+    @Test
+    void whenFindAllThenReturnUsers() {
+        UserEntity userEntity = new UserEntityRepository().getUser();
+        User user = new UserModelRepository().getUser();
+
+        when(this.userRepository.findAll()).thenReturn(List.of(userEntity));
+        when(this.userEntityMapper.toDomain(userEntity)).thenReturn(user);
+
+        assertThat(this.jpaUserDao.findAll(), is(List.of(user)));
+    }
+
 }

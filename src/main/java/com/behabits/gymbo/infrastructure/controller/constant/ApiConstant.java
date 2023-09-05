@@ -19,5 +19,6 @@ public class ApiConstant {
     public static final String LOGIN = "/login";
     public static final String REVIEWED = "/reviewed";
     public static final String USERS = "/users";
-    public static final String KILOMETERS = "/{kilometers}";
+    public static final String KILOMETERS = "/kilometers/{kilometers}";
+    public static final String SPORTS = "/sports";
 }

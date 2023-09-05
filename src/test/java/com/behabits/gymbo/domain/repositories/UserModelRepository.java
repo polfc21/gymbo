@@ -42,4 +42,16 @@ public class UserModelRepository {
                 .build();
     }
 
+    public User getFootballUser() {
+        return User.builder()
+                .id(4L)
+                .username("football")
+                .password("password")
+                .email("football@football.com")
+                .firstName("Football")
+                .lastName("Football")
+                .sports(Set.of(Sport.FOOTBALL))
+                .build();
+    }
+
 }
