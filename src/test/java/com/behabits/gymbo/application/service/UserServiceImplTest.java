@@ -3,6 +3,7 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.domain.daos.UserDao;
 import com.behabits.gymbo.domain.exceptions.ExistingUserException;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.application.domain.UserDetailsImpl;
@@ -96,6 +97,17 @@ class UserServiceImplTest {
         when(this.userDao.findUsersInKilometersOrderedByDistanceFromLoggedUser(loggedUserId, kilometers)).thenReturn(List.of(nearUser));
 
         assertThat(this.userService.findUsersInKilometersOrderedByDistanceFromLoggedUser(kilometers), is(List.of(nearUser)));
+    }
+
+    @Test
+    void givenFootballSportWhenFindUsersBySportThenReturnUsers() {
+        User loggedUser = this.user;
+        User footballUser = new UserModelRepository().getFootballUser();
+
+        when(this.authorityService.getLoggedUser()).thenReturn(loggedUser);
+        when(this.userDao.findAll()).thenReturn(List.of(loggedUser, footballUser));
+
+        assertThat(this.userService.findUsersBySport(Sport.FOOTBALL), is(List.of(footballUser)));
     }
 
 }
