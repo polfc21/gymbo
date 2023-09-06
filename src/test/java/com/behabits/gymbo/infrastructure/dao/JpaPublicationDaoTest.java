@@ -1,5 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.repositories.PublicationModelRepository;
 import com.behabits.gymbo.infrastructure.repository.PublicationRepository;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,4 +43,24 @@ class JpaPublicationDaoTest {
 
         assertThat(this.publicationDao.savePublication(this.publication), is(this.publication));
     }
+
+    @Test
+    void givenExistentPublicationWhenFindPublicationByIdThenReturnPublication() {
+        Long existentId = 1L;
+
+        when(this.publicationRepository.findById(existentId)).thenReturn(Optional.of(this.publicationEntity));
+        when(this.publicationEntityMapper.toDomain(this.publicationEntity)).thenReturn(this.publication);
+
+        assertThat(this.publicationDao.findPublicationById(existentId), is(this.publication));
+    }
+
+    @Test
+    void givenNonExistentPublicationWhenFindPublicationByIdThenThrowNotFoundException() {
+        Long nonExistentId = 1L;
+
+        when(this.publicationRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> this.publicationDao.findPublicationById(nonExistentId));
+    }
+
 }
