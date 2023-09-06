@@ -9,10 +9,7 @@ import com.behabits.gymbo.infrastructure.controller.mapper.PublicationApiMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS)
 @RestController
@@ -27,6 +24,13 @@ public class PublicationController {
         Publication publicationToCreate = this.mapper.toDomain(request);
         Publication publicationCreated = this.publicationService.createPublication(publicationToCreate, request.getFiles());
         return new ResponseEntity<>(this.mapper.toResponse(publicationCreated), HttpStatus.CREATED);
+    }
+
+    @PutMapping(ApiConstant.ID)
+    public ResponseEntity<PublicationResponse> updatePublication(@RequestBody PublicationRequest request, @PathVariable Long id) {
+        Publication publicationToUpdate = this.mapper.toDomain(request);
+        Publication publicationUpdated = this.publicationService.updatePublication(id, publicationToUpdate);
+        return new ResponseEntity<>(this.mapper.toResponse(publicationUpdated), HttpStatus.OK);
     }
 
 }
