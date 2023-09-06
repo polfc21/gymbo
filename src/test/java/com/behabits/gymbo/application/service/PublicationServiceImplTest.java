@@ -126,4 +126,43 @@ class PublicationServiceImplTest {
         assertThrows(NotFoundException.class, () -> this.publicationService.createPublication(publicationToCreate, List.of()));
     }
 
+    @Test
+    void givenExistentPublicationWithPermissionsWhenUpdatePublicationThenReturnPublication() {
+        Long publicationId = 1L;
+        Publication publication = mock(Publication.class);
+        Publication publicationToUpdate = mock(Publication.class);
+        Publication publicationUpdated = mock(Publication.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(publicationToUpdate);
+        when(this.publicationDao.savePublication(publicationToUpdate)).thenReturn(publicationUpdated);
+
+        assertThat(this.publicationService.updatePublication(publicationId, publication), is(publicationUpdated));
+        verify(publicationToUpdate).setDescription(publication.getDescription());
+        verify(publicationToUpdate).setSport(publication.getSport());
+        verify(publicationToUpdate).setUpdatedAt(any());
+    }
+
+    @Test
+    void givenExistentPublicationWithoutPermissionsWhenUpdatePublicationThenThrowPermissionsException() {
+        Long publicationId = 1L;
+        Publication publication = mock(Publication.class);
+        Publication publicationToUpdate = mock(Publication.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(publicationToUpdate);
+
+        assertThrows(PermissionsException.class, () -> this.publicationService.updatePublication(publicationId, publication));
+    }
+
+    @Test
+    void givenNonExistentPublicationWhenUpdatePublicationThenThrowNotFoundException() {
+        Long publicationId = 1L;
+        Publication publication = mock(Publication.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.publicationService.updatePublication(publicationId, publication));
+    }
+
 }
