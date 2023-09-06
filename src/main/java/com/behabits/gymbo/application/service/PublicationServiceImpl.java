@@ -44,4 +44,14 @@ public class PublicationServiceImpl implements PublicationService {
                 .toList();
     }
 
+    @Override
+    public Publication updatePublication(Long id, Publication publication) {
+        Publication publicationToUpdate = this.publicationDao.findPublicationById(id);
+        this.authorityService.checkLoggedUserHasPermissions(publicationToUpdate);
+        publicationToUpdate.setDescription(publication.getDescription());
+        publicationToUpdate.setSport(publication.getSport());
+        publicationToUpdate.setUpdatedAt(LocalDateTime.now());
+        return this.publicationDao.savePublication(publicationToUpdate);
+    }
+
 }

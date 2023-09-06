@@ -4,4 +4,5 @@ import com.behabits.gymbo.domain.models.Publication;
 
 public interface PublicationDao {
     Publication savePublication(Publication publication);
+    Publication findPublicationById(Long id);
 }

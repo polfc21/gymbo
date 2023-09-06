@@ -151,4 +151,66 @@ class PublicationControllerTest {
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(publicationResponseWithLinks)));
     }
+
+    @Test
+    @WithMockUser
+    void givenExistentPublicationWithPermissionsWhenUpdatePublicationThenReturnPublicationResponse() throws Exception {
+        Long publicationId = 1L;
+        given(this.mapper.toDomain(this.publicationRequest)).willReturn(this.publication);
+        given(this.publicationService.updatePublication(publicationId, this.publication)).willReturn(this.publication);
+        given(this.mapper.toResponse(this.publication)).willReturn(this.publicationResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(put(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId)
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content(this.objectMapper.writeValueAsString(this.publicationRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.publicationResponse)));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentPublicationWithoutPermissionsWhenUpdatePublicationThenReturn403() throws Exception {
+        Long publicationId = 1L;
+        given(this.mapper.toDomain(this.publicationRequest)).willReturn(this.publication);
+        doThrow(PermissionsException.class).when(this.publicationService).updatePublication(publicationId, this.publication);
+
+        MockHttpServletResponse response = this.mockMvc.perform(put(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId)
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content(this.objectMapper.writeValueAsString(this.publicationRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenNonExistentPublicationWhenUpdatePublicationThenReturn404() throws Exception {
+        Long publicationId = 1L;
+        given(this.mapper.toDomain(this.publicationRequest)).willReturn(this.publication);
+        doThrow(NotFoundException.class).when(this.publicationService).updatePublication(publicationId, this.publication);
+
+        MockHttpServletResponse response = this.mockMvc.perform(put(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId)
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content(this.objectMapper.writeValueAsString(this.publicationRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenUpdatePublicationThenReturn403() throws Exception {
+        Long publicationId = 1L;
+        MockHttpServletResponse response = this.mockMvc.perform(put(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId)
+                        .contentType("application/json")
+                        .content(this.objectMapper.writeValueAsString(this.publicationRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
 }
