@@ -52,6 +52,9 @@ class JpaAuthorityDaoTest {
     private ReviewRepository reviewRepository;
 
     @Mock
+    private PublicationRepository publicationRepository;
+
+    @Mock
     private UserEntityMapper userMapper;
 
     private final User user = new UserModelRepository().getUser();
@@ -68,6 +71,8 @@ class JpaAuthorityDaoTest {
     private final LocationEntity locationEntity = new LocationEntityRepository().getBarcelona();
     private final Review review = new ReviewModelRepository().getReview();
     private final ReviewEntity reviewEntity = new ReviewEntityRepository().getReview();
+    private final Publication publication = new PublicationModelRepository().getPublication();
+    private final PublicationEntity publicationEntity = new PublicationEntityRepository().getPublication();
 
     @BeforeEach
     void setUp() {
@@ -219,4 +224,27 @@ class JpaAuthorityDaoTest {
     		fail("Should not throw exception");
     	}
     }
+
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckPublicationPermissionsThenThrowPermissionsException() {
+    	when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+    	when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+    	when(this.publicationRepository.findByIdAndPlayerId(this.publicationEntity.getId(), this.user.getId())).thenReturn(null);
+
+    	assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(this.publication));
+    }
+
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckPublicationPermissionsThenDoNothing() {
+    	when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+    	when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+    	when(this.publicationRepository.findByIdAndPlayerId(this.publicationEntity.getId(), this.user.getId())).thenReturn(this.publicationEntity);
+
+    	try {
+    		this.authorityDao.checkLoggedUserHasPermissions(this.publication);
+    	} catch (Exception e) {
+    		fail("Should not throw exception");
+    	}
+    }
+
 }
