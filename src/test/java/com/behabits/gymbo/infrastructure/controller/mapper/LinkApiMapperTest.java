@@ -5,7 +5,6 @@ import com.behabits.gymbo.domain.repositories.LinkModelRepository;
 import com.behabits.gymbo.infrastructure.controller.dto.request.LinkRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.LinkResponse;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.LinkRequestRepository;
-import com.behabits.gymbo.infrastructure.controller.repositories.response.LinkResponseRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,25 +20,6 @@ class LinkApiMapperTest {
 
     private final LinkModelRepository linkModelRepository = new LinkModelRepository();
     private final LinkRequestRepository linkRequestRepository = new LinkRequestRepository();
-
-    @Test
-    void givenLinkRequestWhenMapToDomainThenReturnLink() {
-        LinkRequest linkRequest = this.linkRequestRepository.getCorrectLinkRequest();
-
-        Link link = this.linkApiMapper.toDomain(linkRequest);
-
-        assertThat(link.getEntity(), is(linkRequest.getEntity()));
-    }
-
-    @Test
-    void givenLinkWhenMapToResponseThenReturnLinkResponse() {
-        Link link = this.linkModelRepository.getLink();
-
-        LinkResponse linkResponse = this.linkApiMapper.toResponse(link);
-
-        assertThat(linkResponse.getId(), is(link.getId()));
-        assertThat(linkResponse.getEntity(), is(link.getEntity()));
-    }
 
     @Test
     void givenLinkRequestWithExerciseWhenMapToDomainThenReturnLinkWithExercise() {
@@ -60,6 +40,27 @@ class LinkApiMapperTest {
         assertThat(linkResponse.getId(), is(link.getId()));
         assertThat(linkResponse.getEntity(), is(link.getEntity()));
         assertThat(linkResponse.getExercise().getId(), is(link.getExercise().getId()));
+    }
+
+    @Test
+    void givenLinkRequestWithUserWhenMapToDomainThenReturnLinkWithUser() {
+        LinkRequest linkRequest = this.linkRequestRepository.getLinkWithUserRequest();
+
+        Link link = this.linkApiMapper.toDomain(linkRequest);
+
+        assertThat(link.getEntity(), is(linkRequest.getEntity()));
+        assertThat(link.getUser().getUsername(), is(linkRequest.getUsername()));
+    }
+
+    @Test
+    void givenLinkWithUserWhenMapToResponseThenReturnLinkResponseWithUser() {
+        Link link = this.linkModelRepository.getLinkWithUser();
+
+        LinkResponse linkResponse = this.linkApiMapper.toResponse(link);
+
+        assertThat(linkResponse.getId(), is(link.getId()));
+        assertThat(linkResponse.getEntity(), is(link.getEntity()));
+        assertThat(linkResponse.getUser().getUsername(), is(link.getUser().getUsername()));
     }
 
 }
