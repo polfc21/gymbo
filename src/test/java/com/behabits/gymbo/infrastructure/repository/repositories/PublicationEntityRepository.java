@@ -25,8 +25,21 @@ public class PublicationEntityRepository {
                 .build();
     }
 
-    public PublicationEntity getPublicationWithLink() {
-        LinkEntity link = new LinkEntityRepository().getLink();
+    public PublicationEntity getPublicationWithLinkExercise() {
+        LinkEntity link = new LinkEntityRepository().getLinkWithExercise();
+        return PublicationEntity.builder()
+                .id(1L)
+                .description("description")
+                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .player(this.player)
+                .links(List.of(link))
+                .sport(Sport.FOOTBALL)
+                .build();
+    }
+
+    public PublicationEntity getPublicationWithLinkUser() {
+        LinkEntity link = new LinkEntityRepository().getLinkWithUser();
         return PublicationEntity.builder()
                 .id(1L)
                 .description("description")
