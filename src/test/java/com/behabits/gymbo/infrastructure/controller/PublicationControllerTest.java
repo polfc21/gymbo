@@ -74,10 +74,10 @@ class PublicationControllerTest {
 
     @Test
     @WithMockUser
-    void givenPublicationWithLinksWhenCreatePublicationThenReturnPublicationResponse() throws Exception {
-        PublicationRequest publicationRequestWithLinks = new PublicationRequestRepository().getPublicationRequestWithLinks();
-        Publication publicationWithLinks = new PublicationModelRepository().getPublicationWithLink();
-        PublicationResponse publicationResponseWithLinks = new PublicationResponseRepository().getPublicationResponseWithLinks();
+    void givenPublicationWithUserLinksWhenCreatePublicationThenReturnPublicationResponse() throws Exception {
+        PublicationRequest publicationRequestWithLinks = new PublicationRequestRepository().getPublicationRequestWithUserLink();
+        Publication publicationWithLinks = new PublicationModelRepository().getPublicationWithUserLink();
+        PublicationResponse publicationResponseWithLinks = new PublicationResponseRepository().getPublicationResponseWithUserLink();
         given(this.mapper.toDomain(publicationRequestWithLinks)).willReturn(publicationWithLinks);
         given(this.publicationService.createPublication(publicationWithLinks, publicationRequestWithLinks.getFiles())).willReturn(publicationWithLinks);
         given(this.mapper.toResponse(publicationWithLinks)).willReturn(publicationResponseWithLinks);

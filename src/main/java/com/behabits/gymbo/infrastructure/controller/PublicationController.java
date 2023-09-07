@@ -6,6 +6,7 @@ import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
 import com.behabits.gymbo.infrastructure.controller.dto.request.PublicationRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.PublicationResponse;
 import com.behabits.gymbo.infrastructure.controller.mapper.PublicationApiMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class PublicationController {
     private final PublicationApiMapper mapper;
 
     @PostMapping
-    public ResponseEntity<PublicationResponse> createPublication(@RequestBody PublicationRequest request) {
+    public ResponseEntity<PublicationResponse> createPublication(@RequestBody @Valid PublicationRequest request) {
         Publication publicationToCreate = this.mapper.toDomain(request);
         Publication publicationCreated = this.publicationService.createPublication(publicationToCreate, request.getFiles());
         return new ResponseEntity<>(this.mapper.toResponse(publicationCreated), HttpStatus.CREATED);
