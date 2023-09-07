@@ -19,4 +19,6 @@ public class LinkEntity {
     private PublicationEntity publication;
     @ManyToOne
     private ExerciseEntity exercise;
+    @ManyToOne
+    private UserEntity player;
 }

@@ -26,8 +26,8 @@ public class PublicationModelRepository {
                 .build();
     }
 
-    public Publication getPublicationWithLink() {
-        Link link = this.linkModelRepository.getLink();
+    public Publication getPublicationWithExerciseLink() {
+        Link link = this.linkModelRepository.getLinkWithExercise();
         return Publication.builder()
                 .id(1L)
                 .description("description")
@@ -39,8 +39,8 @@ public class PublicationModelRepository {
                 .build();
     }
 
-    public Publication getPublicationWithExerciseLink() {
-        Link link = this.linkModelRepository.getLinkWithExercise();
+    public Publication getPublicationWithUserLink() {
+        Link link = this.linkModelRepository.getLinkWithUser();
         return Publication.builder()
                 .id(1L)
                 .description("description")

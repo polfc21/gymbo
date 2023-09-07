@@ -9,17 +9,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class LinkResponseTest {
 
     @Test
-    void givenSameLinkResponseWhenEqualsAndHashCodeThenReturnTrueSameHashCode() {
-        LinkResponse linkResponse = new LinkResponseRepository().getLinkResponse();
-        LinkResponse linkResponse2 = new LinkResponseRepository().getLinkResponse();
+    void givenSameLinkResponseWithExerciseWhenEqualsAndHashCodeThenReturnTrueSameHashCode() {
+        LinkResponse linkResponse = new LinkResponseRepository().getLinkResponseWithExercise();
+        LinkResponse linkResponse2 = new LinkResponseRepository().getLinkResponseWithExercise();
         assertThat(linkResponse, is(linkResponse2));
         assertThat(linkResponse.hashCode(), is(linkResponse2.hashCode()));
     }
 
     @Test
-    void givenSameLinkResponseWithExerciseWhenEqualsAndHashCodeThenReturnTrueSameHashCode() {
-        LinkResponse linkResponse = new LinkResponseRepository().getLinkResponseWithExercise();
-        LinkResponse linkResponse2 = new LinkResponseRepository().getLinkResponseWithExercise();
+    void givenSameLinkResponseWithUserWhenEqualsAndHashCodeThenReturnTrueSameHashCode() {
+        LinkResponse linkResponse = new LinkResponseRepository().getLinkResponseWithUser();
+        LinkResponse linkResponse2 = new LinkResponseRepository().getLinkResponseWithUser();
         assertThat(linkResponse, is(linkResponse2));
         assertThat(linkResponse.hashCode(), is(linkResponse2.hashCode()));
     }

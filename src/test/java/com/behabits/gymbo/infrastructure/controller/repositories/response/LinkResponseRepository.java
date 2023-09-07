@@ -6,16 +6,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LinkResponseRepository {
 
-    public LinkResponse getLinkResponse() {
+    public LinkResponse getLinkResponseWithExercise() {
         return LinkResponse.builder()
-                .entity("entity")
+                .entity("EXERCISE")
+                .exercise(new ExerciseResponseRepository().getSquatExerciseResponse())
                 .build();
     }
 
-    public LinkResponse getLinkResponseWithExercise() {
+    public LinkResponse getLinkResponseWithUser() {
         return LinkResponse.builder()
-                .entity("exercise")
-                .exercise(new ExerciseResponseRepository().getSquatExerciseResponse())
+                .entity("USER")
+                .user(new UserResponseRepository().getUserResponse())
                 .build();
     }
 

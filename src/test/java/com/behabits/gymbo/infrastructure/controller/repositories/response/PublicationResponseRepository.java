@@ -25,18 +25,6 @@ public class PublicationResponseRepository {
                 .build();
     }
 
-    public PublicationResponse getPublicationResponseWithLinks() {
-        return PublicationResponse.builder()
-                .id(1L)
-                .description("description")
-                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
-                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
-                .postedBy(this.user)
-                .links(List.of(this.linkResponseRepository.getLinkResponse()))
-                .sport(Sport.FOOTBALL)
-                .build();
-    }
-
     public PublicationResponse getPublicationResponseWithExerciseLink() {
         return PublicationResponse.builder()
                 .id(1L)
@@ -45,6 +33,18 @@ public class PublicationResponseRepository {
                 .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
                 .postedBy(this.user)
                 .links(List.of(this.linkResponseRepository.getLinkResponseWithExercise()))
+                .sport(Sport.FOOTBALL)
+                .build();
+    }
+
+    public PublicationResponse getPublicationResponseWithUserLink() {
+        return PublicationResponse.builder()
+                .id(1L)
+                .description("description")
+                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .postedBy(this.user)
+                .links(List.of(this.linkResponseRepository.getLinkResponseWithUser()))
                 .sport(Sport.FOOTBALL)
                 .build();
     }

@@ -12,6 +12,7 @@ import java.util.List;
 public class LinkEntityMapper {
 
     private final ExerciseEntityMapper exerciseEntityMapper;
+    private final UserEntityMapper userEntityMapper;
 
     public List<Link> toDomain(List<LinkEntity> entities) {
         return entities != null ? entities.stream()
@@ -25,6 +26,9 @@ public class LinkEntityMapper {
         domain.setEntity(entity.getEntity());
         if (entity.getExercise() != null) {
             domain.setExercise(this.exerciseEntityMapper.toDomain(entity.getExercise()));
+        }
+        if (entity.getPlayer() != null) {
+            domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
         }
         return domain;
     }
@@ -41,6 +45,9 @@ public class LinkEntityMapper {
         entity.setEntity(domain.getEntity());
         if (domain.getExercise() != null) {
             entity.setExercise(this.exerciseEntityMapper.toEntity(domain.getExercise()));
+        }
+        if (domain.getUser() != null) {
+            entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
         }
         return entity;
     }

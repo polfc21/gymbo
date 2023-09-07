@@ -18,20 +18,20 @@ public class PublicationRequestRepository {
                 .build();
     }
 
-    public PublicationRequest getPublicationRequestWithLinks() {
-        return PublicationRequest.builder()
-                .description("Description")
-                .files(List.of(1L))
-                .links(List.of(this.linkRequestRepository.getCorrectLinkRequest()))
-                .sport("FOOTBALL")
-                .build();
-    }
-
     public PublicationRequest getPublicationRequestWithExerciseLink() {
         return PublicationRequest.builder()
                 .description("Description")
                 .files(List.of(1L))
                 .links(List.of(this.linkRequestRepository.getLinkWithExerciseRequest()))
+                .sport("FOOTBALL")
+                .build();
+    }
+
+    public PublicationRequest getPublicationRequestWithUserLink() {
+        return PublicationRequest.builder()
+                .description("Description")
+                .files(List.of(1L))
+                .links(List.of(this.linkRequestRepository.getLinkWithUserRequest()))
                 .sport("FOOTBALL")
                 .build();
     }

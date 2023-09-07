@@ -31,7 +31,7 @@ public class PublicationServiceImpl implements PublicationService {
         publication.setPostedBy(user);
         publication.setCreatedAt(LocalDateTime.now());
         List<File> filesToSet = this.getFiles(files);
-        this.linkService.setExercises(publication.getLinks());
+        this.linkService.setLinks(publication.getLinks());
         Publication publicationCreated = this.publicationDao.savePublication(publication);
         filesToSet.forEach(file -> this.fileService.setPublication(file, publicationCreated));
         publicationCreated.setFiles(filesToSet);
