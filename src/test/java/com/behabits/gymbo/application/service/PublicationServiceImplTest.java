@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.PublicationDao;
+import com.behabits.gymbo.domain.exceptions.IncorrectLinkException;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.File;
@@ -91,13 +92,13 @@ class PublicationServiceImplTest {
 
         when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
         when(publicationToCreate.getLinks()).thenReturn(links);
-        doNothing().when(this.linkService).setExercises(links);
+        doNothing().when(this.linkService).setLinks(links);
         when(this.publicationDao.savePublication(publicationToCreate)).thenReturn(publicationCreated);
 
         assertThat(this.publicationService.createPublication(publicationToCreate, List.of()), is(publicationCreated));
         verify(publicationToCreate).setPostedBy(this.loggedUser);
         verify(publicationToCreate).setCreatedAt(any());
-        verify(this.linkService).setExercises(links);
+        verify(this.linkService).setLinks(links);
     }
 
     @Test
@@ -108,7 +109,7 @@ class PublicationServiceImplTest {
 
         when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
         when(publicationToCreate.getLinks()).thenReturn(links);
-        doThrow(PermissionsException.class).when(this.linkService).setExercises(links);
+        doThrow(PermissionsException.class).when(this.linkService).setLinks(links);
 
         assertThrows(PermissionsException.class, () -> this.publicationService.createPublication(publicationToCreate, List.of()));
     }
@@ -121,9 +122,22 @@ class PublicationServiceImplTest {
 
         when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
         when(publicationToCreate.getLinks()).thenReturn(links);
-        doThrow(NotFoundException.class).when(this.linkService).setExercises(links);
+        doThrow(NotFoundException.class).when(this.linkService).setLinks(links);
 
         assertThrows(NotFoundException.class, () -> this.publicationService.createPublication(publicationToCreate, List.of()));
+    }
+
+    @Test
+    void givenPublicationWithIncorrectLinksWhenCreatePublicationThenThrowsIncorrectLinkException() {
+        Publication publicationToCreate = mock(Publication.class);
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+
+        when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
+        when(publicationToCreate.getLinks()).thenReturn(links);
+        doThrow(IncorrectLinkException.class).when(this.linkService).setLinks(links);
+
+        assertThrows(IncorrectLinkException.class, () -> this.publicationService.createPublication(publicationToCreate, List.of()));
     }
 
     @Test

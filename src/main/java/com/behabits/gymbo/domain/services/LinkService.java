@@ -5,5 +5,5 @@ import com.behabits.gymbo.domain.models.Link;
 import java.util.List;
 
 public interface LinkService {
-    void setExercises(List<Link> links);
+    void setLinks(List<Link> links);
 }
