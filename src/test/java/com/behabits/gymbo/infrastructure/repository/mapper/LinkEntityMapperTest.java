@@ -20,23 +20,6 @@ class LinkEntityMapperTest {
     private final LinkEntityRepository linkEntityRepository = new LinkEntityRepository();
     private final LinkModelRepository linkModelRepository = new LinkModelRepository();
 
-    @Test
-    void givenLinkWhenMapToEntityThenReturnLinkEntity() {
-        Link link = this.linkModelRepository.getLink();
-        LinkEntity linkEntity = this.mapper.toEntity(link);
-
-        assertThat(linkEntity.getId(), is(link.getId()));
-        assertThat(linkEntity.getEntity(), is(link.getEntity()));
-    }
-
-    @Test
-    void givenLinkEntityWhenMapToDomainThenReturnLink() {
-        LinkEntity linkEntity = this.linkEntityRepository.getLink();
-        Link link = this.mapper.toDomain(linkEntity);
-
-        assertThat(link.getId(), is(linkEntity.getId()));
-        assertThat(link.getEntity(), is(linkEntity.getEntity()));
-    }
 
     @Test
     void givenLinkWithExerciseWhenMapToEntityThenReturnLinkEntityWithExercise() {
@@ -56,6 +39,26 @@ class LinkEntityMapperTest {
         assertThat(link.getId(), is(linkEntity.getId()));
         assertThat(link.getEntity(), is(linkEntity.getEntity()));
         assertThat(link.getExercise().getId(), is(linkEntity.getExercise().getId()));
+    }
+
+    @Test
+    void givenLinkWithUserWhenMapToEntityThenReturnLinkEntityWithUser() {
+        Link link = this.linkModelRepository.getLinkWithUser();
+        LinkEntity linkEntity = this.mapper.toEntity(link);
+
+        assertThat(linkEntity.getId(), is(link.getId()));
+        assertThat(linkEntity.getEntity(), is(link.getEntity()));
+        assertThat(linkEntity.getPlayer().getId(), is(link.getUser().getId()));
+    }
+
+    @Test
+    void givenLinkEntityWithUserWhenMapToDomainThenReturnLinkWithUser() {
+        LinkEntity linkEntity = this.linkEntityRepository.getLinkWithUser();
+        Link link = this.mapper.toDomain(linkEntity);
+
+        assertThat(link.getId(), is(linkEntity.getId()));
+        assertThat(link.getEntity(), is(linkEntity.getEntity()));
+        assertThat(link.getUser().getId(), is(linkEntity.getPlayer().getId()));
     }
 
 }
