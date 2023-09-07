@@ -11,4 +11,5 @@ public class Link {
     private Long id;
     private String entity;
     private Exercise exercise;
+    private User user;
 }

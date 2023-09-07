@@ -6,18 +6,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LinkModelRepository {
 
-    public Link getLink() {
-        return Link.builder()
-                .id(1L)
-                .entity("entity")
-                .build();
-    }
-
     public Link getLinkWithExercise() {
         return Link.builder()
                 .id(1L)
-                .entity("entity")
+                .entity("EXERCISE")
                 .exercise(new ExerciseModelRepository().getSquatExercise())
+                .build();
+    }
+
+    public Link getLinkWithUser() {
+        return Link.builder()
+                .id(1L)
+                .entity("USER")
+                .user(new UserModelRepository().getUser())
                 .build();
     }
 

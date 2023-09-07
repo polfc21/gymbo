@@ -26,8 +26,8 @@ public class PublicationModelRepository {
                 .build();
     }
 
-    public Publication getPublicationWithLink() {
-        Link link = this.linkModelRepository.getLink();
+    public Publication getPublicationWithLinkExercise() {
+        Link link = this.linkModelRepository.getLinkWithExercise();
         return Publication.builder()
                 .id(1L)
                 .description("description")
@@ -41,6 +41,19 @@ public class PublicationModelRepository {
 
     public Publication getPublicationWithExerciseLink() {
         Link link = this.linkModelRepository.getLinkWithExercise();
+        return Publication.builder()
+                .id(1L)
+                .description("description")
+                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .postedBy(this.user)
+                .links(List.of(link))
+                .sport(Sport.FOOTBALL)
+                .build();
+    }
+
+    public Publication getPublicationWithUserLink() {
+        Link link = this.linkModelRepository.getLinkWithUser();
         return Publication.builder()
                 .id(1L)
                 .description("description")
