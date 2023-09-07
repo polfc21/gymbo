@@ -26,19 +26,6 @@ public class PublicationModelRepository {
                 .build();
     }
 
-    public Publication getPublicationWithLinkExercise() {
-        Link link = this.linkModelRepository.getLinkWithExercise();
-        return Publication.builder()
-                .id(1L)
-                .description("description")
-                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
-                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
-                .postedBy(this.user)
-                .links(List.of(link))
-                .sport(Sport.FOOTBALL)
-                .build();
-    }
-
     public Publication getPublicationWithExerciseLink() {
         Link link = this.linkModelRepository.getLinkWithExercise();
         return Publication.builder()
