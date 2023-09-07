@@ -27,7 +27,8 @@ public class ApiExceptionHandler {
             org.springframework.http.converter.HttpMessageNotReadableException.class,
             org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class,
             IncorrectFileException.class,
-            SameReviewerException.class
+            SameReviewerException.class,
+            IncorrectLinkException.class
     })
     @ResponseBody
     public ErrorMessage badRequest(Exception exception) {
