@@ -54,4 +54,9 @@ public class AuthorityServiceImpl implements AuthorityService {
         this.authorityDao.checkLoggedUserHasPermissions(publication);
     }
 
+    @Override
+    public void checkLoggedUserHasPermissions(Link link) {
+        this.authorityDao.checkLoggedUserHasPermissions(link);
+    }
+
 }
