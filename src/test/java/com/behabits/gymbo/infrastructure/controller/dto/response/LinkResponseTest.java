@@ -24,4 +24,12 @@ class LinkResponseTest {
         assertThat(linkResponse.hashCode(), is(linkResponse2.hashCode()));
     }
 
+    @Test
+    void givenSameLinkResponseWithTrainingWhenEqualsAndHashCodeThenReturnTrueSameHashCode() {
+        LinkResponse linkResponse = new LinkResponseRepository().getLinkResponseWithTraining();
+        LinkResponse linkResponse2 = new LinkResponseRepository().getLinkResponseWithTraining();
+        assertThat(linkResponse, is(linkResponse2));
+        assertThat(linkResponse.hashCode(), is(linkResponse2.hashCode()));
+    }
+
 }

@@ -13,4 +13,5 @@ public class LinkResponse {
     private String entity;
     private ExerciseResponse exercise;
     private UserResponse user;
+    private TrainingResponse training;
 }
