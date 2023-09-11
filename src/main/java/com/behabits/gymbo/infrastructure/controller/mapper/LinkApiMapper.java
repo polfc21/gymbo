@@ -2,6 +2,7 @@ package com.behabits.gymbo.infrastructure.controller.mapper;
 
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Link;
+import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.infrastructure.controller.dto.request.LinkRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.LinkResponse;
@@ -16,6 +17,7 @@ public class LinkApiMapper {
 
     private final ExerciseApiMapper exerciseApiMapper;
     private final UserApiMapper userApiMapper;
+    private final TrainingApiMapper trainingApiMapper;
 
     public List<Link> toDomain(List<LinkRequest> requests) {
         return requests != null ? requests.stream()
@@ -36,6 +38,11 @@ public class LinkApiMapper {
             user.setUsername(request.getUsername());
             domain.setUser(user);
         }
+        if (request.getTrainingId() != null) {
+            Training training = new Training();
+            training.setId(request.getTrainingId());
+            domain.setTraining(training);
+        }
         return domain;
     }
 
@@ -54,6 +61,9 @@ public class LinkApiMapper {
         }
         if (domain.getUser() != null) {
             response.setUser(this.userApiMapper.toResponse(domain.getUser()));
+        }
+        if (domain.getTraining() != null) {
+            response.setTraining(this.trainingApiMapper.toResponse(domain.getTraining()));
         }
         return response;
     }
