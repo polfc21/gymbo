@@ -13,6 +13,7 @@ public class LinkEntityMapper {
 
     private final ExerciseEntityMapper exerciseEntityMapper;
     private final UserEntityMapper userEntityMapper;
+    private final TrainingEntityMapper trainingEntityMapper;
 
     public List<Link> toDomain(List<LinkEntity> entities) {
         return entities != null ? entities.stream()
@@ -29,6 +30,9 @@ public class LinkEntityMapper {
         }
         if (entity.getPlayer() != null) {
             domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
+        }
+        if (entity.getTraining() != null) {
+            domain.setTraining(this.trainingEntityMapper.toDomain(entity.getTraining()));
         }
         return domain;
     }
@@ -48,6 +52,9 @@ public class LinkEntityMapper {
         }
         if (domain.getUser() != null) {
             entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
+        }
+        if (domain.getTraining() != null) {
+            entity.setTraining(this.trainingEntityMapper.toEntity(domain.getTraining()));
         }
         return entity;
     }
