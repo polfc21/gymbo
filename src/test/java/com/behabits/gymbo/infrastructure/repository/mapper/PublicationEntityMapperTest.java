@@ -132,4 +132,46 @@ class PublicationEntityMapperTest {
                 is(publicationEntity.getLinks().get(0).getPlayer().getId()));
     }
 
+    @Test
+    void givenPublicationWithTrainingLinkWhenMapToEntityThenReturnPublicationEntityWithTrainingLink() {
+        Publication publication = this.publicationModelRepository.getPublicationWithTrainingLink();
+
+        PublicationEntity publicationEntity = this.mapper.toEntity(publication);
+
+        assertThat(publicationEntity.getId(), is(publication.getId()));
+        assertThat(publicationEntity.getDescription(), is(publication.getDescription()));
+        assertThat(publicationEntity.getCreatedAt(), is(publication.getCreatedAt()));
+        assertThat(publicationEntity.getUpdatedAt(), is(publication.getUpdatedAt()));
+        assertThat(publicationEntity.getPlayer().getId(), is(publication.getPostedBy().getId()));
+        assertThat(publicationEntity.getSport(), is(publication.getSport()));
+
+        assertThat(publicationEntity.getLinks().get(0).getId(),
+                is(publication.getLinks().get(0).getId()));
+        assertThat(publicationEntity.getLinks().get(0).getEntity(),
+                is(publication.getLinks().get(0).getEntity()));
+        assertThat(publicationEntity.getLinks().get(0).getTraining().getId(),
+                is(publication.getLinks().get(0).getTraining().getId()));
+    }
+
+    @Test
+    void givenPublicationEntityWithTrainingLinkWhenMapToDomainThenReturnPublicationWithTrainingLink() {
+        PublicationEntity publicationEntity = this.publicationEntityRepository.getPublicationWithLinkTraining();
+
+        Publication publication = this.mapper.toDomain(publicationEntity);
+
+        assertThat(publication.getId(), is(publicationEntity.getId()));
+        assertThat(publication.getDescription(), is(publicationEntity.getDescription()));
+        assertThat(publication.getCreatedAt(), is(publicationEntity.getCreatedAt()));
+        assertThat(publication.getUpdatedAt(), is(publicationEntity.getUpdatedAt()));
+        assertThat(publication.getPostedBy().getId(), is(publicationEntity.getPlayer().getId()));
+        assertThat(publication.getSport(), is(publicationEntity.getSport()));
+
+        assertThat(publication.getLinks().get(0).getId(),
+                is(publicationEntity.getLinks().get(0).getId()));
+        assertThat(publication.getLinks().get(0).getEntity(),
+                is(publicationEntity.getLinks().get(0).getEntity()));
+        assertThat(publication.getLinks().get(0).getTraining().getId(),
+                is(publicationEntity.getLinks().get(0).getTraining().getId()));
+    }
+
 }

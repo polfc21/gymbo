@@ -36,4 +36,13 @@ public class PublicationRequestRepository {
                 .build();
     }
 
+    public PublicationRequest getPublicationRequestWithTrainingLink() {
+        return PublicationRequest.builder()
+                .description("Description")
+                .files(List.of(1L))
+                .links(List.of(this.linkRequestRepository.getLinkWithTrainingRequest()))
+                .sport("FOOTBALL")
+                .build();
+    }
+
 }

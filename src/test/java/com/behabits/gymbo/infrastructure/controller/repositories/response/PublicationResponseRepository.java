@@ -49,4 +49,16 @@ public class PublicationResponseRepository {
                 .build();
     }
 
+    public PublicationResponse getPublicationResponseWithTrainingLink() {
+        return PublicationResponse.builder()
+                .id(1L)
+                .description("description")
+                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .postedBy(this.user)
+                .links(List.of(this.linkResponseRepository.getLinkResponseWithTraining()))
+                .sport(Sport.FOOTBALL)
+                .build();
+    }
+
 }

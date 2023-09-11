@@ -20,4 +20,11 @@ public class LinkResponseRepository {
                 .build();
     }
 
+    public LinkResponse getLinkResponseWithTraining() {
+        return LinkResponse.builder()
+                .entity("TRAINING")
+                .training(new TrainingResponseRepository().getLegTrainingResponse())
+                .build();
+    }
+
 }

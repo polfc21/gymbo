@@ -63,4 +63,25 @@ class LinkApiMapperTest {
         assertThat(linkResponse.getUser().getUsername(), is(link.getUser().getUsername()));
     }
 
+    @Test
+    void givenLinkRequestWithTrainingWhenMapToDomainThenReturnLinkWithTraining() {
+        LinkRequest linkRequest = this.linkRequestRepository.getLinkWithTrainingRequest();
+
+        Link link = this.linkApiMapper.toDomain(linkRequest);
+
+        assertThat(link.getEntity(), is(linkRequest.getEntity()));
+        assertThat(link.getTraining().getId(), is(linkRequest.getTrainingId()));
+    }
+
+    @Test
+    void givenLinkWithTrainingWhenMapToResponseThenReturnLinkResponseWithTraining() {
+        Link link = this.linkModelRepository.getLinkWithTraining();
+
+        LinkResponse linkResponse = this.linkApiMapper.toResponse(link);
+
+        assertThat(linkResponse.getId(), is(link.getId()));
+        assertThat(linkResponse.getEntity(), is(link.getEntity()));
+        assertThat(linkResponse.getTraining().getId(), is(link.getTraining().getId()));
+    }
+
 }

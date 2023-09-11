@@ -14,4 +14,5 @@ public class LinkRequest {
     private String entity;
     private Long exerciseId;
     private String username;
+    private Long trainingId;
 }

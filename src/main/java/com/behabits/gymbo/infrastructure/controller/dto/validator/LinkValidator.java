@@ -11,7 +11,7 @@ public class LinkValidator implements ConstraintValidator<ValidLink, String> {
     }
 
     private boolean isValidEntity(String entity) {
-        return entity.equals("EXERCISE") || entity.equals("USER");
+        return entity.equals("EXERCISE") || entity.equals("USER") || entity.equals("TRAINING");
     }
 
 }

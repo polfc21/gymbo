@@ -51,4 +51,17 @@ public class PublicationEntityRepository {
                 .build();
     }
 
+    public PublicationEntity getPublicationWithLinkTraining() {
+        LinkEntity link = new LinkEntityRepository().getLinkWithTraining();
+        return PublicationEntity.builder()
+                .id(1L)
+                .description("description")
+                .createdAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .updatedAt(LocalDateTime.of(1997, 2, 17, 0, 0))
+                .player(this.player)
+                .links(List.of(link))
+                .sport(Sport.FOOTBALL)
+                .build();
+    }
+
 }

@@ -3,9 +3,11 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.domain.exceptions.IncorrectLinkException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Link;
+import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.ExerciseService;
 import com.behabits.gymbo.domain.services.LinkService;
+import com.behabits.gymbo.domain.services.TrainingService;
 import com.behabits.gymbo.domain.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ public class LinkServiceImpl implements LinkService {
 
     private final ExerciseService exerciseService;
     private final UserService userService;
+    private final TrainingService trainingService;
 
     @Override
     public void setLinks(List<Link> links) {
@@ -25,6 +28,7 @@ public class LinkServiceImpl implements LinkService {
             switch (link.getEntity()) {
                 case "EXERCISE" -> this.setExerciseToLink(link);
                 case "USER" -> this.setUserToLink(link);
+                case "TRAINING" -> this.setTrainingToLink(link);
             }
         });
     }
@@ -43,6 +47,14 @@ public class LinkServiceImpl implements LinkService {
         }
         User user = this.userService.findUserByUsername(link.getUser().getUsername());
         link.setUser(user);
+    }
+
+    private void setTrainingToLink(Link link) {
+        if (link.getTraining() == null) {
+            throw new IncorrectLinkException("Incorrect training link");
+        }
+        Training training = this.trainingService.findTrainingById(link.getTraining().getId());
+        link.setTraining(training);
     }
 
 }

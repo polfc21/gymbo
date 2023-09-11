@@ -61,4 +61,24 @@ class LinkEntityMapperTest {
         assertThat(link.getUser().getId(), is(linkEntity.getPlayer().getId()));
     }
 
+    @Test
+    void givenLinkWithTrainingWhenMapToEntityThenReturnLinkEntityWithTraining() {
+        Link link = this.linkModelRepository.getLinkWithTraining();
+        LinkEntity linkEntity = this.mapper.toEntity(link);
+
+        assertThat(linkEntity.getId(), is(link.getId()));
+        assertThat(linkEntity.getEntity(), is(link.getEntity()));
+        assertThat(linkEntity.getTraining().getId(), is(link.getTraining().getId()));
+    }
+
+    @Test
+    void givenLinkEntityWithTrainingWhenMapToDomainThenReturnLinkWithTraining() {
+        LinkEntity linkEntity = this.linkEntityRepository.getLinkWithTraining();
+        Link link = this.mapper.toDomain(linkEntity);
+
+        assertThat(link.getId(), is(linkEntity.getId()));
+        assertThat(link.getEntity(), is(linkEntity.getEntity()));
+        assertThat(link.getTraining().getId(), is(linkEntity.getTraining().getId()));
+    }
+
 }
