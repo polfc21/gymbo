@@ -5,8 +5,10 @@ import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Link;
+import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.ExerciseService;
+import com.behabits.gymbo.domain.services.TrainingService;
 import com.behabits.gymbo.domain.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +32,9 @@ class LinkServiceImplTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private TrainingService trainingService;
 
     @Test
     void givenLinksWithExistentExerciseWhenSetLinksThenSetLinks() {
@@ -126,6 +131,63 @@ class LinkServiceImplTest {
 
         when(link.getEntity()).thenReturn("USER");
         when(link.getUser()).thenReturn(null);
+
+        assertThrows(IncorrectLinkException.class, () -> this.linkService.setLinks(links));
+    }
+
+    @Test
+    void givenLinksWithExistentTrainingWhenSetLinksThenSetLinks() {
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+        Training training = mock(Training.class);
+        Long trainingId = 1L;
+
+        when(link.getEntity()).thenReturn("TRAINING");
+        when(link.getTraining()).thenReturn(training);
+        when(training.getId()).thenReturn(trainingId);
+        when(this.trainingService.findTrainingById(trainingId)).thenReturn(training);
+        this.linkService.setLinks(links);
+
+        verify(link).setTraining(training);
+    }
+
+    @Test
+    void givenLinksWithNonExistentTrainingWhenSetLinksThenThrowNotFoundException() {
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+        Training training = mock(Training.class);
+        Long trainingId = 1L;
+
+        when(link.getEntity()).thenReturn("TRAINING");
+        when(link.getTraining()).thenReturn(training);
+        when(training.getId()).thenReturn(trainingId);
+        when(this.trainingService.findTrainingById(trainingId)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.linkService.setLinks(links));
+    }
+
+    @Test
+    void givenNotOwnTrainingLinksWhenSetLinksThenThrowPermissionsException() {
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+        Training training = mock(Training.class);
+        Long trainingId = 1L;
+
+        when(link.getEntity()).thenReturn("TRAINING");
+        when(link.getTraining()).thenReturn(training);
+        when(training.getId()).thenReturn(trainingId);
+        when(this.trainingService.findTrainingById(trainingId)).thenThrow(PermissionsException.class);
+
+        assertThrows(PermissionsException.class, () -> this.linkService.setLinks(links));
+    }
+
+    @Test
+    void givenIncorrectTrainingLinksWhenSetLinksThenThrowRuntimeException() {
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+
+        when(link.getEntity()).thenReturn("TRAINING");
+        when(link.getTraining()).thenReturn(null);
 
         assertThrows(IncorrectLinkException.class, () -> this.linkService.setLinks(links));
     }
