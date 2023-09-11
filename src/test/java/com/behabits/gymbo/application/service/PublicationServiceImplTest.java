@@ -179,4 +179,35 @@ class PublicationServiceImplTest {
         assertThrows(NotFoundException.class, () -> this.publicationService.updatePublication(publicationId, publication));
     }
 
+    @Test
+    void givenExistentLinkWithPermissionsWhenDeleteLinkThenDeleteLink() {
+        Long linkId = 1L;
+
+        doNothing().when(this.linkService).deleteLink(linkId);
+
+        try {
+            this.publicationService.deleteLink(linkId);
+        } catch (Exception e) {
+            assertThat(e, is(nullValue()));
+        }
+    }
+
+    @Test
+    void givenExistentLinkWithoutPermissionsWhenDeleteLinkThenThrowPermissionsException() {
+        Long linkId = 1L;
+
+        doThrow(PermissionsException.class).when(this.linkService).deleteLink(linkId);
+
+        assertThrows(PermissionsException.class, () -> this.publicationService.deleteLink(linkId));
+    }
+
+    @Test
+    void givenNonExistentLinkWhenDeleteLinkThenThrowNotFoundException() {
+        Long linkId = 1L;
+
+        doThrow(NotFoundException.class).when(this.linkService).deleteLink(linkId);
+
+        assertThrows(NotFoundException.class, () -> this.publicationService.deleteLink(linkId));
+    }
+
 }

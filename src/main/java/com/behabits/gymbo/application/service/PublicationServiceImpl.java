@@ -54,4 +54,9 @@ public class PublicationServiceImpl implements PublicationService {
         return this.publicationDao.savePublication(publicationToUpdate);
     }
 
+    @Override
+    public void deleteLink(Long id) {
+        this.linkService.deleteLink(id);
+    }
+
 }
