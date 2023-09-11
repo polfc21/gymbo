@@ -12,4 +12,5 @@ public class Link {
     private String entity;
     private Exercise exercise;
     private User user;
+    private Training training;
 }
