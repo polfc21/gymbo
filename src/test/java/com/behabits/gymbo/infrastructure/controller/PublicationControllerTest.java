@@ -24,6 +24,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
@@ -231,6 +232,54 @@ class PublicationControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(publicationResponseWithLinks)));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentLinkWithPermissionsWhenDeleteLinkThenReturnNoContent() throws Exception {
+        Long linkId = 1L;
+        doNothing().when(this.publicationService).deleteLink(linkId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.LINKS + ApiConstant.ID, linkId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NO_CONTENT.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentLinkWithoutPermissionsWhenDeleteLinkThenReturn403() throws Exception {
+        Long linkId = 1L;
+        doThrow(PermissionsException.class).when(this.publicationService).deleteLink(linkId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.LINKS + ApiConstant.ID, linkId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenNonExistentLinkWhenDeleteLinkThenReturn404() throws Exception {
+        Long linkId = 1L;
+        doThrow(NotFoundException.class).when(this.publicationService).deleteLink(linkId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.LINKS + ApiConstant.ID, linkId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenDeleteLinkThenReturn403() throws Exception {
+        Long linkId = 1L;
+        MockHttpServletResponse response = this.mockMvc.perform(delete(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.LINKS + ApiConstant.ID, linkId))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
     }
 
 }

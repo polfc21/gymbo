@@ -21,4 +21,5 @@ public class ApiConstant {
     public static final String USERS = "/users";
     public static final String KILOMETERS = "/kilometers/{kilometers}";
     public static final String SPORTS = "/sports";
+    public static final String LINKS = "/links";
 }
