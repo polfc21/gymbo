@@ -25,6 +25,8 @@ public class TrainingEntity {
     private List<ExerciseEntity> exercises;
     @ManyToOne
     private UserEntity player;
+    @OneToMany(mappedBy = "training", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LinkEntity> links;
     @Enumerated(EnumType.STRING)
     private Sport sport;
 }

@@ -22,4 +22,12 @@ public class LinkEntityRepository {
                 .build();
     }
 
+    public LinkEntity getLinkWithTraining() {
+        return LinkEntity.builder()
+                .id(1L)
+                .entity("TRAINING")
+                .training(new TrainingEntityRepository().getLegTraining())
+                .build();
+    }
+
 }

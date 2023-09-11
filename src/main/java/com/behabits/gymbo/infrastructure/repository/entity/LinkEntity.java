@@ -21,4 +21,6 @@ public class LinkEntity {
     private ExerciseEntity exercise;
     @ManyToOne
     private UserEntity player;
+    @ManyToOne
+    private TrainingEntity training;
 }
