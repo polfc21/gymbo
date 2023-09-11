@@ -26,6 +26,7 @@ public class JpaAuthorityDao implements AuthorityDao {
     private final LocationRepository locationRepository;
     private final ReviewRepository reviewRepository;
     private final PublicationRepository publicationRepository;
+    private final LinkRepository linkRepository;
 
     @Override
     public User getLoggedUser() {
@@ -93,6 +94,15 @@ public class JpaAuthorityDao implements AuthorityDao {
         Long loggedUserId = this.getLoggedUser().getId();
         PublicationEntity publicationToCheck = this.publicationRepository.findByIdAndPlayerId(publication.getId(), loggedUserId);
         if (publicationToCheck == null) {
+            throw new PermissionsException(USER_HAS_NOT_PERMISSIONS);
+        }
+    }
+
+    @Override
+    public void checkLoggedUserHasPermissions(Link link) {
+        Long loggedUserId = this.getLoggedUser().getId();
+        LinkEntity linkToCheck = this.linkRepository.findByIdAndPlayerId(link.getId(), loggedUserId);
+        if (linkToCheck == null) {
             throw new PermissionsException(USER_HAS_NOT_PERMISSIONS);
         }
     }

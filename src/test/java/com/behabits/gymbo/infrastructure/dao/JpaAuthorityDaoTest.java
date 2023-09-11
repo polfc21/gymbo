@@ -55,6 +55,9 @@ class JpaAuthorityDaoTest {
     private PublicationRepository publicationRepository;
 
     @Mock
+    private LinkRepository linkRepository;
+
+    @Mock
     private UserEntityMapper userMapper;
 
     private final User user = new UserModelRepository().getUser();
@@ -73,6 +76,8 @@ class JpaAuthorityDaoTest {
     private final ReviewEntity reviewEntity = new ReviewEntityRepository().getReview();
     private final Publication publication = new PublicationModelRepository().getPublication();
     private final PublicationEntity publicationEntity = new PublicationEntityRepository().getPublication();
+    private final LinkEntity linkEntity = new LinkEntityRepository().getLinkWithExercise();
+    private final Link link = new LinkModelRepository().getLinkWithExercise();
 
     @BeforeEach
     void setUp() {
@@ -242,6 +247,28 @@ class JpaAuthorityDaoTest {
 
     	try {
     		this.authorityDao.checkLoggedUserHasPermissions(this.publication);
+    	} catch (Exception e) {
+    		fail("Should not throw exception");
+    	}
+    }
+
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckLinkPermissionsThenThrowPermissionsException() {
+    	when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+    	when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+    	when(this.linkRepository.findByIdAndPlayerId(this.linkEntity.getId(), this.user.getId())).thenReturn(null);
+
+    	assertThrows(PermissionsException.class, () -> this.authorityDao.checkLoggedUserHasPermissions(this.link));
+    }
+
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckLinkPermissionsThenDoNothing() {
+    	when(this.userRepository.findByUsername(this.loggedUser.getUsername())).thenReturn(this.loggedUser);
+    	when(this.userMapper.toDomain(this.loggedUser)).thenReturn(this.user);
+    	when(this.linkRepository.findByIdAndPlayerId(this.linkEntity.getId(), this.user.getId())).thenReturn(this.linkEntity);
+
+    	try {
+    		this.authorityDao.checkLoggedUserHasPermissions(this.link);
     	} catch (Exception e) {
     		fail("Should not throw exception");
     	}

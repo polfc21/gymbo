@@ -34,4 +34,10 @@ public class PublicationController {
         return new ResponseEntity<>(this.mapper.toResponse(publicationUpdated), HttpStatus.OK);
     }
 
+    @DeleteMapping(ApiConstant.LINKS + ApiConstant.ID)
+    public ResponseEntity<String> deleteLink(@PathVariable Long id) {
+        this.publicationService.deleteLink(id);
+        return new ResponseEntity<>("Link with id " + id + " deleted successfully", HttpStatus.NO_CONTENT);
+    }
+
 }

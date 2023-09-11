@@ -1,5 +1,6 @@
 package com.behabits.gymbo.application.service;
 
+import com.behabits.gymbo.domain.daos.LinkDao;
 import com.behabits.gymbo.domain.exceptions.IncorrectLinkException;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
@@ -7,6 +8,7 @@ import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
+import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.ExerciseService;
 import com.behabits.gymbo.domain.services.TrainingService;
 import com.behabits.gymbo.domain.services.UserService;
@@ -19,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +38,12 @@ class LinkServiceImplTest {
 
     @Mock
     private TrainingService trainingService;
+
+    @Mock
+    private LinkDao linkDao;
+
+    @Mock
+    private AuthorityService authorityService;
 
     @Test
     void givenLinksWithExistentExerciseWhenSetLinksThenSetLinks() {
@@ -190,6 +199,42 @@ class LinkServiceImplTest {
         when(link.getTraining()).thenReturn(null);
 
         assertThrows(IncorrectLinkException.class, () -> this.linkService.setLinks(links));
+    }
+
+    @Test
+    void givenExistentLinkWithPermissionsWhenDeleteLinkThenDeleteLink() {
+        Link link = mock(Link.class);
+        Long linkId = 1L;
+
+        when(this.linkDao.findLinkById(linkId)).thenReturn(link);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(link);
+        doNothing().when(this.linkDao).deleteLink(link);
+
+        try {
+            this.linkService.deleteLink(linkId);
+        } catch (Exception e) {
+            fail("Should not throw any exception");
+        }
+    }
+
+    @Test
+    void givenExistentLinkWithoutPermissionsWhenDeleteLinkThenThrowPermissionsException() {
+        Link link = mock(Link.class);
+        Long linkId = 1L;
+
+        when(this.linkDao.findLinkById(linkId)).thenReturn(link);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(link);
+
+        assertThrows(PermissionsException.class, () -> this.linkService.deleteLink(linkId));
+    }
+
+    @Test
+    void givenNonExistentLinkWhenDeleteLinkThenThrowNotFoundException() {
+        Long nonExistentId = 1L;
+
+        doThrow(NotFoundException.class).when(this.linkDao).findLinkById(nonExistentId);
+
+        assertThrows(NotFoundException.class, () -> this.linkService.deleteLink(nonExistentId));
     }
 
 }

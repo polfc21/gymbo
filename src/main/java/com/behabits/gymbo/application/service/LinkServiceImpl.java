@@ -1,14 +1,12 @@
 package com.behabits.gymbo.application.service;
 
+import com.behabits.gymbo.domain.daos.LinkDao;
 import com.behabits.gymbo.domain.exceptions.IncorrectLinkException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
-import com.behabits.gymbo.domain.services.ExerciseService;
-import com.behabits.gymbo.domain.services.LinkService;
-import com.behabits.gymbo.domain.services.TrainingService;
-import com.behabits.gymbo.domain.services.UserService;
+import com.behabits.gymbo.domain.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +19,8 @@ public class LinkServiceImpl implements LinkService {
     private final ExerciseService exerciseService;
     private final UserService userService;
     private final TrainingService trainingService;
+    private final LinkDao linkDao;
+    private final AuthorityService authorityService;
 
     @Override
     public void setLinks(List<Link> links) {
@@ -55,6 +55,13 @@ public class LinkServiceImpl implements LinkService {
         }
         Training training = this.trainingService.findTrainingById(link.getTraining().getId());
         link.setTraining(training);
+    }
+
+    @Override
+    public void deleteLink(Long id) {
+        Link link = this.linkDao.findLinkById(id);
+        this.authorityService.checkLoggedUserHasPermissions(link);
+        this.linkDao.deleteLink(link);
     }
 
 }

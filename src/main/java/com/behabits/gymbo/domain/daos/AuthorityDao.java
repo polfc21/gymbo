@@ -11,4 +11,5 @@ public interface AuthorityDao {
     void checkLoggedUserHasPermissions(Location location);
     void checkLoggedUserHasPermissions(Review review);
     void checkLoggedUserHasPermissions(Publication publication);
+    void checkLoggedUserHasPermissions(Link link);
 }

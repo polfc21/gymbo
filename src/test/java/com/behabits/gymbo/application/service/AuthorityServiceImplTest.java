@@ -188,4 +188,26 @@ class AuthorityServiceImplTest {
         assertThrows(PermissionsException.class, () -> this.authorityService.checkLoggedUserHasPermissions(publication));
     }
 
+    @Test
+    void givenLoggedUserHasPermissionsWhenCheckLinkThenDoNothing() {
+        Link link = new Link();
+
+        doNothing().when(this.authorityDao).checkLoggedUserHasPermissions(link);
+
+        try {
+            this.authorityService.checkLoggedUserHasPermissions(link);
+        } catch (Exception e) {
+            fail("Should not throw exception");
+        }
+    }
+
+    @Test
+    void givenLoggedUserHasNotPermissionsWhenCheckLinkThenThrowException() {
+        Link link = new Link();
+
+        doThrow(PermissionsException.class).when(this.authorityDao).checkLoggedUserHasPermissions(link);
+
+        assertThrows(PermissionsException.class, () -> this.authorityService.checkLoggedUserHasPermissions(link));
+    }
+
 }
