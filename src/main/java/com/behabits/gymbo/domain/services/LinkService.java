@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface LinkService {
     void setLinks(List<Link> links);
+    void deleteLink(Long id);
 }
