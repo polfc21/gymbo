@@ -49,4 +49,13 @@ class LinkValidatorTest {
 
         assertThat(violations.size(), is(0));
     }
+
+    @Test
+    void givenCorrectLinkWithTrainingWhenValidateThenViolationsSizeIs0() {
+        var linkRequest = this.linkRequestRepository.getLinkWithTrainingRequest();
+
+        var violations = this.validator.validate(linkRequest);
+
+        assertThat(violations.size(), is(0));
+    }
 }
