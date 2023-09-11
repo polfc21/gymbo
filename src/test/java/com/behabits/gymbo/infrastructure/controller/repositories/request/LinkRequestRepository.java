@@ -26,4 +26,11 @@ public class LinkRequestRepository {
                 .build();
     }
 
+    public LinkRequest getLinkWithTrainingRequest() {
+        return LinkRequest.builder()
+                .entity("TRAINING")
+                .trainingId(1L)
+                .build();
+    }
+
 }
