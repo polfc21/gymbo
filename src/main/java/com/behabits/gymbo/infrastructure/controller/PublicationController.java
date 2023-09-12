@@ -1,10 +1,13 @@
 package com.behabits.gymbo.infrastructure.controller;
 
+import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.services.PublicationService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
+import com.behabits.gymbo.infrastructure.controller.dto.request.LinkRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.request.PublicationRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.PublicationResponse;
+import com.behabits.gymbo.infrastructure.controller.mapper.LinkApiMapper;
 import com.behabits.gymbo.infrastructure.controller.mapper.PublicationApiMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ public class PublicationController {
 
     private final PublicationService publicationService;
     private final PublicationApiMapper mapper;
+    private final LinkApiMapper linkMapper;
 
     @PostMapping
     public ResponseEntity<PublicationResponse> createPublication(@RequestBody @Valid PublicationRequest request) {
@@ -38,6 +42,13 @@ public class PublicationController {
     public ResponseEntity<String> deleteLink(@PathVariable Long id) {
         this.publicationService.deleteLink(id);
         return new ResponseEntity<>("Link with id " + id + " deleted successfully", HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping(ApiConstant.ID + ApiConstant.LINKS)
+    public ResponseEntity<PublicationResponse> addLink(@PathVariable Long id, @RequestBody @Valid LinkRequest linkRequest) {
+        Link link = this.linkMapper.toDomain(linkRequest);
+        Publication publication = this.publicationService.addLink(id, link);
+        return new ResponseEntity<>(this.mapper.toResponse(publication), HttpStatus.CREATED);
     }
 
 }

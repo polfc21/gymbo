@@ -2,14 +2,19 @@ package com.behabits.gymbo.infrastructure.controller;
 
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
+import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Publication;
+import com.behabits.gymbo.domain.repositories.LinkModelRepository;
 import com.behabits.gymbo.domain.repositories.PublicationModelRepository;
 import com.behabits.gymbo.domain.services.PublicationService;
 import com.behabits.gymbo.domain.services.TokenService;
 import com.behabits.gymbo.infrastructure.controller.constant.ApiConstant;
+import com.behabits.gymbo.infrastructure.controller.dto.request.LinkRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.request.PublicationRequest;
 import com.behabits.gymbo.infrastructure.controller.dto.response.PublicationResponse;
+import com.behabits.gymbo.infrastructure.controller.mapper.LinkApiMapper;
 import com.behabits.gymbo.infrastructure.controller.mapper.PublicationApiMapper;
+import com.behabits.gymbo.infrastructure.controller.repositories.request.LinkRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.request.PublicationRequestRepository;
 import com.behabits.gymbo.infrastructure.controller.repositories.response.PublicationResponseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +29,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,6 +44,9 @@ class PublicationControllerTest {
 
     @MockBean
     private PublicationApiMapper mapper;
+
+    @MockBean
+    private LinkApiMapper linkMapper;
 
     @MockBean
     private TokenService tokenService; // Added to load application context
@@ -280,6 +287,28 @@ class PublicationControllerTest {
                 .andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentPublicationWithPermissionsWhenAddLinkThenReturnPublicationResponse() throws Exception {
+        Long publicationId = 1L;
+        LinkRequest linkRequest = new LinkRequestRepository().getLinkWithUserRequest();
+        Link link = new LinkModelRepository().getLinkWithUser();
+        Publication publication = mock(Publication.class);
+        PublicationResponse publicationResponse = mock(PublicationResponse.class);
+        given(this.linkMapper.toDomain(linkRequest)).willReturn(link);
+        given(this.publicationService.addLink(publicationId, link)).willReturn(publication);
+        given(this.mapper.toResponse(publication)).willReturn(publicationResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(post(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID + ApiConstant.LINKS, publicationId)
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content(this.objectMapper.writeValueAsString(linkRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(publicationResponse)));
     }
 
 }
