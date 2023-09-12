@@ -8,6 +8,8 @@ import com.behabits.gymbo.domain.models.File;
 import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.models.User;
+import com.behabits.gymbo.domain.repositories.LinkModelRepository;
+import com.behabits.gymbo.domain.repositories.PublicationModelRepository;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.domain.services.AuthorityService;
 import com.behabits.gymbo.domain.services.FileService;
@@ -208,6 +210,110 @@ class PublicationServiceImplTest {
         doThrow(NotFoundException.class).when(this.linkService).deleteLink(linkId);
 
         assertThrows(NotFoundException.class, () -> this.publicationService.deleteLink(linkId));
+    }
+
+    @Test
+    void givenExistentPublicationWithPermissionsWithOwnLinkWhenAddLinkThenReturnPublicationWithLinkAdded() {
+        Long publicationId = 1L;
+        Publication publicationToUpdate = mock(Publication.class);
+        Publication publicationUpdated = mock(Publication.class);
+        Link link = mock(Link.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(publicationToUpdate);
+        doNothing().when(this.linkService).setLinks(List.of(link));
+        doNothing().when(publicationToUpdate).addLink(link);
+        when(this.publicationDao.savePublication(publicationToUpdate)).thenReturn(publicationUpdated);
+
+        assertThat(this.publicationService.addLink(publicationId, link), is(publicationUpdated));
+        verify(publicationToUpdate).addLink(link);
+    }
+
+    @Test
+    void givenNonExistentPublicationWhenAddLinkThenThrowNotFoundException() {
+        Long publicationId = 1L;
+        Link link = mock(Link.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> this.publicationService.addLink(publicationId, link));
+    }
+
+    @Test
+    void givenExistentPublicationWithoutPermissionsWhenAddLinkThenThrowPermissionsException() {
+        Long publicationId = 1L;
+        Publication publicationToUpdate = mock(Publication.class);
+        Link link = mock(Link.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(publicationToUpdate);
+
+        assertThrows(PermissionsException.class, () -> this.publicationService.addLink(publicationId, link));
+    }
+
+    @Test
+    void givenNotExistentEntityWhenAddLinkThenThrowNotFoundException() {
+        Long publicationId = 1L;
+        Publication publicationToUpdate = mock(Publication.class);
+        Link link = mock(Link.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
+        doThrow(NotFoundException.class).when(this.linkService).setLinks(List.of(link));
+
+        assertThrows(NotFoundException.class, () -> this.publicationService.addLink(publicationId, link));
+    }
+
+    @Test
+    void givenExistentEntityWithoutPermissionsWhenAddLinkThenThrowPermissionsException() {
+        Long publicationId = 1L;
+        Publication publicationToUpdate = mock(Publication.class);
+        Link link = mock(Link.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
+        doThrow(PermissionsException.class).when(this.linkService).setLinks(List.of(link));
+
+        assertThrows(PermissionsException.class, () -> this.publicationService.addLink(publicationId, link));
+    }
+
+    @Test
+    void givenExistentEntityWithIncorrectLinkWhenAddLinkThenThrowIncorrectLinkException() {
+        Long publicationId = 1L;
+        Publication publicationToUpdate = mock(Publication.class);
+        Link link = mock(Link.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
+        doThrow(IncorrectLinkException.class).when(this.linkService).setLinks(List.of(link));
+
+        assertThrows(IncorrectLinkException.class, () -> this.publicationService.addLink(publicationId, link));
+    }
+
+    @Test
+    void givenPublicationWithSameLinkWhenAddLinkThenThrowIncorrectLinkException() {
+        Long publicationId = 1L;
+        Publication publicationToUpdate = mock(Publication.class);
+        Link link = mock(Link.class);
+        List<Link> links = List.of(link);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(publicationToUpdate);
+        doNothing().when(this.linkService).setLinks(List.of(link));
+        doThrow(IncorrectLinkException.class).when(publicationToUpdate).addLink(link);
+
+        assertThrows(IncorrectLinkException.class, () -> this.publicationService.addLink(publicationId, link));
+    }
+
+    @Test
+    void givenExistentPublicationWithPermissionsWithOwnLinkWhenAddLinkThenReturnPublicationWithLinkItem() {
+        Publication publication = new PublicationModelRepository().getPublication();
+        Link link = new LinkModelRepository().getLinkWithExercise();
+
+        when(this.publicationDao.findPublicationById(publication.getId())).thenReturn(publication);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(publication);
+        doNothing().when(this.linkService).setLinks(List.of(link));
+        when(this.publicationDao.savePublication(publication)).thenReturn(publication);
+        Publication publicationWithLink = this.publicationService.addLink(publication.getId(), link);
+
+        assertThat(publicationWithLink.getLinks(), hasItem(link));
     }
 
 }

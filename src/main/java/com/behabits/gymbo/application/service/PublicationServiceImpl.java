@@ -2,6 +2,7 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.PublicationDao;
 import com.behabits.gymbo.domain.models.File;
+import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.AuthorityService;
@@ -57,6 +58,15 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public void deleteLink(Long id) {
         this.linkService.deleteLink(id);
+    }
+
+    @Override
+    public Publication addLink(Long id, Link link) {
+        Publication publicationToUpdate = this.publicationDao.findPublicationById(id);
+        this.authorityService.checkLoggedUserHasPermissions(publicationToUpdate);
+        this.linkService.setLinks(List.of(link));
+        publicationToUpdate.addLink(link);
+        return this.publicationDao.savePublication(publicationToUpdate);
     }
 
 }
