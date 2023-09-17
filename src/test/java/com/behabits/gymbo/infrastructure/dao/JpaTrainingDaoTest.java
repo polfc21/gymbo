@@ -44,7 +44,7 @@ class JpaTrainingDaoTest {
         when(this.trainingRepository.save(this.legTrainingEntity)).thenReturn(this.legTrainingEntity);
         when(this.mapper.toDomain(this.legTrainingEntity)).thenReturn(this.legTraining);
 
-        assertThat(this.trainingDao.createTraining(this.legTraining), is(this.legTraining));
+        assertThat(this.trainingDao.saveTraining(this.legTraining), is(this.legTraining));
     }
 
     @Test
@@ -53,7 +53,7 @@ class JpaTrainingDaoTest {
         when(this.trainingRepository.save(this.legTrainingEntity)).thenReturn(this.legTrainingEntity);
         when(this.mapper.toDomain(this.legTrainingEntity)).thenReturn(this.legTraining);
 
-        assertThat(this.trainingDao.createTraining(this.legTraining), is(this.legTraining));
+        assertThat(this.trainingDao.saveTraining(this.legTraining), is(this.legTraining));
     }
 
     @Test
