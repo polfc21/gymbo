@@ -46,9 +46,10 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public Training updateTraining(Long id, Training training) {
-        Training trainingToUpdate = this.trainingDao.findTrainingById(id);
-        this.authorityService.checkLoggedUserHasPermissions(trainingToUpdate);
-        return this.trainingDao.updateTraining(id, training);
+        Training trainingToUpdate = this.findTrainingById(id);
+        trainingToUpdate.setName(training.getName());
+        trainingToUpdate.setTrainingDate(training.getTrainingDate());
+        return this.trainingDao.createTraining(trainingToUpdate);
     }
 
     @Override
