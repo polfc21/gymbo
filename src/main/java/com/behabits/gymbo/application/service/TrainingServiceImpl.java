@@ -41,7 +41,7 @@ public class TrainingServiceImpl implements TrainingService {
     public Training createTraining(Training training) {
         User loggedUser = this.authorityService.getLoggedUser();
         training.setUser(loggedUser);
-        return this.trainingDao.createTraining(training);
+        return this.trainingDao.saveTraining(training);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class TrainingServiceImpl implements TrainingService {
         Training trainingToUpdate = this.findTrainingById(id);
         trainingToUpdate.setName(training.getName());
         trainingToUpdate.setTrainingDate(training.getTrainingDate());
-        return this.trainingDao.createTraining(trainingToUpdate);
+        return this.trainingDao.saveTraining(trainingToUpdate);
     }
 
     @Override
@@ -63,6 +63,6 @@ public class TrainingServiceImpl implements TrainingService {
     public Training addExercise(Long id, Exercise exercise) {
         Training training = this.findTrainingById(id);
         training.addExercise(exercise);
-        return this.trainingDao.createTraining(training);
+        return this.trainingDao.saveTraining(training);
     }
 }
