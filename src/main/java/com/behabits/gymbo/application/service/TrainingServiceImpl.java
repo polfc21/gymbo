@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.TrainingDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
@@ -29,6 +30,9 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public Training findTrainingById(Long id) {
         Training training = this.trainingDao.findTrainingById(id);
+        if (training == null) {
+            throw new NotFoundException("Training not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(training);
         return training;
     }

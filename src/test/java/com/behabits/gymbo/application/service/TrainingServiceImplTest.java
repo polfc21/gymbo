@@ -79,7 +79,7 @@ class TrainingServiceImplTest {
     void givenNonExistentIdWhenFindTrainingByIdThenThrowNotFoundException() {
         Long id = 1L;
 
-        when(this.trainingDao.findTrainingById(id)).thenThrow(NotFoundException.class);
+        when(this.trainingDao.findTrainingById(id)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.trainingService.findTrainingById(id));
     }
