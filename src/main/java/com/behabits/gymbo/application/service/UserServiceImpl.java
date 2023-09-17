@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.UserDao;
+import com.behabits.gymbo.domain.exceptions.ExistingUserException;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Sport;
 import com.behabits.gymbo.domain.models.User;
@@ -42,7 +43,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-        return this.userDao.createUser(user);
+        if (this.userDao.findByUsername(user.getUsername()) != null) {
+            throw new ExistingUserException("User with username " + user.getUsername() + " already exists");
+        }
+        return this.userDao.saveUser(user);
     }
 
     @Override

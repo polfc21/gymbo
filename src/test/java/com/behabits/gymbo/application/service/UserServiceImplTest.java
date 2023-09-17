@@ -39,16 +39,17 @@ class UserServiceImplTest {
 
     @Test
     void givenNonExistentUsernameWhenCreateUserThenReturnUser() {
-        when(this.userDao.createUser(this.user)).thenReturn(this.user);
+        when(this.userDao.findByUsername(this.user.getUsername())).thenReturn(null);
+        when(this.userDao.saveUser(this.user)).thenReturn(this.user);
 
         assertThat(this.userService.createUser(this.user), is(this.user));
     }
 
     @Test
     void givenExistentUsernameWhenCreateUserThenThrowExistingUserException() {
-        when(this.userDao.createUser(this.user)).thenThrow(ExistingUserException.class);
+        when(this.userDao.findByUsername(this.user.getUsername())).thenReturn(this.user);
 
-        assertThrows(ExistingUserException.class, () -> this.userService.createUser(this.user));
+        assertThrows(ExistingUserException.class,() -> this.userService.createUser(this.user));
     }
 
     @Test
