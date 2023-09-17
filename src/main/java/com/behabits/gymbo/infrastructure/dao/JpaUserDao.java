@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.UserDao;
-import com.behabits.gymbo.domain.exceptions.ExistingUserException;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.infrastructure.repository.UserRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
@@ -20,10 +19,7 @@ public class JpaUserDao implements UserDao {
 
 
     @Override
-    public User createUser(User user) {
-        if (this.existsUsername(user.getUsername())) {
-            throw new ExistingUserException("User with username " + user.getUsername() + " already exists");
-        }
+    public User saveUser(User user) {
         UserEntity entity = this.mapper.toEntity(user);
         UserEntity createdEntity = this.userRepository.save(entity);
         return this.mapper.toDomain(createdEntity);
@@ -49,10 +45,6 @@ public class JpaUserDao implements UserDao {
                 .stream()
                 .map(this.mapper::toDomain)
                 .toList();
-    }
-
-    private Boolean existsUsername(String username) {
-        return this.userRepository.findByUsername(username) != null;
     }
 
 }

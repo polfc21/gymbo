@@ -38,20 +38,12 @@ class JpaUserDaoTest {
     private final UserEntity userEntity = new UserEntityRepository().getUser();
 
     @Test
-    void givenNonExistentUserWhenCreateUserThenReturnUser() {
-        when(this.userRepository.findByUsername(this.user.getUsername())).thenReturn(null);
+    void givenUserWhenSaveUserThenReturnUser() {
         when(this.userEntityMapper.toEntity(this.user)).thenReturn(this.userEntity);
         when(this.userRepository.save(this.userEntity)).thenReturn(this.userEntity);
         when(this.userEntityMapper.toDomain(this.userEntity)).thenReturn(this.user);
 
-        assertThat(this.jpaUserDao.createUser(this.user), is(this.user));
-    }
-
-    @Test
-    void givenExistentUserWhenCreateUserThenThrowExistingUsernameException() {
-        when(this.userRepository.findByUsername(this.user.getUsername())).thenReturn(this.userEntity);
-
-        assertThrows(ExistingUserException.class, () -> this.jpaUserDao.createUser(this.user));
+        assertThat(this.jpaUserDao.saveUser(this.user), is(this.user));
     }
 
     @Test
