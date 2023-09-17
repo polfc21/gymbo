@@ -42,15 +42,6 @@ public class JpaTrainingDao implements TrainingDao {
     }
 
     @Override
-    public Training updateTraining(Long id, Training training) {
-        TrainingEntity trainingEntity = this.trainingRepository.getReferenceById(id);
-        trainingEntity.setName(training.getName());
-        trainingEntity.setTrainingDate(training.getTrainingDate());
-        trainingEntity = this.trainingRepository.save(trainingEntity);
-        return this.mapper.toDomain(trainingEntity);
-    }
-
-    @Override
     public void deleteTraining(Training training) {
         this.trainingRepository.deleteById(training.getId());
     }

@@ -88,17 +88,6 @@ class JpaTrainingDaoTest {
     }
 
     @Test
-    void givenTrainingWhenUpdateTrainingThenReturnTrainingUpdated() {
-        Long existentId = 1L;
-
-        when(this.trainingRepository.getReferenceById(existentId)).thenReturn(this.legTrainingEntity);
-        when(this.trainingRepository.save(this.legTrainingEntity)).thenReturn(this.legTrainingEntity);
-        when(this.mapper.toDomain(this.legTrainingEntity)).thenReturn(this.legTraining);
-
-        assertThat(this.trainingDao.updateTraining(existentId, this.legTraining), is(this.legTraining));
-    }
-
-    @Test
     void givenTrainingWhenDeleteTrainingThenTrainingRepositoryDeleteTraining() {
         this.trainingDao.deleteTraining(this.legTraining);
 

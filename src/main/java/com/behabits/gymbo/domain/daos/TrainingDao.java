@@ -10,6 +10,5 @@ public interface TrainingDao {
     List<Training> findTrainingsByMonthAndYearAndUserId(Month month, Year year, Long userId);
     Training findTrainingById(Long id);
     Training createTraining(Training training);
-    Training updateTraining(Long id, Training training);
     void deleteTraining(Training training);
 }
