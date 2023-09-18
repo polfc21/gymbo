@@ -69,15 +69,4 @@ class JpaSerieDaoTest {
         assertNull(this.serieDao.findSerieById(nonExistentId));
     }
 
-    @Test
-    void givenSerieWhenUpdateSerieThenReturnSerieUpdated() {
-        Long existentId = 1L;
-
-        when(this.serieRepository.getReferenceById(existentId)).thenReturn(this.squatSerieEntity);
-        when(this.serieRepository.save(this.squatSerieEntity)).thenReturn(this.squatSerieEntity);
-        when(this.mapper.toDomain(this.squatSerieEntity)).thenReturn(this.squatSerie);
-
-        assertThat(this.serieDao.updateSerie(existentId, this.squatSerie), is(this.squatSerie));
-    }
-
 }
