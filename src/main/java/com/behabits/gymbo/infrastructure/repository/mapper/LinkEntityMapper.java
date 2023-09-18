@@ -1,7 +1,7 @@
 package com.behabits.gymbo.infrastructure.repository.mapper;
 
-import com.behabits.gymbo.domain.models.Link;
-import com.behabits.gymbo.infrastructure.repository.entity.LinkEntity;
+import com.behabits.gymbo.domain.models.*;
+import com.behabits.gymbo.infrastructure.repository.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,10 +10,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class LinkEntityMapper {
-
-    private final ExerciseEntityMapper exerciseEntityMapper;
-    private final UserEntityMapper userEntityMapper;
-    private final TrainingEntityMapper trainingEntityMapper;
 
     public List<Link> toDomain(List<LinkEntity> entities) {
         return entities != null ? entities.stream()
@@ -26,14 +22,23 @@ public class LinkEntityMapper {
         domain.setId(entity.getId());
         domain.setEntity(entity.getEntity());
         if (entity.getExercise() != null) {
-            domain.setExercise(this.exerciseEntityMapper.toDomain(entity.getExercise()));
+            Exercise exercise = new Exercise();
+            exercise.setId(entity.getExercise().getId());
+            domain.setExercise(exercise);
         }
         if (entity.getPlayer() != null) {
-            domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
+            User user = new User();
+            user.setId(entity.getPlayer().getId());
+            domain.setUser(user);
         }
         if (entity.getTraining() != null) {
-            domain.setTraining(this.trainingEntityMapper.toDomain(entity.getTraining()));
+            Training training = new Training();
+            training.setId(entity.getTraining().getId());
+            domain.setTraining(training);
         }
+        Publication publication = new Publication();
+        publication.setId(entity.getPublication().getId());
+        domain.setPublication(publication);
         return domain;
     }
 
@@ -48,13 +53,24 @@ public class LinkEntityMapper {
         entity.setId(domain.getId());
         entity.setEntity(domain.getEntity());
         if (domain.getExercise() != null) {
-            entity.setExercise(this.exerciseEntityMapper.toEntity(domain.getExercise()));
+            ExerciseEntity exerciseEntity = new ExerciseEntity();
+            exerciseEntity.setId(domain.getExercise().getId());
+            entity.setExercise(exerciseEntity);
         }
         if (domain.getUser() != null) {
-            entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
+            UserEntity userEntity = new UserEntity();
+            userEntity.setId(domain.getUser().getId());
+            entity.setPlayer(userEntity);
         }
         if (domain.getTraining() != null) {
-            entity.setTraining(this.trainingEntityMapper.toEntity(domain.getTraining()));
+            TrainingEntity trainingEntity = new TrainingEntity();
+            trainingEntity.setId(domain.getTraining().getId());
+            entity.setTraining(trainingEntity);
+        }
+        if (domain.getPublication() != null) {
+            PublicationEntity publicationEntity = new PublicationEntity();
+            publicationEntity.setId(domain.getPublication().getId());
+            entity.setPublication(publicationEntity);
         }
         return entity;
     }
