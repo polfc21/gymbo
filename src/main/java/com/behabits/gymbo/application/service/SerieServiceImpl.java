@@ -54,7 +54,8 @@ public class SerieServiceImpl implements SerieService {
     public Serie createSerie(Long exerciseId, Serie serie) {
         Exercise exercise = this.exerciseService.findExerciseById(exerciseId);
         this.authorityService.checkLoggedUserHasPermissions(exercise);
-        return this.serieDao.createSerie(exerciseId, serie);
+        serie.setExercise(exercise);
+        return this.serieDao.saveSerie(serie);
     }
 
 }

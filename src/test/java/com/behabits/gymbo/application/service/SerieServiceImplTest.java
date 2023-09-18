@@ -173,12 +173,14 @@ class SerieServiceImplTest {
     @Test
     void givenExistentExerciseIdAndUserHasPermissionsWhenCreateSerieThenReturnSerie() {
         Long existentId = 1L;
+        Serie serie = mock(Serie.class);
 
         when(this.exerciseService.findExerciseById(existentId)).thenReturn(this.squatExercise);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatExercise);
-        when(this.serieDao.createSerie(existentId, this.squatSerie)).thenReturn(this.squatSerie);
+        when(this.serieDao.saveSerie(serie)).thenReturn(serie);
 
-        assertThat(this.serieService.createSerie(existentId, this.squatSerie), is(this.squatSerie));
+        assertThat(this.serieService.createSerie(existentId, serie), is(serie));
+        verify(serie).setExercise(this.squatExercise);
     }
 
     @Test
