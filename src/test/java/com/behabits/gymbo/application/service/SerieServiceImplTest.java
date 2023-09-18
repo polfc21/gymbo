@@ -15,8 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
@@ -154,9 +152,12 @@ class SerieServiceImplTest {
 
         when(this.exerciseService.findExerciseById(existentId)).thenReturn(this.squatExercise);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatExercise);
-        when(this.serieDao.findSeriesByExerciseId(existentId)).thenReturn(List.of(this.squatSerie));
+        Serie serie = this.serieService.findSeriesByExerciseId(existentId).get(0);
 
-        assertThat(this.serieService.findSeriesByExerciseId(existentId), is(List.of(this.squatSerie)));
+        assertThat(serie.getId(), is(this.squatSerie.getId()));
+        assertThat(serie.getNumber(), is(this.squatSerie.getNumber()));
+        assertThat(serie.getRepetitions(), is(this.squatSerie.getRepetitions()));
+        assertThat(serie.getWeight(), is(this.squatSerie.getWeight()));
     }
 
     @Test

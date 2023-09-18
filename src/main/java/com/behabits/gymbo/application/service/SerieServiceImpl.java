@@ -47,7 +47,7 @@ public class SerieServiceImpl implements SerieService {
     public List<Serie> findSeriesByExerciseId(Long exerciseId) {
         Exercise exercise = this.exerciseService.findExerciseById(exerciseId);
         this.authorityService.checkLoggedUserHasPermissions(exercise);
-        return this.serieDao.findSeriesByExerciseId(exerciseId);
+        return exercise.getSeries();
     }
 
     @Override
