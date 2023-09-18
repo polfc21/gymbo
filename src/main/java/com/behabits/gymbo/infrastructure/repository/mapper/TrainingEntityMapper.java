@@ -12,6 +12,7 @@ public class TrainingEntityMapper {
 
     private final ExerciseEntityMapper exerciseEntityMapper;
     private final UserEntityMapper userEntityMapper;
+    private final LinkEntityMapper linkEntityMapper;
 
     public Training toDomain(TrainingEntity entity) {
         Training domain = new Training();
@@ -23,6 +24,7 @@ public class TrainingEntityMapper {
             domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
         }
         domain.setSport(entity.getSport());
+        domain.setLinks(this.linkEntityMapper.toDomain(entity.getLinks()));
         return domain;
     }
 
@@ -43,6 +45,10 @@ public class TrainingEntityMapper {
             entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
         }
         entity.setSport(domain.getSport());
+        if (domain.getLinks() != null) {
+            entity.setLinks(this.linkEntityMapper.toEntity(domain.getLinks()));
+            entity.getLinks().forEach(linkEntity -> linkEntity.setTraining(entity));
+        }
         return entity;
     }
 }
