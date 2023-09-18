@@ -13,4 +13,5 @@ public class Link {
     private Exercise exercise;
     private User user;
     private Training training;
+    private Publication publication;
 }
