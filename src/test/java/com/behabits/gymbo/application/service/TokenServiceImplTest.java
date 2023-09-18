@@ -126,7 +126,7 @@ class TokenServiceImplTest {
         when(this.jwtParser.extractExpiration(TOKEN)).thenReturn(this.nonExpiredDate);
         when(this.jwtParser.extractUsername(TOKEN)).thenReturn(USERNAME);
         when(this.userService.loadUserByUsername(USERNAME)).thenReturn(this.userDetails);
-        when(this.tokenDao.findByTokenAndUserId(TOKEN, this.user.getId())).thenThrow(PermissionsException.class);
+        when(this.tokenDao.findByTokenAndUserId(TOKEN, this.user.getId())).thenReturn(null);
 
         assertThrows(PermissionsException.class, () -> this.tokenService.isValid(BEARER_TOKEN));
     }

@@ -4,6 +4,7 @@ import com.behabits.gymbo.application.domain.UserDetailsImpl;
 import com.behabits.gymbo.application.jwt.JwtBuilder;
 import com.behabits.gymbo.application.jwt.JwtParser;
 import com.behabits.gymbo.domain.daos.TokenDao;
+import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.TokenService;
@@ -61,6 +62,9 @@ public class TokenServiceImpl implements TokenService {
         }
         UserDetailsImpl userDetails = (UserDetailsImpl) this.userService.loadUserByUsername(username);
         Token token = this.tokenDao.findByTokenAndUserId(bearerToken, userDetails.getUser().getId());
+        if (token == null) {
+            throw new PermissionsException("Token not found for this user");
+        }
         return !token.getIsExpired() && !token.getIsRevoked();
     }
 
