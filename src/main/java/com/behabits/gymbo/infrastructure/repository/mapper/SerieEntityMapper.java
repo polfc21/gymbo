@@ -41,9 +41,11 @@ public class SerieEntityMapper {
         entity.setNumber(domain.getNumber());
         entity.setRepetitions(domain.getRepetitions());
         entity.setWeight(domain.getWeight());
-        ExerciseEntity exerciseEntity = new ExerciseEntity();
-        exerciseEntity.setId(domain.getExercise().getId());
-        entity.setExercise(exerciseEntity);
+        if (domain.getExercise() != null) {
+            ExerciseEntity exerciseEntity = new ExerciseEntity();
+            exerciseEntity.setId(domain.getExercise().getId());
+            entity.setExercise(exerciseEntity);
+        }
         return entity;
     }
 }
