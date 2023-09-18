@@ -46,7 +46,7 @@ class SerieServiceImplTest {
     void givenNonExistentSerieWhenFindSerieByIdThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(nonExistentId);
+        when(this.serieDao.findSerieById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.serieService.findSerieById(nonExistentId));
     }

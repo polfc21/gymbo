@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.SerieDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.services.AuthorityService;
@@ -22,6 +23,9 @@ public class SerieServiceImpl implements SerieService {
     @Override
     public Serie findSerieById(Long id) {
         Serie serie = this.serieDao.findSerieById(id);
+        if (serie == null) {
+            throw new NotFoundException("Serie not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(serie);
         return serie;
     }
