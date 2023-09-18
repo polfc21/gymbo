@@ -41,6 +41,16 @@ class JpaSerieDaoTest {
     private final SerieEntity squatSerieEntity = new SerieEntityRepository().getSquatSerie();
 
     private final ExerciseEntity squatExerciseEntity = new ExerciseEntityRepository().getSquatExerciseWithSeries();
+
+    @Test
+    void givenSerieWhenSaveSerieThenReturnSerie() {
+        when(this.mapper.toEntity(this.squatSerie)).thenReturn(this.squatSerieEntity);
+        when(this.serieRepository.save(this.squatSerieEntity)).thenReturn(this.squatSerieEntity);
+        when(this.mapper.toDomain(this.squatSerieEntity)).thenReturn(this.squatSerie);
+
+        assertThat(this.serieDao.saveSerie(this.squatSerie), is(this.squatSerie));
+    }
+
     @Test
     void givenSerieWhenDeleteSerieThenDeleteSerie() {
         this.serieDao.deleteSerie(this.squatSerie);

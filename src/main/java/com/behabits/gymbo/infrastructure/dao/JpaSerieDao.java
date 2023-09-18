@@ -19,6 +19,13 @@ public class JpaSerieDao implements SerieDao {
     private final ExerciseRepository exerciseRepository;
 
     @Override
+    public Serie saveSerie(Serie serie) {
+        SerieEntity entityToCreate = this.mapper.toEntity(serie);
+        SerieEntity createdEntity = this.serieRepository.save(entityToCreate);
+        return this.mapper.toDomain(createdEntity);
+    }
+
+    @Override
     public Serie findSerieById(Long id) {
         SerieEntity serieEntity = this.serieRepository.findById(id)
                 .orElse(null);
