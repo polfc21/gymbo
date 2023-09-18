@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.SerieDao;
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
 import com.behabits.gymbo.infrastructure.repository.SerieRepository;
@@ -24,8 +23,8 @@ public class JpaSerieDao implements SerieDao {
     @Override
     public Serie findSerieById(Long id) {
         SerieEntity serieEntity = this.serieRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Serie with" + id + " not found"));
-        return this.mapper.toDomain(serieEntity);
+                .orElse(null);
+        return serieEntity != null ? this.mapper.toDomain(serieEntity) : null;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.behabits.gymbo.infrastructure.dao;
 
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Serie;
 import com.behabits.gymbo.domain.repositories.SerieModelRepository;
 import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
@@ -21,6 +20,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -61,12 +61,12 @@ class JpaSerieDaoTest {
     }
 
     @Test
-    void givenNonExistentSeriesWhenFindSerieByIdThenThrowNotFoundException() {
+    void givenNonExistentSeriesWhenFindSerieByIdThenReturnNull() {
         Long nonExistentId = 1L;
 
         when(this.serieRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> this.serieDao.findSerieById(nonExistentId));
+        assertNull(this.serieDao.findSerieById(nonExistentId));
     }
 
     @Test
