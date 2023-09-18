@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.TokenDao;
-import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.infrastructure.repository.TokenRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.TokenEntity;
@@ -49,10 +48,7 @@ public class JpaTokenDao implements TokenDao {
     @Override
     public Token findByTokenAndUserId(String token, Long userId) {
         TokenEntity tokenEntity = this.tokenRepository.findByTokenAndPlayerId(token, userId);
-        if (tokenEntity == null) {
-            throw new PermissionsException("Token not found for this user");
-        }
-        return this.tokenEntityMapper.toDomain(tokenEntity);
+        return tokenEntity != null ? this.tokenEntityMapper.toDomain(tokenEntity) : null;
     }
 
 }

@@ -1,6 +1,5 @@
 package com.behabits.gymbo.infrastructure.dao;
 
-import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.repositories.TokenModelRepository;
 import com.behabits.gymbo.infrastructure.repository.TokenRepository;
@@ -101,6 +100,6 @@ class JpaTokenDaoTest {
 
         when(this.tokenRepository.findByTokenAndPlayerId(notPresentToken, notPresentUserId)).thenReturn(null);
 
-        assertThrows(PermissionsException.class, () -> this.tokenDao.findByTokenAndUserId(notPresentToken, notPresentUserId));
+        assertNull(this.tokenDao.findByTokenAndUserId(notPresentToken, notPresentUserId));
     }
 }
