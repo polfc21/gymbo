@@ -34,7 +34,10 @@ public class SerieServiceImpl implements SerieService {
     public Serie updateSerie(Long id, Serie serie) {
         Serie serieToUpdate = this.findSerieById(id);
         this.authorityService.checkLoggedUserHasPermissions(serieToUpdate);
-        return this.serieDao.updateSerie(id, serie);
+        serieToUpdate.setNumber(serie.getNumber());
+        serieToUpdate.setRepetitions(serie.getRepetitions());
+        serieToUpdate.setWeight(serie.getWeight());
+        return this.serieDao.saveSerie(serieToUpdate);
     }
 
     @Override

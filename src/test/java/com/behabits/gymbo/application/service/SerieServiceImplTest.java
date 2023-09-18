@@ -120,12 +120,16 @@ class SerieServiceImplTest {
     @Test
     void givenExistentSerieAndUserHasPermissionsWhenUpdateSerieThenUpdateSerie() {
         Long existentId = 1L;
+        Serie serieToUpdate = mock(Serie.class);
 
-        when(this.serieDao.findSerieById(existentId)).thenReturn(this.squatSerie);
-        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
-        when(this.serieDao.updateSerie(existentId, this.squatSerie)).thenReturn(this.squatSerie);
+        when(this.serieDao.findSerieById(existentId)).thenReturn(serieToUpdate);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(serieToUpdate);
+        when(this.serieDao.saveSerie(serieToUpdate)).thenReturn(serieToUpdate);
 
-        assertThat(this.serieService.updateSerie(existentId, this.squatSerie), is(this.squatSerie));
+        assertThat(this.serieService.updateSerie(existentId, this.squatSerie), is(serieToUpdate));
+        verify(serieToUpdate).setNumber(this.squatSerie.getNumber());
+        verify(serieToUpdate).setRepetitions(this.squatSerie.getRepetitions());
+        verify(serieToUpdate).setWeight(this.squatSerie.getWeight());
     }
 
     @Test
