@@ -47,13 +47,4 @@ public class JpaSerieDao implements SerieDao {
         this.serieRepository.deleteById(serie.getId());
     }
 
-    @Override
-    public Serie createSerie(Long exerciseId, Serie serie) {
-        ExerciseEntity exerciseEntity = this.exerciseRepository.getReferenceById(exerciseId);
-        SerieEntity serieEntity = this.mapper.toEntity(serie);
-        serieEntity.setExercise(exerciseEntity);
-        serieEntity = this.serieRepository.save(serieEntity);
-        return this.mapper.toDomain(serieEntity);
-    }
-
 }

@@ -7,5 +7,4 @@ public interface SerieDao {
     Serie findSerieById(Long id);
     Serie updateSerie(Long id, Serie serie);
     void deleteSerie(Serie serie);
-    Serie createSerie(Long exerciseId, Serie serie);
 }
