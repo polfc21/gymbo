@@ -15,13 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,16 +76,6 @@ class JpaSerieDaoTest {
         when(this.mapper.toDomain(this.squatSerieEntity)).thenReturn(this.squatSerie);
 
         assertThat(this.serieDao.updateSerie(existentId, this.squatSerie), is(this.squatSerie));
-    }
-
-    @Test
-    void givenExistentExerciseIdWhenFindSeriesByExerciseIdThenReturnSeriesList() {
-        Long existentId = 1L;
-
-        when(this.exerciseRepository.getReferenceById(existentId)).thenReturn(this.squatExerciseEntity);
-        when(this.mapper.toDomain(this.squatExerciseEntity.getSeries())).thenReturn(List.of(this.squatSerie));
-
-        assertThat(this.serieDao.findSeriesByExerciseId(existentId), is(List.of(this.squatSerie)));
     }
 
     @Test

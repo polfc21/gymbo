@@ -10,8 +10,6 @@ import com.behabits.gymbo.infrastructure.repository.mapper.SerieEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class JpaSerieDao implements SerieDao {
@@ -40,12 +38,6 @@ public class JpaSerieDao implements SerieDao {
     @Override
     public void deleteSerie(Serie serie) {
         this.serieRepository.deleteById(serie.getId());
-    }
-
-    @Override
-    public List<Serie> findSeriesByExerciseId(Long exerciseId) {
-        ExerciseEntity exerciseEntity = this.exerciseRepository.getReferenceById(exerciseId);
-        return this.mapper.toDomain(exerciseEntity.getSeries());
     }
 
     @Override

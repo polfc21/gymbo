@@ -9,5 +9,4 @@ public interface SerieDao {
     Serie updateSerie(Long id, Serie serie);
     void deleteSerie(Serie serie);
     Serie createSerie(Long exerciseId, Serie serie);
-    List<Serie> findSeriesByExerciseId(Long exerciseId);
 }
