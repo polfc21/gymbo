@@ -12,4 +12,5 @@ public class Serie {
     private Integer number;
     private Double weight;
     private Integer repetitions;
+    private Exercise exercise;
 }

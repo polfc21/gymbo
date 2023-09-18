@@ -12,6 +12,7 @@ public class SerieModelRepository {
                 .number(1)
                 .repetitions(10)
                 .weight(100.0)
+                .exercise(new ExerciseModelRepository().getSquatExercise())
                 .build();
     }
 }
