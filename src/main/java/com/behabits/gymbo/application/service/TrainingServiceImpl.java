@@ -54,7 +54,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public void deleteTraining(Long id) {
-        Training training = this.trainingDao.findTrainingById(id);
+        Training training = this.findTrainingById(id);
         this.authorityService.checkLoggedUserHasPermissions(training);
         this.trainingDao.deleteTraining(training);
     }
