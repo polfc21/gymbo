@@ -187,4 +187,36 @@ class ReviewControllerTest {
         assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED.value()));
     }
 
+    @Test
+    @WithMockUser
+    void givenExistentReviewWhenUpdateReviewThenReturnReviewResponse() throws Exception {
+        Long existentId = 1L;
+
+        given(this.mapper.toDomain(this.reviewRequest)).willReturn(this.review);
+        given(this.reviewService.updateReview(existentId, this.review)).willReturn(this.review);
+        given(this.mapper.toResponse(this.review)).willReturn(this.reviewResponse);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, existentId)
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content(this.objectMapper.writeValueAsString(this.reviewRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenUpdateReviewThenReturn403() throws Exception {
+        Long existentId = 1L;
+
+        MockHttpServletResponse response = mockMvc.perform(
+                put(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, existentId)
+                        .contentType("application/json")
+                        .content(this.objectMapper.writeValueAsString(this.reviewRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
 }
