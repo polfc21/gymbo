@@ -33,8 +33,10 @@ public class JpaExerciseDao implements ExerciseDao {
 
     @Override
     public List<Exercise> findExercisesByTrainingIdAndUserId(Long trainingId, Long userId) {
-        List<ExerciseEntity> entities = this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId);
-        return this.mapper.toDomain(entities);
+        return this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId)
+                .stream()
+                .map(this.mapper::toDomain)
+                .toList();
     }
 
     @Override

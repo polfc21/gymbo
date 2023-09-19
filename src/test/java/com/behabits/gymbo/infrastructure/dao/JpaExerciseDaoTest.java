@@ -78,7 +78,7 @@ class JpaExerciseDaoTest {
         Long userId = 1L;
 
         when(this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId)).thenReturn(List.of(this.squatExerciseEntity));
-        when(this.mapper.toDomain(List.of(this.squatExerciseEntity))).thenReturn(List.of(this.squatExercise));
+        when(this.mapper.toDomain(this.squatExerciseEntity)).thenReturn(this.squatExercise);
 
         assertThat(this.exerciseDao.findExercisesByTrainingIdAndUserId(trainingId, userId), is(List.of(this.squatExercise)));
     }
