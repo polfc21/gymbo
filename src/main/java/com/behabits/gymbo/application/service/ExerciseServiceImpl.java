@@ -44,7 +44,6 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public void deleteExercise(Long id) {
         Exercise exercise = this.findExerciseById(id);
-        this.authorityService.checkLoggedUserHasPermissions(exercise);
         this.exerciseDao.deleteExercise(exercise);
     }
 
