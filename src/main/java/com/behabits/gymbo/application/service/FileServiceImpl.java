@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.FileDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.File;
 import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.models.User;
@@ -33,6 +34,9 @@ public class FileServiceImpl implements FileService {
     @Override
     public File findFileById(Long id) {
         File file = this.fileDao.findFileById(id);
+        if (file == null) {
+            throw new NotFoundException("File not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(file);
         return file;
     }

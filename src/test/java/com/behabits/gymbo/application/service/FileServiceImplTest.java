@@ -59,7 +59,7 @@ class FileServiceImplTest {
     void givenNonExistentIdWhenFindFileByIdThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.fileDao.findFileById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.fileDao.findFileById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.fileService.findFileById(nonExistentId));
     }
@@ -104,7 +104,7 @@ class FileServiceImplTest {
     void givenNonExistentIdWhenUpdateFileThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.fileDao.findFileById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.fileDao.findFileById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.fileService.updateFile(nonExistentId, this.file));
     }
@@ -138,7 +138,7 @@ class FileServiceImplTest {
     void givenNonExistentFileWhenDeleteExerciseThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        doThrow(NotFoundException.class).when(this.fileDao).findFileById(nonExistentId);
+        when(this.fileDao.findFileById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.fileService.deleteFile(nonExistentId));
     }
