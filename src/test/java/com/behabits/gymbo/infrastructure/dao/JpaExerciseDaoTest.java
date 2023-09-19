@@ -90,14 +90,4 @@ class JpaExerciseDaoTest {
         verify(this.exerciseRepository).deleteById(this.squatExercise.getId());
     }
 
-    @Test
-    void givenExerciseWhenUpdateExerciseThenReturnExerciseUpdated() {
-        Long existentId = 1L;
-
-        when(this.exerciseRepository.getReferenceById(existentId)).thenReturn(this.squatExerciseEntity);
-        when(this.exerciseRepository.save(this.squatExerciseEntity)).thenReturn(this.squatExerciseEntity);
-        when(this.mapper.toDomain(squatExerciseEntity)).thenReturn(squatExercise);
-
-        assertThat(this.exerciseDao.updateExercise(existentId, this.squatExercise), is(this.squatExercise));
-    }
 }

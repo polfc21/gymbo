@@ -9,5 +9,4 @@ public interface ExerciseDao {
     Exercise saveExercise(Exercise exercise);
     List<Exercise> findExercisesByTrainingIdAndUserId(Long trainingId, Long userId);
     void deleteExercise(Exercise exercise);
-    Exercise updateExercise(Long id, Exercise exercise);
 }
