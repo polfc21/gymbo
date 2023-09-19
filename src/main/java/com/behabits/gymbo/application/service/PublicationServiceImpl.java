@@ -78,4 +78,9 @@ public class PublicationServiceImpl implements PublicationService {
         return this.publicationDao.savePublication(publicationToUpdate);
     }
 
+    @Override
+    public List<Publication> findAllPublications() {
+        return this.publicationDao.findAllPublications();
+    }
+
 }
