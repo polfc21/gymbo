@@ -47,6 +47,37 @@ class PublicationServiceImplTest {
     private final User loggedUser = new UserModelRepository().getUser();
 
     @Test
+    void givenExistentPublicationWithPermissionsWhenFindByPublicationByIdThenReturnPublication() {
+        Long publicationId = 1L;
+        Publication publication = mock(Publication.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publication);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(publication);
+
+        assertThat(this.publicationService.findPublicationById(publicationId), is(publication));
+    }
+
+    @Test
+    void givenExistentPublicationWithoutPermissionsWhenFindByPublicationByIdThenThrowPermissionsException() {
+        Long publicationId = 1L;
+        Publication publication = mock(Publication.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publication);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(publication);
+
+        assertThrows(PermissionsException.class, () -> this.publicationService.findPublicationById(publicationId));
+    }
+
+    @Test
+    void givenNonExistentPublicationWhenFindByPublicationByIdThenThrowNotFoundException() {
+        Long publicationId = 1L;
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> this.publicationService.findPublicationById(publicationId));
+    }
+
+    @Test
     void givenPublicationAndExistentFilesIdsWithPermissionsWhenCreatePublicationThenReturnPublication() {
         Publication publicationToCreate = mock(Publication.class);
         Publication publicationCreated = mock(Publication.class);
