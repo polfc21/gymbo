@@ -1,6 +1,5 @@
 package com.behabits.gymbo.infrastructure.dao;
 
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Review;
 import com.behabits.gymbo.domain.repositories.ReviewModelRepository;
 import com.behabits.gymbo.infrastructure.repository.ReviewRepository;
@@ -18,7 +17,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,12 +55,12 @@ class JpaReviewDaoTest {
     }
 
     @Test
-    void givenNonExistentIdWhenFindReviewByIdThenThrowNotFoundException() {
+    void givenNonExistentIdWhenFindReviewByIdThenReturnNull() {
         Long nonExistentId = 1L;
 
         when(this.reviewRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> this.reviewDao.findReviewById(nonExistentId));
+        assertNull(this.reviewDao.findReviewById(nonExistentId));
     }
 
     @Test

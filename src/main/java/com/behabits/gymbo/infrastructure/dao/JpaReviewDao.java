@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.ReviewDao;
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Review;
 import com.behabits.gymbo.infrastructure.repository.ReviewRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.ReviewEntity;
@@ -28,8 +27,8 @@ public class JpaReviewDao implements ReviewDao {
     @Override
     public Review findReviewById(Long id) {
         ReviewEntity entity = this.reviewRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Review with id " + id + " not found"));
-        return this.mapper.toDomain(entity);
+                .orElse(null);
+        return entity != null ? this.mapper.toDomain(entity) : null;
     }
 
     @Override
