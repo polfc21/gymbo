@@ -26,6 +26,16 @@ public class PublicationServiceImpl implements PublicationService {
     private final FileService fileService;
     private final LinkService linkService;
 
+    @Override
+    public Publication findPublicationById(Long id) {
+        Publication publication = this.publicationDao.findPublicationById(id);
+        if (publication == null) {
+            throw new NotFoundException("Publication not found");
+        }
+        this.authorityService.checkLoggedUserHasPermissions(publication);
+        return publication;
+    }
+
     @Transactional
     @Override
     public Publication createPublication(Publication publication, List<Long> files) {
