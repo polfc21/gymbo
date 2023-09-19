@@ -65,6 +65,53 @@ class PublicationControllerTest {
 
     @Test
     @WithMockUser
+    void givenExistentPublicationWithPermissionsWhenFindPublicationByIdThenReturnPublicationResponse() throws Exception {
+        Long publicationId = 1L;
+        given(this.publicationService.findPublicationById(publicationId)).willReturn(this.publication);
+        given(this.mapper.toResponse(this.publication)).willReturn(this.publicationResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(get(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(this.publicationResponse)));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentPublicationWithoutPermissionsWhenFindPublicationByIdThenReturn403() throws Exception {
+        Long publicationId = 1L;
+        doThrow(PermissionsException.class).when(this.publicationService).findPublicationById(publicationId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(get(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenNonExistentPublicationWhenFindPublicationByIdThenReturn404() throws Exception {
+        Long publicationId = 1L;
+        doThrow(NotFoundException.class).when(this.publicationService).findPublicationById(publicationId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(get(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenFindPublicationByIdThenReturn401() throws Exception {
+        Long publicationId = 1L;
+        MockHttpServletResponse response = this.mockMvc.perform(get(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED.value()));
+    }
+
+    @Test
+    @WithMockUser
     void givenPublicationRequestAndExistentFileIdsWithPermissionsWhenCreatePublicationThenReturnPublicationResponse() throws Exception {
         given(this.mapper.toDomain(this.publicationRequest)).willReturn(this.publication);
         given(this.publicationService.createPublication(this.publication, this.publicationRequest.getFiles())).willReturn(this.publication);

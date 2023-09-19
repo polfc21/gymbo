@@ -24,6 +24,12 @@ public class PublicationController {
     private final PublicationApiMapper mapper;
     private final LinkApiMapper linkMapper;
 
+    @GetMapping(ApiConstant.ID)
+    public ResponseEntity<PublicationResponse> findPublicationById(@PathVariable Long id) {
+        Publication publication = this.publicationService.findPublicationById(id);
+        return new ResponseEntity<>(this.mapper.toResponse(publication), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<PublicationResponse> createPublication(@RequestBody @Valid PublicationRequest request) {
         Publication publicationToCreate = this.mapper.toDomain(request);
