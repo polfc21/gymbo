@@ -8,6 +8,8 @@ import com.behabits.gymbo.infrastructure.repository.mapper.PublicationEntityMapp
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class JpaPublicationDao implements PublicationDao {
@@ -27,6 +29,14 @@ public class JpaPublicationDao implements PublicationDao {
         PublicationEntity entity = this.publicationRepository.findById(id)
                 .orElse(null);
         return entity != null ? this.publicationEntityMapper.toDomain(entity) : null;
+    }
+
+    @Override
+    public List<Publication> findAllPublications() {
+        return this.publicationRepository.findAll()
+                .stream()
+                .map(this.publicationEntityMapper::toDomain)
+                .toList();
     }
 
 }
