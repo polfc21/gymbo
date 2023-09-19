@@ -64,4 +64,13 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Override
+    public List<User> findUsersInKilometersOrderedByDistanceFromLoggedUserAndBySport(Double kilometers, Sport sport) {
+        User loggedUser = this.authorityService.getLoggedUser();
+        return this.userDao.findUsersInKilometersOrderedByDistanceFromLoggedUser(loggedUser.getId(), kilometers)
+                .stream()
+                .filter(user -> user.getSports().contains(sport) && !Objects.equals(user.getUsername(), loggedUser.getUsername()))
+                .toList();
+    }
+
 }

@@ -13,4 +13,5 @@ public interface UserService extends UserDetailsService {
     User createUser(User user);
     List<User> findUsersInKilometersOrderedByDistanceFromLoggedUser(Double kilometers);
     List<User> findUsersBySport(Sport sport);
+    List<User> findUsersInKilometersOrderedByDistanceFromLoggedUserAndBySport(Double kilometers, Sport sport);
 }
