@@ -26,8 +26,8 @@ public class JpaFileDao implements FileDao {
     @Override
     public File findFileById(Long id) {
         FileEntity fileEntity = this.fileRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("File with " + id + " id not found"));
-        return this.fileEntityMapper.toDomain(fileEntity);
+                .orElse(null);
+        return fileEntity != null ? this.fileEntityMapper.toDomain(fileEntity) : null;
     }
 
     @Override

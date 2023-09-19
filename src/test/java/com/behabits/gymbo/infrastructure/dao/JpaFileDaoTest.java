@@ -1,6 +1,5 @@
 package com.behabits.gymbo.infrastructure.dao;
 
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.File;
 import com.behabits.gymbo.domain.repositories.FileModelRepository;
 import com.behabits.gymbo.infrastructure.repository.FileRepository;
@@ -17,7 +16,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +60,7 @@ class JpaFileDaoTest{
 
         when(this.fileRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> this.fileDao.findFileById(nonExistentId));
+        assertNull(this.fileDao.findFileById(nonExistentId));
     }
 
     @Test
