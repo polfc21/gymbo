@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.FileDao;
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.File;
 import com.behabits.gymbo.infrastructure.repository.FileRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.FileEntity;
@@ -18,16 +17,16 @@ public class JpaFileDao implements FileDao {
 
     @Override
     public File saveFile(File file) {
-        FileEntity entityToCreate = this.fileEntityMapper.toEntity(file);
-        FileEntity entityCreated = this.fileRepository.save(entityToCreate);
-        return this.fileEntityMapper.toDomain(entityCreated);
+        FileEntity entityToSave = this.fileEntityMapper.toEntity(file);
+        FileEntity entitySaved = this.fileRepository.save(entityToSave);
+        return this.fileEntityMapper.toDomain(entitySaved);
     }
 
     @Override
     public File findFileById(Long id) {
-        FileEntity fileEntity = this.fileRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("File with " + id + " id not found"));
-        return this.fileEntityMapper.toDomain(fileEntity);
+        FileEntity entity = this.fileRepository.findById(id)
+                .orElse(null);
+        return entity != null ? this.fileEntityMapper.toDomain(entity) : null;
     }
 
     @Override

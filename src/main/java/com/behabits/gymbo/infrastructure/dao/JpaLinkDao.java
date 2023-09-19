@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.LinkDao;
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.infrastructure.repository.LinkRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.LinkEntity;
@@ -23,9 +22,9 @@ public class JpaLinkDao implements LinkDao {
 
     @Override
     public Link findLinkById(Long id) {
-        LinkEntity linkEntity = this.linkRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Link with" + id + " not found"));
-        return this.mapper.toDomain(linkEntity);
+        LinkEntity entity = this.linkRepository.findById(id)
+                .orElse(null);
+        return entity != null ? this.mapper.toDomain(entity) : null;
     }
 
 }

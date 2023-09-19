@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.LocationDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Location;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.AuthorityService;
@@ -25,6 +26,9 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Location findLocationById(Long id) {
         Location location = this.locationDao.findLocationById(id);
+        if (location == null) {
+            throw new NotFoundException("Location not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(location);
         return location;
     }

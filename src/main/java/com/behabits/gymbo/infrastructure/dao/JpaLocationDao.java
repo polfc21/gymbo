@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.LocationDao;
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Location;
 import com.behabits.gymbo.infrastructure.repository.LocationRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.LocationEntity;
@@ -18,9 +17,9 @@ public class JpaLocationDao implements LocationDao {
 
     @Override
     public Location findLocationById(Long id) {
-        LocationEntity locationEntity = this.locationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Location with " + id + " id not found"));
-        return this.locationEntityMapper.toDomain(locationEntity);
+        LocationEntity entity = this.locationRepository.findById(id)
+                .orElse(null);
+        return entity != null ? this.locationEntityMapper.toDomain(entity) : null;
     }
 
     @Override

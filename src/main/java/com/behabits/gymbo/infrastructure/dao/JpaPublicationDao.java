@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.PublicationDao;
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.infrastructure.repository.PublicationRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.PublicationEntity;
@@ -18,16 +17,16 @@ public class JpaPublicationDao implements PublicationDao {
 
     @Override
     public Publication savePublication(Publication publication) {
-        PublicationEntity entityToCreate = this.publicationEntityMapper.toEntity(publication);
-        PublicationEntity entityCreated = this.publicationRepository.save(entityToCreate);
-        return this.publicationEntityMapper.toDomain(entityCreated);
+        PublicationEntity entityToSave = this.publicationEntityMapper.toEntity(publication);
+        PublicationEntity entitySaved = this.publicationRepository.save(entityToSave);
+        return this.publicationEntityMapper.toDomain(entitySaved);
     }
 
     @Override
     public Publication findPublicationById(Long id) {
         PublicationEntity entity = this.publicationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Publication with " + id + " id not found"));
-        return this.publicationEntityMapper.toDomain(entity);
+                .orElse(null);
+        return entity != null ? this.publicationEntityMapper.toDomain(entity) : null;
     }
 
 }

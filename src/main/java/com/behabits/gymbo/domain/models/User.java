@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -23,4 +24,5 @@ public class User implements Serializable {
     private String email;
     private String password;
     private Set<Sport> sports;
+    private List<Link> links;
 }

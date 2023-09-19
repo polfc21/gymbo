@@ -15,4 +15,5 @@ public class Exercise {
     private List<Serie> series;
     private User user;
     private Sport sport;
+    private List<Link> links;
 }

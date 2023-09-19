@@ -58,7 +58,7 @@ public class LocationServiceImplTest {
     void givenNonExistentIdWhenFindLocationByIdThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.locationDao.findLocationById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.locationDao.findLocationById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.locationService.findLocationById(nonExistentId));
     }
@@ -102,7 +102,7 @@ public class LocationServiceImplTest {
     void givenNonExistentIdWhenUpdateLocationThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.locationDao.findLocationById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.locationDao.findLocationById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.locationService.updateLocation(nonExistentId, this.location));
     }
@@ -133,7 +133,7 @@ public class LocationServiceImplTest {
     void givenNonExistentIdWhenDeleteLocationThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.locationDao.findLocationById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.locationDao.findLocationById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.locationService.deleteLocation(nonExistentId));
     }

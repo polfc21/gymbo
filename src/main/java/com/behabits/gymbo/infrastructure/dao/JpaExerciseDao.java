@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.ExerciseDao;
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.infrastructure.repository.ExerciseRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.ExerciseEntity;
@@ -21,21 +20,23 @@ public class JpaExerciseDao implements ExerciseDao {
     @Override
     public Exercise findExerciseById(Long id) {
         ExerciseEntity entity = this.exerciseRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Exercise with " + id + " not found"));
-        return this.mapper.toDomain(entity);
+                .orElse(null);
+        return entity != null ? this.mapper.toDomain(entity) : null;
     }
 
     @Override
-    public Exercise createExercise(Exercise exercise) {
-        ExerciseEntity entity = this.mapper.toEntity(exercise);
-        entity = this.exerciseRepository.save(entity);
-        return this.mapper.toDomain(entity);
+    public Exercise saveExercise(Exercise exercise) {
+        ExerciseEntity entityToSave = this.mapper.toEntity(exercise);
+        ExerciseEntity entitySaved = this.exerciseRepository.save(entityToSave);
+        return this.mapper.toDomain(entitySaved);
     }
 
     @Override
     public List<Exercise> findExercisesByTrainingIdAndUserId(Long trainingId, Long userId) {
-        List<ExerciseEntity> entities = this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId);
-        return this.mapper.toDomain(entities);
+        return this.exerciseRepository.findAllByTrainingIdAndPlayerId(trainingId, userId)
+                .stream()
+                .map(this.mapper::toDomain)
+                .toList();
     }
 
     @Override
@@ -43,11 +44,4 @@ public class JpaExerciseDao implements ExerciseDao {
         this.exerciseRepository.deleteById(exercise.getId());
     }
 
-    @Override
-    public Exercise updateExercise(Long id, Exercise exercise) {
-        ExerciseEntity exerciseEntity = this.exerciseRepository.getReferenceById(id);
-        exerciseEntity.setName(exercise.getName());
-        exerciseEntity = this.exerciseRepository.save(exerciseEntity);
-        return this.mapper.toDomain(exerciseEntity);
-    }
 }

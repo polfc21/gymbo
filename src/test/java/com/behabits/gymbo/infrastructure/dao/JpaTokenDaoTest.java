@@ -1,6 +1,5 @@
 package com.behabits.gymbo.infrastructure.dao;
 
-import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.domain.repositories.TokenModelRepository;
 import com.behabits.gymbo.infrastructure.repository.TokenRepository;
@@ -18,7 +17,6 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -101,6 +99,6 @@ class JpaTokenDaoTest {
 
         when(this.tokenRepository.findByTokenAndPlayerId(notPresentToken, notPresentUserId)).thenReturn(null);
 
-        assertThrows(PermissionsException.class, () -> this.tokenDao.findByTokenAndUserId(notPresentToken, notPresentUserId));
+        assertNull(this.tokenDao.findByTokenAndUserId(notPresentToken, notPresentUserId));
     }
 }

@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.PublicationDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.File;
 import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Publication;
@@ -48,6 +49,9 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public Publication updatePublication(Long id, Publication publication) {
         Publication publicationToUpdate = this.publicationDao.findPublicationById(id);
+        if (publicationToUpdate == null) {
+            throw new NotFoundException("Publication not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(publicationToUpdate);
         publicationToUpdate.setDescription(publication.getDescription());
         publicationToUpdate.setSport(publication.getSport());

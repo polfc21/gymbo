@@ -15,8 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
@@ -46,7 +44,7 @@ class SerieServiceImplTest {
     void givenNonExistentSerieWhenFindSerieByIdThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        doThrow(NotFoundException.class).when(this.serieDao).findSerieById(nonExistentId);
+        when(this.serieDao.findSerieById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.serieService.findSerieById(nonExistentId));
     }
@@ -122,12 +120,16 @@ class SerieServiceImplTest {
     @Test
     void givenExistentSerieAndUserHasPermissionsWhenUpdateSerieThenUpdateSerie() {
         Long existentId = 1L;
+        Serie serieToUpdate = mock(Serie.class);
 
-        when(this.serieDao.findSerieById(existentId)).thenReturn(this.squatSerie);
-        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatSerie);
-        when(this.serieDao.updateSerie(existentId, this.squatSerie)).thenReturn(this.squatSerie);
+        when(this.serieDao.findSerieById(existentId)).thenReturn(serieToUpdate);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(serieToUpdate);
+        when(this.serieDao.saveSerie(serieToUpdate)).thenReturn(serieToUpdate);
 
-        assertThat(this.serieService.updateSerie(existentId, this.squatSerie), is(this.squatSerie));
+        assertThat(this.serieService.updateSerie(existentId, this.squatSerie), is(serieToUpdate));
+        verify(serieToUpdate).setNumber(this.squatSerie.getNumber());
+        verify(serieToUpdate).setRepetitions(this.squatSerie.getRepetitions());
+        verify(serieToUpdate).setWeight(this.squatSerie.getWeight());
     }
 
     @Test
@@ -154,9 +156,12 @@ class SerieServiceImplTest {
 
         when(this.exerciseService.findExerciseById(existentId)).thenReturn(this.squatExercise);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatExercise);
-        when(this.serieDao.findSeriesByExerciseId(existentId)).thenReturn(List.of(this.squatSerie));
+        Serie serie = this.serieService.findSeriesByExerciseId(existentId).get(0);
 
-        assertThat(this.serieService.findSeriesByExerciseId(existentId), is(List.of(this.squatSerie)));
+        assertThat(serie.getId(), is(this.squatSerie.getId()));
+        assertThat(serie.getNumber(), is(this.squatSerie.getNumber()));
+        assertThat(serie.getRepetitions(), is(this.squatSerie.getRepetitions()));
+        assertThat(serie.getWeight(), is(this.squatSerie.getWeight()));
     }
 
     @Test
@@ -172,12 +177,14 @@ class SerieServiceImplTest {
     @Test
     void givenExistentExerciseIdAndUserHasPermissionsWhenCreateSerieThenReturnSerie() {
         Long existentId = 1L;
+        Serie serie = mock(Serie.class);
 
         when(this.exerciseService.findExerciseById(existentId)).thenReturn(this.squatExercise);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.squatExercise);
-        when(this.serieDao.createSerie(existentId, this.squatSerie)).thenReturn(this.squatSerie);
+        when(this.serieDao.saveSerie(serie)).thenReturn(serie);
 
-        assertThat(this.serieService.createSerie(existentId, this.squatSerie), is(this.squatSerie));
+        assertThat(this.serieService.createSerie(existentId, serie), is(serie));
+        verify(serie).setExercise(this.squatExercise);
     }
 
     @Test

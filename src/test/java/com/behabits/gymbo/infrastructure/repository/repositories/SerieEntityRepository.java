@@ -12,6 +12,7 @@ public class SerieEntityRepository {
                 .number(1)
                 .repetitions(10)
                 .weight(100.0)
+                .exercise(new ExerciseEntityRepository().getSquatExercise())
                 .build();
     }
 }

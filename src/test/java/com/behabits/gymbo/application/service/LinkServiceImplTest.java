@@ -232,7 +232,7 @@ class LinkServiceImplTest {
     void givenNonExistentLinkWhenDeleteLinkThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        doThrow(NotFoundException.class).when(this.linkDao).findLinkById(nonExistentId);
+        when(this.linkDao.findLinkById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.linkService.deleteLink(nonExistentId));
     }

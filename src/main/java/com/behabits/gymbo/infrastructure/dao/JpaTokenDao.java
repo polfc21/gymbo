@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.TokenDao;
-import com.behabits.gymbo.domain.exceptions.PermissionsException;
 import com.behabits.gymbo.domain.models.Token;
 import com.behabits.gymbo.infrastructure.repository.TokenRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.TokenEntity;
@@ -20,11 +19,8 @@ public class JpaTokenDao implements TokenDao {
 
     @Override
     public Token findByToken(String token) {
-        TokenEntity tokenEntity = this.tokenRepository.findByToken(token);
-        if (tokenEntity == null) {
-            return null;
-        }
-        return this.tokenEntityMapper.toDomain(tokenEntity);
+        TokenEntity entity = this.tokenRepository.findByToken(token);
+        return entity != null ? this.tokenEntityMapper.toDomain(entity) : null;
     }
 
     @Override
@@ -36,26 +32,23 @@ public class JpaTokenDao implements TokenDao {
 
     @Override
     public void saveAll(List<Token> tokens) {
-        List<TokenEntity> tokenEntities = tokens.stream()
+        List<TokenEntity> entities = tokens.stream()
                 .map(this.tokenEntityMapper::toEntity)
                 .toList();
-        this.tokenRepository.saveAll(tokenEntities);
+        this.tokenRepository.saveAll(entities);
     }
 
     @Override
     public Token createToken(Token token) {
-        TokenEntity tokenEntity = this.tokenEntityMapper.toEntity(token);
-        TokenEntity createdToken = this.tokenRepository.save(tokenEntity);
-        return this.tokenEntityMapper.toDomain(createdToken);
+        TokenEntity entityToSave = this.tokenEntityMapper.toEntity(token);
+        TokenEntity entitySaved = this.tokenRepository.save(entityToSave);
+        return this.tokenEntityMapper.toDomain(entitySaved);
     }
 
     @Override
     public Token findByTokenAndUserId(String token, Long userId) {
-        TokenEntity tokenEntity = this.tokenRepository.findByTokenAndPlayerId(token, userId);
-        if (tokenEntity == null) {
-            throw new PermissionsException("Token not found for this user");
-        }
-        return this.tokenEntityMapper.toDomain(tokenEntity);
+        TokenEntity entity = this.tokenRepository.findByTokenAndPlayerId(token, userId);
+        return entity != null ? this.tokenEntityMapper.toDomain(entity) : null;
     }
 
 }

@@ -18,6 +18,7 @@ public class Training {
     private List<Exercise> exercises;
     private User user;
     private Sport sport;
+    private List<Link> links;
 
     public void addExercise(Exercise exercise) {
         if (this.exercises == null) {

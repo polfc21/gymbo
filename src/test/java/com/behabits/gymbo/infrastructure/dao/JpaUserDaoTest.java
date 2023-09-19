@@ -1,6 +1,5 @@
 package com.behabits.gymbo.infrastructure.dao;
 
-import com.behabits.gymbo.domain.exceptions.ExistingUserException;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.repositories.UserModelRepository;
 import com.behabits.gymbo.infrastructure.repository.UserRepository;
@@ -18,7 +17,6 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,20 +36,12 @@ class JpaUserDaoTest {
     private final UserEntity userEntity = new UserEntityRepository().getUser();
 
     @Test
-    void givenNonExistentUserWhenCreateUserThenReturnUser() {
-        when(this.userRepository.findByUsername(this.user.getUsername())).thenReturn(null);
+    void givenUserWhenSaveUserThenReturnUser() {
         when(this.userEntityMapper.toEntity(this.user)).thenReturn(this.userEntity);
         when(this.userRepository.save(this.userEntity)).thenReturn(this.userEntity);
         when(this.userEntityMapper.toDomain(this.userEntity)).thenReturn(this.user);
 
-        assertThat(this.jpaUserDao.createUser(this.user), is(this.user));
-    }
-
-    @Test
-    void givenExistentUserWhenCreateUserThenThrowExistingUsernameException() {
-        when(this.userRepository.findByUsername(this.user.getUsername())).thenReturn(this.userEntity);
-
-        assertThrows(ExistingUserException.class, () -> this.jpaUserDao.createUser(this.user));
+        assertThat(this.jpaUserDao.saveUser(this.user), is(this.user));
     }
 
     @Test

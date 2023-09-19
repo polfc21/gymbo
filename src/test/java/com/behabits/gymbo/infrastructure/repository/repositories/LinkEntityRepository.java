@@ -11,6 +11,7 @@ public class LinkEntityRepository {
                 .id(1L)
                 .entity("EXERCISE")
                 .exercise(new ExerciseEntityRepository().getSquatExercise())
+                .publication(new PublicationEntityRepository().getPublication())
                 .build();
     }
 
@@ -19,6 +20,7 @@ public class LinkEntityRepository {
                 .id(1L)
                 .entity("USER")
                 .player(new UserEntityRepository().getUser())
+                .publication(new PublicationEntityRepository().getPublication())
                 .build();
     }
 
@@ -27,6 +29,7 @@ public class LinkEntityRepository {
                 .id(1L)
                 .entity("TRAINING")
                 .training(new TrainingEntityRepository().getLegTraining())
+                .publication(new PublicationEntityRepository().getPublication())
                 .build();
     }
 

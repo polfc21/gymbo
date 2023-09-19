@@ -79,7 +79,7 @@ class TrainingServiceImplTest {
     void givenNonExistentIdWhenFindTrainingByIdThenThrowNotFoundException() {
         Long id = 1L;
 
-        when(this.trainingDao.findTrainingById(id)).thenThrow(NotFoundException.class);
+        when(this.trainingDao.findTrainingById(id)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.trainingService.findTrainingById(id));
     }
@@ -87,7 +87,7 @@ class TrainingServiceImplTest {
     @Test
     void givenTrainingWhenCreateTrainingThenReturnTraining() {
         when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
-        when(this.trainingDao.createTraining(this.training)).thenReturn(this.training);
+        when(this.trainingDao.saveTraining(this.training)).thenReturn(this.training);
 
         Training createdTraining = this.trainingService.createTraining(this.training);
         assertThat(createdTraining, is(this.training));
@@ -98,7 +98,7 @@ class TrainingServiceImplTest {
     void givenNonExistentIdWhenUpdateTrainingThenThrowNotFoundException() {
         Long id = 1L;
 
-        when(this.trainingDao.updateTraining(id, this.training)).thenThrow(NotFoundException.class);
+        when(this.trainingDao.findTrainingById(id)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.trainingService.updateTraining(id, this.training));
     }
@@ -109,7 +109,7 @@ class TrainingServiceImplTest {
 
         when(this.trainingDao.findTrainingById(id)).thenReturn(this.training);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.training);
-        when(this.trainingDao.updateTraining(id, this.training)).thenReturn(this.training);
+        when(this.trainingDao.saveTraining(this.training)).thenReturn(this.training);
 
         assertThat(this.trainingService.updateTraining(id, this.training), is(this.training));
     }
@@ -164,7 +164,7 @@ class TrainingServiceImplTest {
 
         when(this.trainingDao.findTrainingById(id)).thenReturn(this.training);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.training);
-        when(this.trainingDao.createTraining(this.training)).thenReturn(this.training);
+        when(this.trainingDao.saveTraining(this.training)).thenReturn(this.training);
         Training trainingWithExerciseAdded = this.trainingService.addExercise(id, this.exercise);
 
         assertThat(trainingWithExerciseAdded, is(this.training));

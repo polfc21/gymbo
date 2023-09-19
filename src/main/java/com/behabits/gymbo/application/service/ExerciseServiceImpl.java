@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.ExerciseDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.AuthorityService;
@@ -20,6 +21,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public Exercise findExerciseById(Long id) {
         Exercise exercise = this.exerciseDao.findExerciseById(id);
+        if (exercise == null) {
+            throw new NotFoundException("Exercise not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(exercise);
         return exercise;
     }
@@ -28,7 +32,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     public Exercise createExercise(Exercise exercise) {
         User user = this.authorityService.getLoggedUser();
         exercise.setUser(user);
-        return this.exerciseDao.createExercise(exercise);
+        return this.exerciseDao.saveExercise(exercise);
     }
 
     @Override
@@ -40,14 +44,13 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public void deleteExercise(Long id) {
         Exercise exercise = this.findExerciseById(id);
-        this.authorityService.checkLoggedUserHasPermissions(exercise);
         this.exerciseDao.deleteExercise(exercise);
     }
 
     @Override
     public Exercise updateExercise(Long id, Exercise exercise) {
         Exercise exerciseToUpdate = this.findExerciseById(id);
-        this.authorityService.checkLoggedUserHasPermissions(exerciseToUpdate);
-        return this.exerciseDao.updateExercise(id, exercise);
+        exerciseToUpdate.setName(exercise.getName());
+        return this.exerciseDao.saveExercise(exerciseToUpdate);
     }
 }

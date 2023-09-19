@@ -2,10 +2,14 @@ package com.behabits.gymbo.infrastructure.repository.mapper;
 
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.infrastructure.repository.entity.UserEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class UserEntityMapper {
+
+    private final LinkEntityMapper linkEntityMapper;
 
     public User toDomain(UserEntity entity) {
         if (entity == null) {
@@ -19,6 +23,7 @@ public class UserEntityMapper {
         domain.setEmail(entity.getEmail());
         domain.setPassword(entity.getPassword());
         domain.setSports(entity.getSports());
+        domain.setLinks(this.linkEntityMapper.toDomain(entity.getLinks()));
         return domain;
     }
 
@@ -34,6 +39,10 @@ public class UserEntityMapper {
         entity.setEmail(domain.getEmail());
         entity.setPassword(domain.getPassword());
         entity.setSports(domain.getSports());
+        if (domain.getLinks() != null) {
+            entity.setLinks(this.linkEntityMapper.toEntity(domain.getLinks()));
+            entity.getLinks().forEach(linkEntity -> linkEntity.setPlayer(entity));
+        }
         return entity;
     }
 }

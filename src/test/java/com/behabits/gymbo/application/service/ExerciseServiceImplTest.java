@@ -62,7 +62,7 @@ class ExerciseServiceImplTest {
     void givenNonExistentIdWhenFindExerciseByIdThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.exerciseDao.findExerciseById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.exerciseDao.findExerciseById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.findExerciseById(1L));
     }
@@ -70,7 +70,7 @@ class ExerciseServiceImplTest {
     @Test
     void givenExerciseWhenCreateExerciseThenReturnExercise() {
         when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
-        when(this.exerciseDao.createExercise(this.exercise)).thenReturn(this.exercise);
+        when(this.exerciseDao.saveExercise(this.exercise)).thenReturn(this.exercise);
 
         Exercise createdExercise = this.exerciseService.createExercise(this.exercise);
         assertThat(createdExercise, is(this.exercise));
@@ -91,7 +91,7 @@ class ExerciseServiceImplTest {
     void givenNonExistentExerciseIdWhenDeleteExerciseThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        doThrow(NotFoundException.class).when(this.exerciseDao).findExerciseById(nonExistentId);
+        when(this.exerciseDao.findExerciseById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.deleteExercise(nonExistentId));
     }
@@ -125,7 +125,7 @@ class ExerciseServiceImplTest {
     void givenNonExistentIdWhenUpdateExerciseThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.exerciseDao.findExerciseById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.exerciseDao.findExerciseById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.updateExercise(nonExistentId, this.exercise));
     }
@@ -133,12 +133,14 @@ class ExerciseServiceImplTest {
     @Test
     void givenExistentIdAndLoggedUserHasPermissionsWhenUpdateExerciseThenReturnExercise() {
         Long existentId = 1L;
+        Exercise exerciseToUpdate = mock(Exercise.class);
 
-        when(this.exerciseDao.findExerciseById(existentId)).thenReturn(this.exercise);
-        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.exercise);
-        when(this.exerciseDao.updateExercise(existentId, this.exercise)).thenReturn(this.exercise);
+        when(this.exerciseDao.findExerciseById(existentId)).thenReturn(exerciseToUpdate);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(exerciseToUpdate);
+        when(this.exerciseDao.saveExercise(exerciseToUpdate)).thenReturn(exerciseToUpdate);
 
-        assertThat(this.exerciseService.updateExercise(existentId, this.exercise), is(this.exercise));
+        assertThat(this.exerciseService.updateExercise(existentId, this.exercise), is(exerciseToUpdate));
+        verify(exerciseToUpdate).setName(this.exercise.getName());
     }
 
     @Test

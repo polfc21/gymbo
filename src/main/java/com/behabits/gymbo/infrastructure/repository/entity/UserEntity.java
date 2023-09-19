@@ -44,7 +44,7 @@ public class UserEntity {
     private List<ReviewEntity> reviews;
     @OneToMany(mappedBy = "reviewed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> reviewers;
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LinkEntity> links;
     @ElementCollection(targetClass = Sport.class)
     @CollectionTable(name = "player_sports", joinColumns = @JoinColumn(name = "player_id"))

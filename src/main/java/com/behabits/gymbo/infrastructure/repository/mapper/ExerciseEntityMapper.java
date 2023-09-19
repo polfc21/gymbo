@@ -13,6 +13,7 @@ public class ExerciseEntityMapper {
 
     private final SerieEntityMapper serieEntityMapper;
     private final UserEntityMapper userEntityMapper;
+    private final LinkEntityMapper linkEntityMapper;
 
     public List<Exercise> toDomain(List<ExerciseEntity> entities) {
         return entities != null ? entities.stream()
@@ -27,6 +28,7 @@ public class ExerciseEntityMapper {
         domain.setSeries(this.serieEntityMapper.toDomain(entity.getSeries()));
         domain.setUser(this.userEntityMapper.toDomain(entity.getPlayer()));
         domain.setSport(entity.getSport());
+        domain.setLinks(this.linkEntityMapper.toDomain(entity.getLinks()));
         return domain;
     }
 
@@ -46,6 +48,10 @@ public class ExerciseEntityMapper {
         }
         entity.setPlayer(this.userEntityMapper.toEntity(domain.getUser()));
         entity.setSport(domain.getSport());
+        if (domain.getLinks() != null) {
+            entity.setLinks(this.linkEntityMapper.toEntity(domain.getLinks()));
+            entity.getLinks().forEach(linkEntity -> linkEntity.setExercise(entity));
+        }
         return entity;
     }
 

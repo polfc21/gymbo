@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.TrainingDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Training;
 import com.behabits.gymbo.domain.models.User;
@@ -29,6 +30,9 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public Training findTrainingById(Long id) {
         Training training = this.trainingDao.findTrainingById(id);
+        if (training == null) {
+            throw new NotFoundException("Training not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(training);
         return training;
     }
@@ -37,19 +41,20 @@ public class TrainingServiceImpl implements TrainingService {
     public Training createTraining(Training training) {
         User loggedUser = this.authorityService.getLoggedUser();
         training.setUser(loggedUser);
-        return this.trainingDao.createTraining(training);
+        return this.trainingDao.saveTraining(training);
     }
 
     @Override
     public Training updateTraining(Long id, Training training) {
-        Training trainingToUpdate = this.trainingDao.findTrainingById(id);
-        this.authorityService.checkLoggedUserHasPermissions(trainingToUpdate);
-        return this.trainingDao.updateTraining(id, training);
+        Training trainingToUpdate = this.findTrainingById(id);
+        trainingToUpdate.setName(training.getName());
+        trainingToUpdate.setTrainingDate(training.getTrainingDate());
+        return this.trainingDao.saveTraining(trainingToUpdate);
     }
 
     @Override
     public void deleteTraining(Long id) {
-        Training training = this.trainingDao.findTrainingById(id);
+        Training training = this.findTrainingById(id);
         this.authorityService.checkLoggedUserHasPermissions(training);
         this.trainingDao.deleteTraining(training);
     }
@@ -58,6 +63,6 @@ public class TrainingServiceImpl implements TrainingService {
     public Training addExercise(Long id, Exercise exercise) {
         Training training = this.findTrainingById(id);
         training.addExercise(exercise);
-        return this.trainingDao.createTraining(training);
+        return this.trainingDao.saveTraining(training);
     }
 }
