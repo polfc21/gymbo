@@ -21,8 +21,8 @@ public class JpaExerciseDao implements ExerciseDao {
     @Override
     public Exercise findExerciseById(Long id) {
         ExerciseEntity entity = this.exerciseRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Exercise with " + id + " not found"));
-        return this.mapper.toDomain(entity);
+                .orElse(null);
+        return entity != null ? this.mapper.toDomain(entity) : null;
     }
 
     @Override
