@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.ExerciseDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.User;
 import com.behabits.gymbo.domain.services.AuthorityService;
@@ -20,6 +21,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public Exercise findExerciseById(Long id) {
         Exercise exercise = this.exerciseDao.findExerciseById(id);
+        if (exercise == null) {
+            throw new NotFoundException("Exercise not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(exercise);
         return exercise;
     }

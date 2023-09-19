@@ -62,7 +62,7 @@ class ExerciseServiceImplTest {
     void givenNonExistentIdWhenFindExerciseByIdThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.exerciseDao.findExerciseById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.exerciseDao.findExerciseById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.findExerciseById(1L));
     }
@@ -91,7 +91,7 @@ class ExerciseServiceImplTest {
     void givenNonExistentExerciseIdWhenDeleteExerciseThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        doThrow(NotFoundException.class).when(this.exerciseDao).findExerciseById(nonExistentId);
+        when(this.exerciseDao.findExerciseById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.deleteExercise(nonExistentId));
     }
@@ -125,7 +125,7 @@ class ExerciseServiceImplTest {
     void givenNonExistentIdWhenUpdateExerciseThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.exerciseDao.findExerciseById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.exerciseDao.findExerciseById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.exerciseService.updateExercise(nonExistentId, this.exercise));
     }
