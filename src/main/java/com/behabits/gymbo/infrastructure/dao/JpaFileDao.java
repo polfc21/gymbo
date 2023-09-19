@@ -17,16 +17,16 @@ public class JpaFileDao implements FileDao {
 
     @Override
     public File saveFile(File file) {
-        FileEntity entityToCreate = this.fileEntityMapper.toEntity(file);
-        FileEntity entityCreated = this.fileRepository.save(entityToCreate);
-        return this.fileEntityMapper.toDomain(entityCreated);
+        FileEntity entityToSave = this.fileEntityMapper.toEntity(file);
+        FileEntity entitySaved = this.fileRepository.save(entityToSave);
+        return this.fileEntityMapper.toDomain(entitySaved);
     }
 
     @Override
     public File findFileById(Long id) {
-        FileEntity fileEntity = this.fileRepository.findById(id)
+        FileEntity entity = this.fileRepository.findById(id)
                 .orElse(null);
-        return fileEntity != null ? this.fileEntityMapper.toDomain(fileEntity) : null;
+        return entity != null ? this.fileEntityMapper.toDomain(entity) : null;
     }
 
     @Override

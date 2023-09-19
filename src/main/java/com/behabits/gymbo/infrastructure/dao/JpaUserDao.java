@@ -20,9 +20,9 @@ public class JpaUserDao implements UserDao {
 
     @Override
     public User saveUser(User user) {
-        UserEntity entity = this.mapper.toEntity(user);
-        UserEntity createdEntity = this.userRepository.save(entity);
-        return this.mapper.toDomain(createdEntity);
+        UserEntity entityToSave = this.mapper.toEntity(user);
+        UserEntity entitySaved = this.userRepository.save(entityToSave);
+        return this.mapper.toDomain(entitySaved);
     }
 
     @Override

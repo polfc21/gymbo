@@ -36,9 +36,9 @@ public class JpaTrainingDao implements TrainingDao {
 
     @Override
     public Training saveTraining(Training training) {
-        TrainingEntity entityToCreate = this.mapper.toEntity(training);
-        TrainingEntity entityCreated = this.trainingRepository.save(entityToCreate);
-        return this.mapper.toDomain(entityCreated);
+        TrainingEntity entityToSave = this.mapper.toEntity(training);
+        TrainingEntity entitySaved = this.trainingRepository.save(entityToSave);
+        return this.mapper.toDomain(entitySaved);
     }
 
     @Override

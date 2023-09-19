@@ -19,9 +19,9 @@ public class JpaReviewDao implements ReviewDao {
 
     @Override
     public Review saveReview(Review review) {
-        ReviewEntity entityToCreate = this.mapper.toEntity(review);
-        ReviewEntity createdEntity = this.reviewRepository.save(entityToCreate);
-        return this.mapper.toDomain(createdEntity);
+        ReviewEntity entityToSave = this.mapper.toEntity(review);
+        ReviewEntity entitySaved = this.reviewRepository.save(entityToSave);
+        return this.mapper.toDomain(entitySaved);
     }
 
     @Override

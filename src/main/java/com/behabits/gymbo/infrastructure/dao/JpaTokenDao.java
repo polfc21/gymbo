@@ -19,8 +19,8 @@ public class JpaTokenDao implements TokenDao {
 
     @Override
     public Token findByToken(String token) {
-        TokenEntity tokenEntity = this.tokenRepository.findByToken(token);
-        return tokenEntity != null ? this.tokenEntityMapper.toDomain(tokenEntity) : null;
+        TokenEntity entity = this.tokenRepository.findByToken(token);
+        return entity != null ? this.tokenEntityMapper.toDomain(entity) : null;
     }
 
     @Override
@@ -32,23 +32,23 @@ public class JpaTokenDao implements TokenDao {
 
     @Override
     public void saveAll(List<Token> tokens) {
-        List<TokenEntity> tokenEntities = tokens.stream()
+        List<TokenEntity> entities = tokens.stream()
                 .map(this.tokenEntityMapper::toEntity)
                 .toList();
-        this.tokenRepository.saveAll(tokenEntities);
+        this.tokenRepository.saveAll(entities);
     }
 
     @Override
     public Token createToken(Token token) {
-        TokenEntity tokenEntity = this.tokenEntityMapper.toEntity(token);
-        TokenEntity createdToken = this.tokenRepository.save(tokenEntity);
-        return this.tokenEntityMapper.toDomain(createdToken);
+        TokenEntity entityToSave = this.tokenEntityMapper.toEntity(token);
+        TokenEntity entitySaved = this.tokenRepository.save(entityToSave);
+        return this.tokenEntityMapper.toDomain(entitySaved);
     }
 
     @Override
     public Token findByTokenAndUserId(String token, Long userId) {
-        TokenEntity tokenEntity = this.tokenRepository.findByTokenAndPlayerId(token, userId);
-        return tokenEntity != null ? this.tokenEntityMapper.toDomain(tokenEntity) : null;
+        TokenEntity entity = this.tokenRepository.findByTokenAndPlayerId(token, userId);
+        return entity != null ? this.tokenEntityMapper.toDomain(entity) : null;
     }
 
 }

@@ -22,9 +22,9 @@ public class JpaLinkDao implements LinkDao {
 
     @Override
     public Link findLinkById(Long id) {
-        LinkEntity linkEntity = this.linkRepository.findById(id)
+        LinkEntity entity = this.linkRepository.findById(id)
                 .orElse(null);
-        return linkEntity != null ? this.mapper.toDomain(linkEntity) : null;
+        return entity != null ? this.mapper.toDomain(entity) : null;
     }
 
 }

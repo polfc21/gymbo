@@ -17,9 +17,9 @@ public class JpaPublicationDao implements PublicationDao {
 
     @Override
     public Publication savePublication(Publication publication) {
-        PublicationEntity entityToCreate = this.publicationEntityMapper.toEntity(publication);
-        PublicationEntity entityCreated = this.publicationRepository.save(entityToCreate);
-        return this.publicationEntityMapper.toDomain(entityCreated);
+        PublicationEntity entityToSave = this.publicationEntityMapper.toEntity(publication);
+        PublicationEntity entitySaved = this.publicationRepository.save(entityToSave);
+        return this.publicationEntityMapper.toDomain(entitySaved);
     }
 
     @Override
