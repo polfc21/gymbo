@@ -181,4 +181,25 @@ class UserControllerTest {
         assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED.value()));
     }
 
+    @Test
+    @WithMockUser
+    void givenKilometersAndSportWhenFindUsersInKilometersOrderedByDistanceFromLoggedUserAndBySportThenReturnUsersAnd200() throws Exception {
+        Double kilometers = 10.0;
+        String sport = "football";
+        User user = new UserModelRepository().getUser();
+        UserResponse userResponse = new UserResponseRepository().getUserResponse();
+        given(this.userService.findUsersInKilometersOrderedByDistanceFromLoggedUserAndBySport(kilometers, Sport.FOOTBALL)).willReturn(List.of(user));
+        given(this.mapper.toResponse(user)).willReturn(userResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(
+                get(ApiConstant.API_V1 + ApiConstant.USERS + ApiConstant.KILOMETERS + ApiConstant.SPORTS, kilometers)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("sport", sport)
+                        .with(csrf())
+        ).andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(List.of(userResponse))));
+    }
+
 }

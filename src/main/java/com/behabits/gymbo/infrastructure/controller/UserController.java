@@ -49,4 +49,14 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @GetMapping(ApiConstant.KILOMETERS + ApiConstant.SPORTS)
+    public ResponseEntity<List<UserResponse>> findUsersInKilometersOrderedByDistanceFromPlayerIdAndBySport(@PathVariable Double kilometers, @RequestParam @ValidSport String sport) {
+        Sport sportEnum = Sport.valueOf(sport.toUpperCase());
+        List<UserResponse> users = this.userService.findUsersInKilometersOrderedByDistanceFromLoggedUserAndBySport(kilometers, sportEnum)
+                .stream()
+                .map(this.mapper::toResponse)
+                .toList();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
 }
