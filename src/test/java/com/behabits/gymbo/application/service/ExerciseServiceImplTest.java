@@ -70,7 +70,7 @@ class ExerciseServiceImplTest {
     @Test
     void givenExerciseWhenCreateExerciseThenReturnExercise() {
         when(this.authorityService.getLoggedUser()).thenReturn(this.loggedUser);
-        when(this.exerciseDao.createExercise(this.exercise)).thenReturn(this.exercise);
+        when(this.exerciseDao.saveExercise(this.exercise)).thenReturn(this.exercise);
 
         Exercise createdExercise = this.exerciseService.createExercise(this.exercise);
         assertThat(createdExercise, is(this.exercise));

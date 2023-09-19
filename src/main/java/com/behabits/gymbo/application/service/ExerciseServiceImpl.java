@@ -32,7 +32,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     public Exercise createExercise(Exercise exercise) {
         User user = this.authorityService.getLoggedUser();
         exercise.setUser(user);
-        return this.exerciseDao.createExercise(exercise);
+        return this.exerciseDao.saveExercise(exercise);
     }
 
     @Override
