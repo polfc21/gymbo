@@ -176,7 +176,7 @@ class PublicationServiceImplTest {
         Long publicationId = 1L;
         Publication publication = mock(Publication.class);
 
-        when(this.publicationDao.findPublicationById(publicationId)).thenThrow(NotFoundException.class);
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.publicationService.updatePublication(publicationId, publication));
     }
