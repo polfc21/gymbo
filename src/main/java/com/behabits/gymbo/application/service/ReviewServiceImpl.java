@@ -1,6 +1,7 @@
 package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.ReviewDao;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.SameReviewerException;
 import com.behabits.gymbo.domain.models.Review;
 import com.behabits.gymbo.domain.models.User;
@@ -37,6 +38,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review findReviewById(Long id) {
         Review review = this.reviewDao.findReviewById(id);
+        if (review == null) {
+            throw new NotFoundException("Review not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(review);
         return review;
     }

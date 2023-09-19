@@ -104,7 +104,7 @@ class ReviewServiceImplTest {
     void givenNonExistentReviewIdWhenFindReviewByIdThenThrowNotFoundException() {
         Long nonExistentId = 1L;
 
-        when(this.reviewDao.findReviewById(nonExistentId)).thenThrow(NotFoundException.class);
+        when(this.reviewDao.findReviewById(nonExistentId)).thenReturn(null);
 
         assertThrows(NotFoundException.class, () -> this.reviewService.findReviewById(nonExistentId));
     }
