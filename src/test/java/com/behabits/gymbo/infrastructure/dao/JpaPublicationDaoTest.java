@@ -1,6 +1,5 @@
 package com.behabits.gymbo.infrastructure.dao;
 
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Publication;
 import com.behabits.gymbo.domain.repositories.PublicationModelRepository;
 import com.behabits.gymbo.infrastructure.repository.PublicationRepository;
@@ -17,7 +16,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +59,7 @@ class JpaPublicationDaoTest {
 
         when(this.publicationRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> this.publicationDao.findPublicationById(nonExistentId));
+        assertNull(this.publicationDao.findPublicationById(nonExistentId));
     }
 
 }
