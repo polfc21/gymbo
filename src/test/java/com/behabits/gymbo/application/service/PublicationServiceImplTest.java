@@ -347,4 +347,13 @@ class PublicationServiceImplTest {
         assertThat(publicationWithLink.getLinks(), hasItem(link));
     }
 
+    @Test
+    void whenFindAllPublicationsThenReturnPublications() {
+        List<Publication> publications = List.of(new PublicationModelRepository().getPublication());
+
+        when(this.publicationDao.findAllPublications()).thenReturn(publications);
+
+        assertThat(this.publicationService.findAllPublications(), is(publications));
+    }
+
 }

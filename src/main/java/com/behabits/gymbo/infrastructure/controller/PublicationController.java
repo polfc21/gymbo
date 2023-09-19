@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS)
 @RestController
 @RequiredArgsConstructor
@@ -55,6 +57,15 @@ public class PublicationController {
         Link link = this.linkMapper.toDomain(linkRequest);
         Publication publication = this.publicationService.addLink(id, link);
         return new ResponseEntity<>(this.mapper.toResponse(publication), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PublicationResponse>> findAllPublications() {
+        List<PublicationResponse> publications = this.publicationService.findAllPublications()
+                .stream()
+                .map(this.mapper::toResponse)
+                .toList();
+        return new ResponseEntity<>(publications, HttpStatus.OK);
     }
 
 }

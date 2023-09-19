@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -60,6 +61,14 @@ class JpaPublicationDaoTest {
         when(this.publicationRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
         assertNull(this.publicationDao.findPublicationById(nonExistentId));
+    }
+
+    @Test
+    void whenFindAllPublicationsThenReturnPublications() {
+        when(this.publicationRepository.findAll()).thenReturn(List.of(this.publicationEntity));
+        when(this.publicationEntityMapper.toDomain(this.publicationEntity)).thenReturn(this.publication);
+
+        assertThat(this.publicationDao.findAllPublications(), is(List.of(this.publication)));
     }
 
 }

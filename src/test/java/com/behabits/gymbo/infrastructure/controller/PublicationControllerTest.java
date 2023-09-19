@@ -28,6 +28,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -356,6 +358,27 @@ class PublicationControllerTest {
 
         assertThat(response.getStatus(), is(HttpStatus.CREATED.value()));
         assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(publicationResponse)));
+    }
+
+    @Test
+    @WithMockUser
+    void whenFindAllPublicationsThenReturnPublicationResponseList() throws Exception {
+        given(this.publicationService.findAllPublications()).willReturn(List.of(this.publication));
+        given(this.mapper.toResponse(this.publication)).willReturn(this.publicationResponse);
+
+        MockHttpServletResponse response = this.mockMvc.perform(get(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.OK.value()));
+        assertThat(response.getContentAsString(), is(this.objectMapper.writeValueAsString(List.of(publicationResponse))));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenFindAllPublicationsThenReturn403() throws Exception {
+        MockHttpServletResponse response = this.mockMvc.perform(get(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED.value()));
     }
 
 }
