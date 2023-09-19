@@ -1,6 +1,5 @@
 package com.behabits.gymbo.infrastructure.dao;
 
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.repositories.LinkModelRepository;
 import com.behabits.gymbo.infrastructure.repository.LinkRepository;
@@ -15,10 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class JpaLinkDaoTest {
@@ -53,12 +52,12 @@ class JpaLinkDaoTest {
     }
 
     @Test
-    void givenNonExistentLinkWhenFindLinkByIdThenThrowException() {
+    void givenNonExistentLinkWhenFindLinkByIdThenReturnNull() {
         Long nonExistentId = 1L;
 
         when(this.linkRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> this.linkDao.findLinkById(nonExistentId));
+        assertNull(this.linkDao.findLinkById(nonExistentId));
     }
 
 }
