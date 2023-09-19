@@ -41,7 +41,7 @@ class JpaExerciseDaoTest {
         when(this.exerciseRepository.save(this.squatExerciseEntity)).thenReturn(this.squatExerciseEntity);
         when(this.mapper.toDomain(this.squatExerciseEntity)).thenReturn(this.squatExercise);
 
-        assertThat(this.exerciseDao.createExercise(this.squatExercise), is(this.squatExercise));
+        assertThat(this.exerciseDao.saveExercise(this.squatExercise), is(this.squatExercise));
     }
 
     @Test
@@ -50,7 +50,7 @@ class JpaExerciseDaoTest {
         when(this.exerciseRepository.save(this.squatExerciseEntity)).thenReturn(this.squatExerciseEntity);
         when(this.mapper.toDomain(this.squatExerciseEntity)).thenReturn(this.squatExercise);
 
-        assertThat(this.exerciseDao.createExercise(this.squatExercise), is(this.squatExercise));
+        assertThat(this.exerciseDao.saveExercise(this.squatExercise), is(this.squatExercise));
     }
 
     @Test
