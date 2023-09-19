@@ -58,11 +58,7 @@ public class PublicationServiceImpl implements PublicationService {
 
     @Override
     public Publication updatePublication(Long id, Publication publication) {
-        Publication publicationToUpdate = this.publicationDao.findPublicationById(id);
-        if (publicationToUpdate == null) {
-            throw new NotFoundException("Publication not found");
-        }
-        this.authorityService.checkLoggedUserHasPermissions(publicationToUpdate);
+        Publication publicationToUpdate = this.findPublicationById(id);
         publicationToUpdate.setDescription(publication.getDescription());
         publicationToUpdate.setSport(publication.getSport());
         publicationToUpdate.setUpdatedAt(LocalDateTime.now());
@@ -76,8 +72,7 @@ public class PublicationServiceImpl implements PublicationService {
 
     @Override
     public Publication addLink(Long id, Link link) {
-        Publication publicationToUpdate = this.publicationDao.findPublicationById(id);
-        this.authorityService.checkLoggedUserHasPermissions(publicationToUpdate);
+        Publication publicationToUpdate = this.findPublicationById(id);
         this.linkService.setLinks(List.of(link));
         publicationToUpdate.addLink(link);
         return this.publicationDao.savePublication(publicationToUpdate);
