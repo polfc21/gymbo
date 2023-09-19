@@ -2,6 +2,7 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.LinkDao;
 import com.behabits.gymbo.domain.exceptions.IncorrectLinkException;
+import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.Exercise;
 import com.behabits.gymbo.domain.models.Link;
 import com.behabits.gymbo.domain.models.Training;
@@ -60,6 +61,9 @@ public class LinkServiceImpl implements LinkService {
     @Override
     public void deleteLink(Long id) {
         Link link = this.linkDao.findLinkById(id);
+        if (link == null) {
+            throw new NotFoundException("Link not found");
+        }
         this.authorityService.checkLoggedUserHasPermissions(link);
         this.linkDao.deleteLink(link);
     }
