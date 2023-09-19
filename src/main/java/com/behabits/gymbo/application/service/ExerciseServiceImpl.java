@@ -50,7 +50,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public Exercise updateExercise(Long id, Exercise exercise) {
         Exercise exerciseToUpdate = this.findExerciseById(id);
-        this.authorityService.checkLoggedUserHasPermissions(exerciseToUpdate);
-        return this.exerciseDao.updateExercise(id, exercise);
+        exerciseToUpdate.setName(exercise.getName());
+        return this.exerciseDao.saveExercise(exerciseToUpdate);
     }
 }

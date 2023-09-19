@@ -133,12 +133,14 @@ class ExerciseServiceImplTest {
     @Test
     void givenExistentIdAndLoggedUserHasPermissionsWhenUpdateExerciseThenReturnExercise() {
         Long existentId = 1L;
+        Exercise exerciseToUpdate = mock(Exercise.class);
 
-        when(this.exerciseDao.findExerciseById(existentId)).thenReturn(this.exercise);
-        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(this.exercise);
-        when(this.exerciseDao.updateExercise(existentId, this.exercise)).thenReturn(this.exercise);
+        when(this.exerciseDao.findExerciseById(existentId)).thenReturn(exerciseToUpdate);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(exerciseToUpdate);
+        when(this.exerciseDao.saveExercise(exerciseToUpdate)).thenReturn(exerciseToUpdate);
 
-        assertThat(this.exerciseService.updateExercise(existentId, this.exercise), is(this.exercise));
+        assertThat(this.exerciseService.updateExercise(existentId, this.exercise), is(exerciseToUpdate));
+        verify(exerciseToUpdate).setName(this.exercise.getName());
     }
 
     @Test
