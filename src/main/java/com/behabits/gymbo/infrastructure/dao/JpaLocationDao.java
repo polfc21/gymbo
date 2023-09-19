@@ -19,8 +19,8 @@ public class JpaLocationDao implements LocationDao {
     @Override
     public Location findLocationById(Long id) {
         LocationEntity locationEntity = this.locationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Location with " + id + " id not found"));
-        return this.locationEntityMapper.toDomain(locationEntity);
+                .orElse(null);
+        return locationEntity != null ? this.locationEntityMapper.toDomain(locationEntity) : null;
     }
 
     @Override

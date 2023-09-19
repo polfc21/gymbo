@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,12 +56,12 @@ class JpaLocationDaoTest {
     }
 
     @Test
-    void givenNonExistentIdWhenFindLocationByIdThenThrowNotFoundException() {
+    void givenNonExistentIdWhenFindLocationByIdThenReturnNull() {
         Long nonExistentId = 1L;
 
         when(this.locationRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> this.locationDao.findLocationById(nonExistentId));
+        assertNull(this.locationDao.findLocationById(nonExistentId));
     }
 
     @Test
