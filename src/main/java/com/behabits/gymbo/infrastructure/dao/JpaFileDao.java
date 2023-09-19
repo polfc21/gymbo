@@ -1,7 +1,6 @@
 package com.behabits.gymbo.infrastructure.dao;
 
 import com.behabits.gymbo.domain.daos.FileDao;
-import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.models.File;
 import com.behabits.gymbo.infrastructure.repository.FileRepository;
 import com.behabits.gymbo.infrastructure.repository.entity.FileEntity;
