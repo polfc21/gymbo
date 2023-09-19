@@ -51,4 +51,13 @@ public class ReviewServiceImpl implements ReviewService {
         return this.reviewDao.findAllReviewsByReviewedId(user.getId());
     }
 
+    @Override
+    public Review updateReview(Long id, Review review) {
+        Review reviewToUpdate = this.findReviewById(id);
+        reviewToUpdate.setRating(review.getRating());
+        reviewToUpdate.setComment(review.getComment());
+        reviewToUpdate.setUpdatedAt(LocalDateTime.now());
+        return this.reviewDao.saveReview(reviewToUpdate);
+    }
+
 }

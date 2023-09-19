@@ -8,4 +8,5 @@ public interface ReviewService {
     Review createReview(Review review, String usernameReviewed);
     Review findReviewById(Long id);
     List<Review> findAllReviewsByUsername(String username);
+    Review updateReview(Long id, Review review);
 }
