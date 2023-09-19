@@ -296,7 +296,7 @@ class PublicationServiceImplTest {
 
         when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publicationToUpdate);
         doNothing().when(this.authorityService).checkLoggedUserHasPermissions(publicationToUpdate);
-        doNothing().when(this.linkService).setLinks(List.of(link));
+        doNothing().when(this.linkService).setLinks(links);
         doThrow(IncorrectLinkException.class).when(publicationToUpdate).addLink(link);
 
         assertThrows(IncorrectLinkException.class, () -> this.publicationService.addLink(publicationId, link));
