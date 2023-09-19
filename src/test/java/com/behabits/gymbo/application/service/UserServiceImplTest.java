@@ -111,4 +111,17 @@ class UserServiceImplTest {
         assertThat(this.userService.findUsersBySport(Sport.FOOTBALL), is(List.of(footballUser)));
     }
 
+    @Test
+    void givenKilometersAndSportWhenFindUsersInKilometersOrderedByDistanceFromLoggedUserAndBySportThenReturnUsers() {
+        Double kilometers = 1.0;
+        Sport sport = Sport.FOOTBALL;
+        User loggedUser = this.user;
+        User footballUser = new UserModelRepository().getFootballUser();
+
+        when(this.authorityService.getLoggedUser()).thenReturn(loggedUser);
+        when(this.userDao.findUsersInKilometersOrderedByDistanceFromLoggedUser(loggedUser.getId(), kilometers)).thenReturn(List.of(footballUser));
+
+        assertThat(this.userService.findUsersInKilometersOrderedByDistanceFromLoggedUserAndBySport(kilometers, sport), is(List.of(footballUser)));
+    }
+
 }
