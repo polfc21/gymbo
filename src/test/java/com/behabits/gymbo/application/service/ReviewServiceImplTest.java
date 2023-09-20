@@ -128,4 +128,39 @@ class ReviewServiceImplTest {
         assertThrows(NotFoundException.class, () -> this.reviewService.findAllReviewsByUsername(nonExistentUsername));
     }
 
+    @Test
+    void givenExistentReviewWhenUpdateReviewThenReturnReview() {
+        Long existentId = 1L;
+        Review reviewToUpdate = mock(Review.class);
+
+        when(this.reviewDao.findReviewById(existentId)).thenReturn(reviewToUpdate);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(reviewToUpdate);
+        when(this.reviewDao.saveReview(reviewToUpdate)).thenReturn(reviewToUpdate);
+
+        assertThat(this.reviewService.updateReview(existentId, this.review), is(reviewToUpdate));
+        verify(reviewToUpdate).setRating(this.review.getRating());
+        verify(reviewToUpdate).setComment(this.review.getComment());
+        verify(reviewToUpdate).setUpdatedAt(any());
+    }
+
+    @Test
+    void givenNonExistentReviewWhenUpdateReviewThenThrowNotFoundException() {
+        Long nonExistentId = 1L;
+
+        when(this.reviewDao.findReviewById(nonExistentId)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> this.reviewService.updateReview(nonExistentId, this.review));
+    }
+
+    @Test
+    void givenExistentReviewWithoutPermissionsWhenUpdateReviewThenThrowPermissionsException() {
+        Long existentId = 1L;
+        Review reviewToUpdate = mock(Review.class);
+
+        when(this.reviewDao.findReviewById(existentId)).thenReturn(reviewToUpdate);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(reviewToUpdate);
+
+        assertThrows(PermissionsException.class, () -> this.reviewService.updateReview(existentId, this.review));
+    }
+
 }

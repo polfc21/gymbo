@@ -44,4 +44,11 @@ public class ReviewController {
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
+    @PutMapping(ApiConstant.ID)
+    public ResponseEntity<ReviewResponse> updateReview(@PathVariable Long id, @RequestBody @Valid ReviewRequest request) {
+        Review reviewToUpdate = this.mapper.toDomain(request);
+        Review reviewUpdated = this.reviewService.updateReview(id, reviewToUpdate);
+        return new ResponseEntity<>(this.mapper.toResponse(reviewUpdated), HttpStatus.OK);
+    }
+
 }
