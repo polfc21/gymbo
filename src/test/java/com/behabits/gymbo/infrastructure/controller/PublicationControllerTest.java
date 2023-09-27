@@ -381,4 +381,52 @@ class PublicationControllerTest {
         assertThat(response.getStatus(), is(HttpStatus.UNAUTHORIZED.value()));
     }
 
+    @Test
+    @WithMockUser
+    void givenExistentPublicationWithPermissionsWhenDeletePublicationThenReturnNoContent() throws Exception {
+        Long publicationId = 1L;
+        doNothing().when(this.publicationService).deletePublication(publicationId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NO_CONTENT.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentPublicationWithoutPermissionsWhenDeletePublicationThenReturn403() throws Exception {
+        Long publicationId = 1L;
+        doThrow(PermissionsException.class).when(this.publicationService).deletePublication(publicationId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenNonExistentPublicationWhenDeletePublicationThenReturn404() throws Exception {
+        Long publicationId = 1L;
+        doThrow(NotFoundException.class).when(this.publicationService).deletePublication(publicationId);
+
+        MockHttpServletResponse response = this.mockMvc.perform(delete(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenDeletePublicationThenReturn403() throws Exception {
+        Long publicationId = 1L;
+        MockHttpServletResponse response = this.mockMvc.perform(delete(ApiConstant.API_V1 + ApiConstant.PUBLICATIONS + ApiConstant.ID, publicationId))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
 }

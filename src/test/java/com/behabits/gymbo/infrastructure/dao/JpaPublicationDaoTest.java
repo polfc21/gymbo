@@ -18,6 +18,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,6 +70,13 @@ class JpaPublicationDaoTest {
         when(this.publicationEntityMapper.toDomain(this.publicationEntity)).thenReturn(this.publication);
 
         assertThat(this.publicationDao.findAllPublications(), is(List.of(this.publication)));
+    }
+
+    @Test
+    void givenPublicationWhenDeletePublicationThenPublicationDeleted() {
+        this.publicationDao.deletePublication(this.publication);
+
+        verify(this.publicationRepository).deleteById(this.publication.getId());
     }
 
 }
