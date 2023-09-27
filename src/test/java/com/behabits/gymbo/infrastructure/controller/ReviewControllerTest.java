@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -214,6 +215,60 @@ class ReviewControllerTest {
                 put(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, existentId)
                         .contentType("application/json")
                         .content(this.objectMapper.writeValueAsString(this.reviewRequest)))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentReviewWithPermissionsWhenDeleteReviewThenReturn204() throws Exception {
+        Long existentId = 1L;
+
+        MockHttpServletResponse response = mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, existentId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NO_CONTENT.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenExistentReviewWithoutPermissionsWhenDeleteReviewThenReturn403() throws Exception {
+        Long existentId = 1L;
+
+        doThrow(PermissionsException.class).when(this.reviewService).deleteReview(existentId);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, existentId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    @WithMockUser
+    void givenNonExistentReviewWhenDeleteReviewThenReturn404() throws Exception {
+        Long nonExistentId = 2L;
+
+        doThrow(NotFoundException.class).when(this.reviewService).deleteReview(nonExistentId);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, nonExistentId)
+                        .with(csrf()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void givenNonAuthenticatedUserWhenDeleteReviewThenReturn403() throws Exception {
+        Long existentId = 1L;
+
+        MockHttpServletResponse response = mockMvc.perform(
+                delete(ApiConstant.API_V1 + ApiConstant.REVIEWS + ApiConstant.ID, existentId))
                 .andReturn().getResponse();
 
         assertThat(response.getStatus(), is(HttpStatus.FORBIDDEN.value()));
