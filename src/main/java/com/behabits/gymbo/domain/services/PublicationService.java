@@ -12,4 +12,5 @@ public interface PublicationService {
     void deleteLink(Long id);
     Publication addLink(Long id, Link link);
     List<Publication> findAllPublications();
+    void deletePublication(Long id);
 }

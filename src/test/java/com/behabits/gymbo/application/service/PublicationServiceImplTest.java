@@ -356,4 +356,39 @@ class PublicationServiceImplTest {
         assertThat(this.publicationService.findAllPublications(), is(publications));
     }
 
+    @Test
+    void givenExistentPublicationWithPermissionsWhenDeletePublicationThenDeletePublication() {
+        Long publicationId = 1L;
+        Publication publication = mock(Publication.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publication);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(publication);
+
+        try {
+            this.publicationService.deletePublication(publicationId);
+        } catch (Exception e) {
+            assertThat(e, is(nullValue()));
+        }
+    }
+
+    @Test
+    void givenExistentPublicationWithoutPermissionsWhenDeletePublicationThenThrowPermissionsException() {
+        Long publicationId = 1L;
+        Publication publication = mock(Publication.class);
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(publication);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(publication);
+
+        assertThrows(PermissionsException.class, () -> this.publicationService.deletePublication(publicationId));
+    }
+
+    @Test
+    void givenNonExistentPublicationWhenDeletePublicationThenThrowNotFoundException() {
+        Long publicationId = 1L;
+
+        when(this.publicationDao.findPublicationById(publicationId)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> this.publicationService.deletePublication(publicationId));
+    }
+
 }

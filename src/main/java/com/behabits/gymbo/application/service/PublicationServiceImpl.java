@@ -83,4 +83,10 @@ public class PublicationServiceImpl implements PublicationService {
         return this.publicationDao.findAllPublications();
     }
 
+    @Override
+    public void deletePublication(Long id) {
+        Publication publicationToDelete = this.findPublicationById(id);
+        this.publicationDao.deletePublication(publicationToDelete);
+    }
+
 }
