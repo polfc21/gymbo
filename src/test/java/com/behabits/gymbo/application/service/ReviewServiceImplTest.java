@@ -3,6 +3,7 @@ package com.behabits.gymbo.application.service;
 import com.behabits.gymbo.domain.daos.ReviewDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
 import com.behabits.gymbo.domain.exceptions.PermissionsException;
+import com.behabits.gymbo.domain.exceptions.SameReviewedException;
 import com.behabits.gymbo.domain.exceptions.SameReviewerException;
 import com.behabits.gymbo.domain.models.Review;
 import com.behabits.gymbo.domain.models.User;
@@ -51,6 +52,7 @@ class ReviewServiceImplTest {
 
         when(this.userService.findUserByUsername(usernameReviewed)).thenReturn(this.reviewed);
         when(this.authorityService.getLoggedUser()).thenReturn(this.reviewer);
+        when(this.reviewDao.findReviewByReviewerIdAndReviewedId(this.reviewer.getId(), this.reviewed.getId())).thenReturn(null);
         when(this.reviewDao.saveReview(reviewToCreate)).thenReturn(reviewCreated);
 
         assertThat(this.reviewService.createReview(reviewToCreate, usernameReviewed), is(reviewCreated));
@@ -78,6 +80,18 @@ class ReviewServiceImplTest {
         when(this.authorityService.getLoggedUser()).thenReturn(this.reviewer);
 
         assertThrows(SameReviewerException.class, () -> this.reviewService.createReview(reviewToCreate, usernameReviewed));
+    }
+
+    @Test
+    void givenReviewWithReviewedAlreadyReviewedByReviewerWhenCreateReviewThenThrowSameReviewedException() {
+        Review reviewToCreate = mock(Review.class);
+        String usernameReviewed = this.reviewed.getUsername();
+
+        when(this.userService.findUserByUsername(usernameReviewed)).thenReturn(this.reviewed);
+        when(this.authorityService.getLoggedUser()).thenReturn(this.reviewer);
+        when(this.reviewDao.findReviewByReviewerIdAndReviewedId(this.reviewer.getId(), this.reviewed.getId())).thenReturn(this.review);
+
+        assertThrows(SameReviewedException.class, () -> this.reviewService.createReview(reviewToCreate, usernameReviewed));
     }
 
     @Test
