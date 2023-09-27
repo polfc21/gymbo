@@ -9,4 +9,5 @@ public interface ReviewDao {
     Review findReviewById(Long id);
     List<Review> findAllReviewsByReviewedId(Long reviewedId);
     Review findReviewByReviewerIdAndReviewedId(Long reviewerId, Long reviewedId);
+    void deleteReview(Review review);
 }
