@@ -9,4 +9,5 @@ public interface ReviewService {
     Review findReviewById(Long id);
     List<Review> findAllReviewsByUsername(String username);
     Review updateReview(Long id, Review review);
+    void deleteReview(Long id);
 }

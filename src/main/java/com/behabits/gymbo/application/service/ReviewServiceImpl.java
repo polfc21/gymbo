@@ -69,4 +69,10 @@ public class ReviewServiceImpl implements ReviewService {
         return this.reviewDao.saveReview(reviewToUpdate);
     }
 
+    @Override
+    public void deleteReview(Long id) {
+        Review review = this.findReviewById(id);
+        this.reviewDao.deleteReview(review);
+    }
+
 }

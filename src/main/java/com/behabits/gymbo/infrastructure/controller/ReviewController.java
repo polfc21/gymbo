@@ -51,4 +51,10 @@ public class ReviewController {
         return new ResponseEntity<>(this.mapper.toResponse(reviewUpdated), HttpStatus.OK);
     }
 
+    @DeleteMapping(ApiConstant.ID)
+    public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
+        this.reviewService.deleteReview(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

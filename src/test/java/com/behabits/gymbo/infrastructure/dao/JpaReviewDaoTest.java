@@ -18,6 +18,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,5 +93,12 @@ class JpaReviewDaoTest {
         when(this.reviewRepository.findByReviewerIdAndReviewedId(nonExistentReviewerId, nonExistentReviewedId)).thenReturn(null);
 
         assertNull(this.reviewDao.findReviewByReviewerIdAndReviewedId(nonExistentReviewerId, nonExistentReviewedId));
+    }
+
+    @Test
+    void givenReviewWhenDeleteReviewThenVerifyReviewRepositoryDeleteIsCalled() {
+        this.reviewDao.deleteReview(this.review);
+
+        verify(this.reviewRepository).deleteById(this.review.getId());
     }
 }

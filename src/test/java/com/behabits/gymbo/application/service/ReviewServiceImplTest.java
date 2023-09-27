@@ -177,4 +177,40 @@ class ReviewServiceImplTest {
         assertThrows(PermissionsException.class, () -> this.reviewService.updateReview(existentId, this.review));
     }
 
+    @Test
+    void givenExistentReviewIdWhenDeleteReviewThenDeleteReview() {
+        Long existentId = 1L;
+        Review reviewToDelete = mock(Review.class);
+
+        when(this.reviewDao.findReviewById(existentId)).thenReturn(reviewToDelete);
+        doNothing().when(this.authorityService).checkLoggedUserHasPermissions(reviewToDelete);
+        doNothing().when(this.reviewDao).deleteReview(reviewToDelete);
+
+        try {
+            this.reviewService.deleteReview(existentId);
+        } catch (Exception e) {
+            assertThat(e, is(nullValue()));
+        }
+    }
+
+    @Test
+    void givenNonExistentReviewIdWhenDeleteReviewThenThrowNotFoundException() {
+        Long nonExistentId = 1L;
+
+        when(this.reviewDao.findReviewById(nonExistentId)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> this.reviewService.deleteReview(nonExistentId));
+    }
+
+    @Test
+    void givenExistentReviewWithoutPermissionsWhenDeleteReviewThenThrowPermissionsException() {
+        Long existentId = 1L;
+        Review reviewToDelete = mock(Review.class);
+
+        when(this.reviewDao.findReviewById(existentId)).thenReturn(reviewToDelete);
+        doThrow(PermissionsException.class).when(this.authorityService).checkLoggedUserHasPermissions(reviewToDelete);
+
+        assertThrows(PermissionsException.class, () -> this.reviewService.deleteReview(existentId));
+    }
+
 }

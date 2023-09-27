@@ -45,4 +45,9 @@ public class JpaReviewDao implements ReviewDao {
         return entity != null ? this.mapper.toDomain(entity) : null;
     }
 
+    @Override
+    public void deleteReview(Review review) {
+        this.reviewRepository.deleteById(review.getId());
+    }
+
 }
