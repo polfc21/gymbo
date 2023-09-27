@@ -72,4 +72,25 @@ class JpaReviewDaoTest {
 
         assertThat(this.reviewDao.findAllReviewsByReviewedId(reviewedId), is(List.of(this.review)));
     }
+
+    @Test
+    void givenReviewerIdAndReviewedIdWhenFindReviewByReviewerIdAndReviewedIdThenReturnReview() {
+        Long reviewerId = 1L;
+        Long reviewedId = 2L;
+
+        when(this.reviewRepository.findByReviewerIdAndReviewedId(reviewerId, reviewedId)).thenReturn(this.reviewEntity);
+        when(this.reviewEntityMapper.toDomain(this.reviewEntity)).thenReturn(this.review);
+
+        assertThat(this.reviewDao.findReviewByReviewerIdAndReviewedId(reviewerId, reviewedId), is(this.review));
+    }
+
+    @Test
+    void givenNonExistentReviewerIdAndReviewedIdWhenFindReviewByReviewerIdAndReviewedIdThenReturnNull() {
+        Long nonExistentReviewerId = 1L;
+        Long nonExistentReviewedId = 2L;
+
+        when(this.reviewRepository.findByReviewerIdAndReviewedId(nonExistentReviewerId, nonExistentReviewedId)).thenReturn(null);
+
+        assertNull(this.reviewDao.findReviewByReviewerIdAndReviewedId(nonExistentReviewerId, nonExistentReviewedId));
+    }
 }

@@ -38,4 +38,11 @@ public class JpaReviewDao implements ReviewDao {
                 .map(this.mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public Review findReviewByReviewerIdAndReviewedId(Long reviewerId, Long reviewedId) {
+        ReviewEntity entity = this.reviewRepository.findByReviewerIdAndReviewedId(reviewerId, reviewedId);
+        return entity != null ? this.mapper.toDomain(entity) : null;
+    }
+
 }

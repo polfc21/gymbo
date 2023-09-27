@@ -2,6 +2,7 @@ package com.behabits.gymbo.application.service;
 
 import com.behabits.gymbo.domain.daos.ReviewDao;
 import com.behabits.gymbo.domain.exceptions.NotFoundException;
+import com.behabits.gymbo.domain.exceptions.SameReviewedException;
 import com.behabits.gymbo.domain.exceptions.SameReviewerException;
 import com.behabits.gymbo.domain.models.Review;
 import com.behabits.gymbo.domain.models.User;
@@ -29,10 +30,18 @@ public class ReviewServiceImpl implements ReviewService {
         if (reviewed.getUsername().equals(reviewer.getUsername())) {
             throw new SameReviewerException("You can't review yourself");
         }
+        this.checkIfReviewAlreadyExists(reviewer, reviewed);
         review.setReviewed(reviewed);
         review.setReviewer(reviewer);
         review.setCreatedAt(LocalDateTime.now());
         return this.reviewDao.saveReview(review);
+    }
+
+    private void checkIfReviewAlreadyExists(User reviewer, User reviewed) {
+        Review review = this.reviewDao.findReviewByReviewerIdAndReviewedId(reviewer.getId(), reviewed.getId());
+        if (review != null) {
+            throw new SameReviewedException("You already reviewed this user");
+        }
     }
 
     @Override

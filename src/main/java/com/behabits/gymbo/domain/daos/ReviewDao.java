@@ -8,4 +8,5 @@ public interface ReviewDao {
     Review saveReview(Review review);
     Review findReviewById(Long id);
     List<Review> findAllReviewsByReviewedId(Long reviewedId);
+    Review findReviewByReviewerIdAndReviewedId(Long reviewerId, Long reviewedId);
 }

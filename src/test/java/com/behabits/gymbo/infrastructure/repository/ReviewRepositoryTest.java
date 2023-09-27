@@ -91,4 +91,32 @@ class ReviewRepositoryTest {
         assertThat(reviews, is(List.of(this.review)));
     }
 
+    @Test
+    void givenReviewerIdAndReviewedIdWhenFindByReviewerIdAndReviewedIdThenReturnReview() {
+        ReviewEntity reviewFound = this.reviewRepository.findByReviewerIdAndReviewedId(this.reviewer.getId(), this.reviewed.getId());
+
+        assertThat(reviewFound, is(this.review));
+    }
+
+    @Test
+    void givenReviewerIdAndNonExistentReviewedIdWhenFindByReviewerIdAndReviewedIdThenReturnNull() {
+        ReviewEntity reviewFound = this.reviewRepository.findByReviewerIdAndReviewedId(this.reviewer.getId(), this.reviewed.getId() + 100);
+
+        assertNull(reviewFound);
+    }
+
+    @Test
+    void givenNonExistentReviewerIdAndReviewedIdWhenFindByReviewerIdAndReviewedIdThenReturnNull() {
+        ReviewEntity reviewFound = this.reviewRepository.findByReviewerIdAndReviewedId(this.reviewer.getId() + 100, this.reviewed.getId());
+
+        assertNull(reviewFound);
+    }
+
+    @Test
+    void givenNonExistentReviewerIdAndNonExistentReviewedIdWhenFindByReviewerIdAndReviewedIdThenReturnNull() {
+        ReviewEntity reviewFound = this.reviewRepository.findByReviewerIdAndReviewedId(this.reviewer.getId() + 100, this.reviewed.getId() + 100);
+
+        assertNull(reviewFound);
+    }
+
 }

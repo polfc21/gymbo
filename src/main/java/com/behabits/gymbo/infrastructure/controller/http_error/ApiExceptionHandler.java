@@ -28,7 +28,8 @@ public class ApiExceptionHandler {
             org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class,
             IncorrectFileException.class,
             SameReviewerException.class,
-            IncorrectLinkException.class
+            IncorrectLinkException.class,
+            SameReviewedException.class
     })
     @ResponseBody
     public ErrorMessage badRequest(Exception exception) {
