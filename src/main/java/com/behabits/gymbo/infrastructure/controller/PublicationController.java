@@ -68,4 +68,10 @@ public class PublicationController {
         return new ResponseEntity<>(publications, HttpStatus.OK);
     }
 
+    @DeleteMapping(ApiConstant.ID)
+    public ResponseEntity<String> deletePublication(@PathVariable Long id) {
+        this.publicationService.deletePublication(id);
+        return new ResponseEntity<>("Publication with id " + id + " deleted successfully", HttpStatus.NO_CONTENT);
+    }
+
 }
