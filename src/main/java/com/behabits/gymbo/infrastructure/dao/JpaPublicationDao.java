@@ -39,4 +39,9 @@ public class JpaPublicationDao implements PublicationDao {
                 .toList();
     }
 
+    @Override
+    public void deletePublication(Publication publication) {
+        this.publicationRepository.deleteById(publication.getId());
+    }
+
 }
